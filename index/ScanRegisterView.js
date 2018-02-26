@@ -1,0 +1,125 @@
+/**
+ * Created by renbaogang on 2018/2/23.
+ */
+
+import React from 'react';
+import { StyleSheet, Text, View,TextInput,Keyboard,TouchableWithoutFeedback,
+    TouchableOpacity,Image,Modal} from 'react-native';
+import WSChannel from '../channel/LocalWSChannel';
+import Store from "../store/LocalStore";
+import MainView from "./MainView";
+import AppUtil from "../AppUtil";
+import UUID from 'uuid/v4';
+import RSAKey from 'react-native-rsa';
+import ScanView from '../mine/ScanView'
+
+export default class ScanRegisterView extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state={scanVisible:false,step:1};
+
+    }
+
+    showScanView=()=>{
+        this.setState({scanVisible:true});
+    }
+
+    hideScanView=()=>{
+        this.setState({scanVisible:false});
+    }
+
+    afterScan=(data)=>{
+        if(data.free){
+            this.setState({scanVisible:false,step:2});
+            this.ip=data.server;
+        }else{
+            //TODO
+        }
+    }
+
+    nameTextChange=(v)=>{
+        this.name = v;
+    }
+
+    cancel=()=>{
+        this.setState({step:1});
+    }
+
+    freeRegister=()=>{
+        if(!this.name){
+            alert("请输入昵称");
+            return;
+        }
+        this.setState({registering:true});
+        setTimeout( ()=> {
+            var uid=UUID();
+            const bits = 2048;
+            const exponent = '10001';
+            var rsa = new RSAKey();
+            rsa.generate(bits, exponent);
+            var publicKey = rsa.getPublicString(); // return json encoded string
+            var privateKey = rsa.getPrivateString(); // return js
+            WSChannel.register(this.ip,uid,this.name,publicKey,(data)=>{
+                this.setState({registering:false});
+                if(data.err){
+                    alert(data.err);
+                }else{
+                    Store.saveKey(this.name,this.ip,uid,publicKey,privateKey);
+                    AppUtil.reset();
+                }
+            },()=>{
+                this.setState({registering:false});
+                alert("访问服务器失败");
+            });
+        },10);
+
+    }
+
+    render() {
+        return (
+            <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
+                <View style={{width:"100%",height:80,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
+                    {
+                        this.state.step==1?null:<TouchableOpacity style={{}} onPress={this.cancel}>
+                            <Text style={{fontSize:16,paddingLeft:10}}>取消</Text>
+                        </TouchableOpacity>
+                    }
+
+                </View>
+                <View style={{width:100,height:100,borderWidth:1,borderStyle:"dashed",borderColor:"#a0a0a0",marginTop:30,marginBottom:30}}><Text style={{textAlign:"center",lineHeight:100,color:"#a0a0a0"}}>logo</Text></View>
+                <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
+                    <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
+                    <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":"来个炫酷的昵称"}</Text>
+                </View>
+                {
+                    this.state.step==1?
+                        <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
+                            <View style={{width:30,height:30,borderWidth:1,borderStyle:"dashed",borderColor:"#e0e0e0",margin:10,borderRadius:2}}></View>
+                            <Text style={{lineHeight:50}}>扫码注册</Text>
+                        </TouchableOpacity>
+                            :
+                        <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+                            <View style={{height:50,width:"100%",flexDirection:"row",backgroundColor:"#ffffff"}} onPress={this.showScanView}>
+                                <View style={{width:30,height:30,borderWidth:1,borderStyle:"dashed",borderColor:"#a0a0a0",margin:10,borderRadius:2}}></View>
+                                <TextInput  style={{height:50,backgroundColor:"#ffffff",width:"100%",color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
+                            </View>
+                            <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
+                            <TouchableOpacity disabled={this.state.registering} onPress={this.freeRegister} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+                                <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?"请稍后...":"完成"}</Text>
+                            </TouchableOpacity>
+                        </View>
+                }
+                <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
+                </View>
+                <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0"}}>
+                    <Text style={{lineHeight:60,color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
+                </View>
+                <Modal visible={this.state.scanVisible}>
+                    <ScanView action="register" parent={this}></ScanView>
+                </Modal>
+            </View>
+        );
+
+    }
+}

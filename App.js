@@ -16,7 +16,7 @@ import Store from "./store/LocalStore"
 import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
-import RegisterView from './index/RegisterView';
+import ScanRegisterView from './index/ScanRegisterView';
 
 
 export default class App extends Component<{}> {
@@ -75,7 +75,7 @@ export default class App extends Component<{}> {
         }else if(this.state.data){
             content=<LoginView key={this.seed} data={this.state.data} logining={this.state.logining}></LoginView>;
         }else if(this.state.data===null){
-            content=<RegisterView key={this.seed}></RegisterView>
+            content=<ScanRegisterView key={this.seed}></ScanRegisterView>
         }else{
             content = <Text style={{textAlign:"center",marginTop:"50%"}}>loading...</Text>
         }

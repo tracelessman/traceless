@@ -10,6 +10,8 @@ export default class ScanView extends Component<{}> {
 
     constructor(props) {
         super(props);
+        this.action = props["action"];
+        this.parent = props["parent"];
         this.state={data:null};
         this.data = null;
     }
@@ -18,16 +20,26 @@ export default class ScanView extends Component<{}> {
         try{
             var d = JSON.parse(e.data);
             if(d.code=="traceless"&&!this.data){
-                this.setState({msg:"等待目标设备响应..."});
-                this.data = d;
-                this.registerOther();
+                if(d.action=="authorize"){
+                    this.setState({msg:"等待目标设备响应..."});
+                    this.data = d;
+                    this.authorizeOther();
+                }else if(d.action=="register"){
+                    this.setState({msg:"扫码成功..."});
+                    this.data = d;
+                    this.parent.afterScan(d);
+                }
             }
         }catch(e){
 
         }
     }
 
-    registerOther = ()=>{
+    cancel=()=>{
+        this.parent.hideScanView();
+    }
+
+    authorizeOther = ()=>{
         var uri = this.data.uri;
         var ws = new WebSocket('ws://'+uri);
         var scanV = this;
@@ -89,10 +101,28 @@ export default class ScanView extends Component<{}> {
                             </View>
                             <View style={{flex:1,backgroundColor:"#000",opacity:0.5,height:"100%"}}/>
                         </View>
-
-                        <View style={{flex:2,backgroundColor:"#000",opacity:0.5,width:"100%",flexDirection:"column",justifyContent:"center"}}>
-                        <Text style={{color:"white",textAlign:"center"}}>确保两台设备连接至同一wifi </Text>
-                        </View>
+                        {
+                            this.action == "register" ?
+                                <TouchableOpacity onPress={this.cancel} style={{
+                                    flex: 2,
+                                    backgroundColor: "#000",
+                                    opacity: 0.5,
+                                    width: "100%",
+                                    flexDirection: "column",
+                                    justifyContent: "center"
+                                }}><Text style={{color: "white", textAlign: "center",fontSize:18}}>取  消</Text></TouchableOpacity>
+                                :
+                            <View style={{
+                                flex: 2,
+                                backgroundColor: "#000",
+                                opacity: 0.5,
+                                width: "100%",
+                                flexDirection: "column",
+                                justifyContent: "center"
+                            }}>
+                                <Text style={{color: "white", textAlign: "center"}}>确保两台设备连接至同一wifi</Text>
+                            </View>
+                        }
 
                     </Camera>
                 </View>);
