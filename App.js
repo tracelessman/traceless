@@ -31,6 +31,18 @@ export default class App extends Component<{}> {
     }
 
     componentDidMount=()=>{
+        this.try2Login();
+    }
+
+    reset=(t)=>{
+        this.seed++;
+        if(Store.getLoginState())
+            this.setState({reset:true});
+        else
+            this.try2Login();
+    }
+
+    try2Login=()=>{
         Store.fetchAllKeys((data)=>{
             if(data&&data.length>0){
                 var cur = data[0];
@@ -54,16 +66,6 @@ export default class App extends Component<{}> {
                 //null 需注册
                 this.setState({data:null});
             }
-        });
-    }
-
-    reset=(t)=>{
-        this.seed++;
-        if(Store.getLoginState())
-            this.setState({reset:true});
-        else
-        Store.fetchAllKeys((data)=>{
-            this.setState({data:data});
         });
     }
 

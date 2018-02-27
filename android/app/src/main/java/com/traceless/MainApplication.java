@@ -3,6 +3,7 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new VectorIconsPackage(),
             new RNNetworkInfoPackage(),
             new RCTCameraPackage(),
             new ImageResizerPackage(),

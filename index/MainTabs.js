@@ -15,6 +15,7 @@ import ChatView from '../recent/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const MainTabs = TabNavigator({
         RecentTab: {
@@ -24,8 +25,10 @@ const MainTabs = TabNavigator({
                 title:'最近',
 
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Image source={require('../images/recent.png')} style={{width:20,height:20}} resizeMode="contain"></Image>:
-                    <Image source={require('../images/recent_n.png')} style={{width:20,height:20}} resizeMode="contain"></Image>
+                    focused?
+                    <Icon name="message-outline" size={30}  color="#f9e160"/>
+                        :
+                        <Icon name="message-outline" size={30}  color="#d0d0d0"/>
 
                 )
             }
@@ -37,8 +40,9 @@ const MainTabs = TabNavigator({
                 title:'通讯录',
 
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Image source={require('../images/contact.png')} style={{width:20,height:20}} resizeMode="contain"></Image>:
-                        <Image source={require('../images/contact_n.png')} style={{width:20,height:20}} resizeMode="contain"></Image>
+                    focused?<Icon name="table-of-contents" size={30}  color="#f9e160"/>
+                        :
+                        <Icon name="table-of-contents" size={30}  color="#d0d0d0"/>
                 )
             }
         },
@@ -48,8 +52,9 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '我的',
                 title:'我的',
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Image source={require('../images/mine.png')} style={{width:20,height:20}} resizeMode="contain"></Image>:
-                        <Image source={require('../images/mine_n.png')} style={{width:20,height:20}} resizeMode="contain"></Image>
+                    focused?<Icon name="account-outline" size={30}  color="#f9e160"/>
+                        :
+                        <Icon name="account-outline" size={30}  color="#d0d0d0"/>
                 )
             },
 
@@ -63,11 +68,11 @@ const MainTabs = TabNavigator({
         tabBarPosition: 'bottom',
         tabBarOptions:
             {
-                activeTintColor:'#000',
+                activeTintColor:'#f9e160',
                 inactiveTintColor: '#d0d0d0',
                 showIcon: true,
                 style: {
-                    backgroundColor:'#f0f0f0',
+                    backgroundColor:'#434343',
                     height:50
                 },
                 labelStyle: {
@@ -75,7 +80,8 @@ const MainTabs = TabNavigator({
                 },
                 indicatorStyle: {
                     height:0,
-                }
+                },
+                showLabel:false
             }
     }
 );
@@ -122,7 +128,7 @@ var MainStack = StackNavigator({
     },ScanView:{
         screen:ScanView,
         navigationOptions:{
-            headerTitle: ''
+            headerTitle: '扫描二维码'
         }
     }
 }, {

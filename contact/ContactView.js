@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Store from '../store/LocalStore'
 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class ContactView extends Component<{}> {
 
@@ -18,8 +19,10 @@ export default class ContactView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
-         headerRight: <Button title="+" onPress={()=>{
-         navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})}} />,
+         headerRight: <TouchableOpacity onPress={()=>{ navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})}}
+             style={{marginRight:20}}>
+             <Icon name="plus" size={22} />
+         </TouchableOpacity>
         }
     );
 
@@ -67,7 +70,7 @@ export default class ContactView extends Component<{}> {
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
                 <TouchableOpacity onPress={this.go2RequireListView} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>+ 好友请求  </Text><Text style={{color:"red",fontStyle: 'italic', fontSize: 11}}>{Store.hasNewReceivedMKFriends()?"new":""}</Text>
+                        <Icon name="call-received" size={16} /><Text> 好友请求  </Text><Text style={{color:"red",fontStyle: 'italic', fontSize: 11}}>{Store.hasNewReceivedMKFriends()?"new":""}</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>

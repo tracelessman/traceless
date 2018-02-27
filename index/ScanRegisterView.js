@@ -12,6 +12,7 @@ import AppUtil from "../AppUtil";
 import UUID from 'uuid/v4';
 import RSAKey from 'react-native-rsa';
 import ScanView from '../mine/ScanView'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 export default class ScanRegisterView extends React.Component {
 
@@ -76,8 +77,13 @@ export default class ScanRegisterView extends React.Component {
 
     }
 
+    dismissKeyboard=()=>{
+        Keyboard.dismiss();
+    }
+
     render() {
         return (
+            <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
             <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
                 <View style={{width:"100%",height:80,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
                     {
@@ -87,7 +93,12 @@ export default class ScanRegisterView extends React.Component {
                     }
 
                 </View>
-                <View style={{width:100,height:100,borderWidth:1,borderStyle:"dashed",borderColor:"#a0a0a0",marginTop:30,marginBottom:30}}><Text style={{textAlign:"center",lineHeight:100,color:"#a0a0a0"}}>logo</Text></View>
+                 {/*<View style={{width:100,height:100,borderWidth:1,borderStyle:"solid",borderColor:"#f0f0f0",marginTop:30,marginBottom:30,overflow:"hidden"}}>*/}
+                    {/*<Icon name="user" size={70}  color="#d0d0d0" style={{textAlign:"center",lineHeight:90}}/>*/}
+                 {/*</View>*/}
+                <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
+
+
                 <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
                     <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
                     <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":"来个炫酷的昵称"}</Text>
@@ -95,14 +106,14 @@ export default class ScanRegisterView extends React.Component {
                 {
                     this.state.step==1?
                         <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
-                            <View style={{width:30,height:30,borderWidth:1,borderStyle:"dashed",borderColor:"#e0e0e0",margin:10,borderRadius:2}}></View>
+                            <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
                             <Text style={{lineHeight:50}}>扫码注册</Text>
                         </TouchableOpacity>
                             :
                         <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
                             <View style={{height:50,width:"100%",flexDirection:"row",backgroundColor:"#ffffff"}} onPress={this.showScanView}>
-                                <View style={{width:30,height:30,borderWidth:1,borderStyle:"dashed",borderColor:"#a0a0a0",margin:10,borderRadius:2}}></View>
-                                <TextInput  style={{height:50,backgroundColor:"#ffffff",width:"100%",color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
+                                <Icon name="user-circle" size={30}  color="#f9e160" style={{textAlign:"center",margin:10}}/>
+                                <TextInput autoFocus={true}  style={{height:50,backgroundColor:"#ffffff",width:"100%",color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
                             </View>
                             <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
                             <TouchableOpacity disabled={this.state.registering} onPress={this.freeRegister} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
@@ -119,6 +130,7 @@ export default class ScanRegisterView extends React.Component {
                     <ScanView action="register" parent={this}></ScanView>
                 </Modal>
             </View>
+            </TouchableWithoutFeedback>
         );
 
     }

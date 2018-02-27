@@ -11,14 +11,21 @@ import {
 } from 'react-native';
 import AppUtil from "../AppUtil"
 import Store from "../store/LocalStore"
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default class RecentView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
+            // headerStyle: {
+            //     backgroundColor: '#434343'
+            // },
+            // headerTintColor: '#ffffff',
             headerRight:<TouchableOpacity onPress={()=>{navigation.navigate("AddGroupView")}}
-                                          style={{marginRight:20}}><Image source={require('../images/addGroup.png')} style={{width:22,height:22}} resizeMode="contain"></Image></TouchableOpacity>,
+                                          style={{marginRight:20}}>
+                <Icon name="account-multiple-plus" size={22} />
+            </TouchableOpacity>,
         }
     );
 
