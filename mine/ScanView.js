@@ -5,6 +5,7 @@ import React, { Component} from 'react';
 import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput,StyleSheet} from 'react-native';
 import Camera from 'react-native-camera';
 import Store from "../store/LocalStore"
+import { NetworkInfo } from 'react-native-network-info';
 
 export default class ScanView extends Component<{}> {
 
@@ -24,7 +25,7 @@ export default class ScanView extends Component<{}> {
                     this.setState({msg:"等待目标设备响应..."});
                     this.data = d;
                     this.authorizeOther();
-                }else if(d.action=="register"){
+                }else if(d.action=="register"&&this.action=="register"){
                     this.setState({msg:"扫码成功..."});
                     this.data = d;
                     this.parent.afterScan(d);
@@ -40,37 +41,66 @@ export default class ScanView extends Component<{}> {
     }
 
     authorizeOther = ()=>{
-        var uri = this.data.uri;
-        var ws = new WebSocket('ws://'+uri);
-        var scanV = this;
-        ws.onmessage = function incoming(message) {
-            var msg = JSON.parse(message.data);
-            if(msg.state){//done
-                ws.close();
-            }
-            if(msg.msg){
-                scanV.setState({msg:msg.msg});
-            }
-        };
-        ws.onerror = function incoming(event) {
-            scanV.setState({msg:"网络连接错误，务必保证目标设备和手机连接同一WIFI"});
-        };
-        ws.onclose = (event)=>{
+        NetworkInfo.getIPAddress(ip => {
+            try{
+                var ipSeg = ip.substring(0,ip.lastIndexOf("."));
+                var addresses = this.data.addresses;
+                var serverIP;
+                for(var i=0;i<addresses.length;i++){
+                    if(addresses[i].indexOf(ipSeg)==0){
+                        serverIP = addresses[i];
+                    }
+                }
+
+                if(!serverIP){
+                    ipSeg = ipSeg.substring(0,ipSeg.lastIndexOf("."));
+                    for(var i=0;i<addresses.length;i++){
+                        if(addresses[i].indexOf(ipSeg)==0){
+                            serverIP = addresses[i];
+                        }
+                    }
+                }
+                if(serverIP){
+                    var uri = serverIP+":"+this.data.port;
+                    var ws = new WebSocket('ws://'+uri);
+                    var scanV = this;
+                    ws.onmessage = function incoming(message) {
+                        var msg = JSON.parse(message.data);
+                        if(msg.state){//done
+                            ws.close();
+                        }
+                        if(msg.msg){
+                            scanV.setState({msg:msg.msg});
+                        }
+                    };
+                    ws.onerror = function incoming(event) {
+                        scanV.setState({msg:"网络连接错误 "+event?event.toString():""});
+                    };
+                    ws.onclose = (event)=>{
+
+                    };
+                    ws.onopen = function () {
+                        var msg={};
+                        msg.name = Store.keyData.name;
+                        msg.id = Store.keyData.id;
+                        msg.publicKey = Store.keyData.publicKey;
+                        msg.privateKey = Store.keyData.privateKey;
+                        msg.server = Store.keyData.server;
+                        msg.friends = Store.keyData.friends;
+                        msg.groups = Store.keyData.groups;
+                        ws.send(JSON.stringify(msg));
+                        scanV.setState({msg:"注册中，请稍后..."});
+                    };
+                }else{
+                    scanV.setState({msg:"目标设备和手机并非连接同一WIFI"});
+                }
 
 
-        };
-        ws.onopen = function () {
-            var msg={};
-            msg.name = Store.keyData.name;
-            msg.id = Store.keyData.id;
-            msg.publicKey = Store.keyData.publicKey;
-            msg.privateKey = Store.keyData.privateKey;
-            msg.server = Store.keyData.server;
-            msg.friends = Store.keyData.friends;
-            msg.groups = Store.keyData.groups;
-            ws.send(JSON.stringify(msg));
-            scanV.setState({msg:"注册中，请稍后..."});
-        };
+            }catch(e){
+                console.info(e);
+            }
+        });
+
 
 
     }
