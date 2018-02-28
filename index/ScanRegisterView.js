@@ -23,14 +23,9 @@ export default class ScanRegisterView extends React.Component {
 
     componentDidMount=()=>{
 
-        setTimeout( ()=> {
-            const bits = 2048;
-            const exponent = '10001';
-            var rsa = new RSAKey();
-            rsa.generate(bits, exponent);
-            this.publicKey = rsa.getPublicString(); // return json encoded string
-            this.privateKey = rsa.getPrivateString(); // return js
-        },10);
+        // setTimeout( ()=> {
+
+        // },10);
     }
 
     showScanView=()=>{
@@ -59,25 +54,27 @@ export default class ScanRegisterView extends React.Component {
     }
 
     _doRegister = ()=>{
-        if(this.publicKey&&this.privateKey){
-            var uid=UUID();
-            WSChannel.register(this.ip,uid,this.name,this.publicKey,(data)=>{
-                this.setState({registering:false});
-                if(data.err){
-                    alert(data.err);
-                }else{
-                    Store.saveKey(this.name,this.ip,uid,this.publicKey,this.privateKey);
-                    AppUtil.reset();
-                }
-            },()=>{
-                this.setState({registering:false});
-                alert("访问服务器失败");
-            });
-        }else{
-            setTimeout( ()=> {
-                this._doRegister();
-            },100);
-        }
+        const bits = 2048;
+        const exponent = '10001';
+        var rsa = new RSAKey();
+        rsa.generate(bits, exponent);
+        this.publicKey = rsa.getPublicString(); // return json encoded string
+        this.privateKey = rsa.getPrivateString(); // return js
+        this.setState({registerStep:"注册中......"});
+
+        var uid=UUID();
+        WSChannel.register(this.ip,uid,this.name,this.publicKey,(data)=>{
+            this.setState({registering:false});
+            if(data.err){
+                alert(data.err);
+            }else{
+                Store.saveKey(this.name,this.ip,uid,this.publicKey,this.privateKey);
+                AppUtil.reset();
+            }
+        },()=>{
+            this.setState({registering:false});
+            alert("访问服务器失败");
+        });
     }
 
     freeRegister=()=>{
@@ -85,7 +82,8 @@ export default class ScanRegisterView extends React.Component {
             alert("请输入昵称");
             return;
         }
-        this.setState({registering:true});
+        this.setState({registering:true,registerStep:"创建密钥中，请耐心等待......"});
+
         setTimeout( ()=> {
             this._doRegister();
         },10);
@@ -126,13 +124,14 @@ export default class ScanRegisterView extends React.Component {
                         </TouchableOpacity>
                             :
                         <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                            <View style={{height:50,width:"100%",flexDirection:"row",backgroundColor:"#ffffff"}} onPress={this.showScanView}>
+                            <View style={{height:50,width:"100%",flexDirection:"row",backgroundColor:"#ffffff"}} >
                                 <Icon name="user-circle" size={30}  color="#f9e160" style={{textAlign:"center",margin:10}}/>
                                 <TextInput autoFocus={true}  style={{height:50,backgroundColor:"#ffffff",width:"100%",color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
                             </View>
                             <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
                             <TouchableOpacity disabled={this.state.registering} onPress={this.freeRegister} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
-                                <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?"请稍后...":"完成"}</Text>
+                                <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
+                                {this.state.registering?<Image source={require('../images/loading.gif')} style={{width:18,height:18,marginLeft:10}} resizeMode="contain"></Image>:null}
                             </TouchableOpacity>
                         </View>
                 }
