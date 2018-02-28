@@ -19,7 +19,18 @@ export default class ScanRegisterView extends React.Component {
     constructor(props) {
         super(props);
         this.state={scanVisible:false,step:1};
+    }
 
+    componentDidMount=()=>{
+
+        setTimeout( ()=> {
+            const bits = 2048;
+            const exponent = '10001';
+            var rsa = new RSAKey();
+            rsa.generate(bits, exponent);
+            this.publicKey = rsa.getPublicString(); // return json encoded string
+            this.privateKey = rsa.getPrivateString(); // return js
+        },10);
     }
 
     showScanView=()=>{
@@ -47,6 +58,28 @@ export default class ScanRegisterView extends React.Component {
         this.setState({step:1});
     }
 
+    _doRegister = ()=>{
+        if(this.publicKey&&this.privateKey){
+            var uid=UUID();
+            WSChannel.register(this.ip,uid,this.name,this.publicKey,(data)=>{
+                this.setState({registering:false});
+                if(data.err){
+                    alert(data.err);
+                }else{
+                    Store.saveKey(this.name,this.ip,uid,this.publicKey,this.privateKey);
+                    AppUtil.reset();
+                }
+            },()=>{
+                this.setState({registering:false});
+                alert("访问服务器失败");
+            });
+        }else{
+            setTimeout( ()=> {
+                this._doRegister();
+            },100);
+        }
+    }
+
     freeRegister=()=>{
         if(!this.name){
             alert("请输入昵称");
@@ -54,25 +87,7 @@ export default class ScanRegisterView extends React.Component {
         }
         this.setState({registering:true});
         setTimeout( ()=> {
-            var uid=UUID();
-            const bits = 2048;
-            const exponent = '10001';
-            var rsa = new RSAKey();
-            rsa.generate(bits, exponent);
-            var publicKey = rsa.getPublicString(); // return json encoded string
-            var privateKey = rsa.getPrivateString(); // return js
-            WSChannel.register(this.ip,uid,this.name,publicKey,(data)=>{
-                this.setState({registering:false});
-                if(data.err){
-                    alert(data.err);
-                }else{
-                    Store.saveKey(this.name,this.ip,uid,publicKey,privateKey);
-                    AppUtil.reset();
-                }
-            },()=>{
-                this.setState({registering:false});
-                alert("访问服务器失败");
-            });
+            this._doRegister();
         },10);
 
     }
