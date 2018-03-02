@@ -37,11 +37,19 @@ export default class ScanRegisterView extends React.Component {
     }
 
     afterScan=(data)=>{
-        if(data.free){
+        this.isFreeRegister = data.free;
+        this.ip=data.server;
+        if(this.isFreeRegister){
             this.setState({scanVisible:false,step:2});
-            this.ip=data.server;
         }else{
-            //TODO
+            this.uid=data.uid;
+            this.needCheckCode = data.needCheckCode;
+            if(this.needCheckCode){
+                this.setState({scanVisible:false,step:2});
+            }else{
+                this.setState({scanVisible:false});
+                this.register();
+            }
         }
     }
 
@@ -49,26 +57,34 @@ export default class ScanRegisterView extends React.Component {
         this.name = v;
     }
 
+    checkCodeTextChange=(v)=>{
+        this.checkCode = v;
+    }
+
     cancel=()=>{
         this.setState({step:1});
     }
 
-    _doRegister = ()=>{
+    createKey=()=>{
         const bits = 2048;
         const exponent = '10001';
         var rsa = new RSAKey();
         rsa.generate(bits, exponent);
         this.publicKey = rsa.getPublicString(); // return json encoded string
         this.privateKey = rsa.getPrivateString(); // return js
+    }
+
+    _doRegister = ()=>{
+        this.createKey();
         this.setState({registerStep:"注册中......"});
 
-        var uid=UUID();
-        WSChannel.register(this.ip,uid,this.name,this.publicKey,(data)=>{
+        var uid=this.uid||UUID();
+        WSChannel.register(this.ip,uid,this.name,this.publicKey,this.checkCode,(data)=>{
             this.setState({registering:false});
             if(data.err){
                 alert(data.err);
             }else{
-                Store.saveKey(this.name,this.ip,uid,this.publicKey,this.privateKey);
+                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey);
                 AppUtil.reset();
             }
         },()=>{
@@ -77,12 +93,16 @@ export default class ScanRegisterView extends React.Component {
         });
     }
 
-    freeRegister=()=>{
-        if(!this.name){
+    register=()=>{
+        if(this.isFreeRegister&&!this.name){
             alert("请输入昵称");
             return;
         }
-        this.setState({registering:true,registerStep:"创建密钥中，请耐心等待......"});
+        if(!this.isFreeRegister&&this.needCheckCode&&!this.checkCode){
+            alert("请输入口令");
+            return;
+        }
+        this.setState({registering:true,registerStep:"创建密钥中，这需要一定的时间......"});
 
         setTimeout( ()=> {
             this._doRegister();
@@ -114,7 +134,7 @@ export default class ScanRegisterView extends React.Component {
 
                 <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
                     <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
-                    <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":"来个炫酷的昵称"}</Text>
+                    <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":this.isFreeRegister?"来个炫酷的昵称":"请输入口令"}</Text>
                 </View>
                 {
                     this.state.step==1?
@@ -124,12 +144,43 @@ export default class ScanRegisterView extends React.Component {
                         </TouchableOpacity>
                             :
                         <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                            <View style={{height:50,width:"100%",flexDirection:"row",backgroundColor:"#ffffff"}} >
-                                <Icon name="user-circle" size={30}  color="#f9e160" style={{textAlign:"center",margin:10}}/>
-                                <TextInput autoFocus={true}  style={{height:50,backgroundColor:"#ffffff",width:"100%",color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
-                            </View>
+                            {this.isFreeRegister ?
+                                <View style={{
+                                    height: 50,
+                                    width: "100%",
+                                    flexDirection: "row",
+                                    backgroundColor: "#ffffff"
+                                }}>
+                                    <Icon name="user-circle" size={30} color="#f9e160"
+                                          style={{textAlign: "center", margin: 10}}/>
+                                    <TextInput autoFocus={true} style={{
+                                        height: 50,
+                                        backgroundColor: "#ffffff",
+                                        width: "100%",
+                                        color: "gray"
+                                    }} underlineColorAndroid='transparent' defaultValue={""}
+                                               onChangeText={this.nameTextChange}/>
+                                </View>
+                                :
+                                <View style={{
+                                    height: 50,
+                                    width: "100%",
+                                    flexDirection: "row",
+                                    backgroundColor: "#ffffff"
+                                }}>
+                                    <Icon name="lock" size={30} color="#f9e160"
+                                          style={{textAlign: "center", margin: 10}}/>
+                                    <TextInput autoFocus={true} style={{
+                                        height: 50,
+                                        backgroundColor: "#ffffff",
+                                        width: "100%",
+                                        color: "gray"
+                                    }} underlineColorAndroid='transparent' defaultValue={""}
+                                               onChangeText={this.checkCodeTextChange}/>
+                                </View>
+                            }
                             <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
-                            <TouchableOpacity disabled={this.state.registering} onPress={this.freeRegister} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+                            <TouchableOpacity disabled={this.state.registering} onPress={this.register} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                                 <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
                                 {this.state.registering?<Image source={require('../images/loading.gif')} style={{width:18,height:18,marginLeft:10}} resizeMode="contain"></Image>:null}
                             </TouchableOpacity>

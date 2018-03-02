@@ -93,8 +93,8 @@ var WSChannel={
                 callback(this.ws);
         }
     },
-    register:function (ip,uid,name,publicKey,callback,timeoutCallback) {
-        var req = WSChannel.newRequestMsg("register",{uid:uid,name:name,publicKey:publicKey},callback)
+    register:function (ip,uid,name,publicKey,checkCode,callback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("register",{uid:uid,name:name,publicKey:publicKey,checkCode:checkCode},callback)
         this._sendRequest(req,timeoutCallback,ip);
     },
     _timeoutHandler : function (reqId,callback) {
