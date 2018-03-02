@@ -5,7 +5,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
-import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -13,6 +12,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import org.reactnative.camera.RNCameraPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +31,10 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new VectorIconsPackage(),
             new RNNetworkInfoPackage(),
-            new RCTCameraPackage(),
             new ImageResizerPackage(),
             new ImagePickerPackage(),
-            new RNFetchBlobPackage()
+            new RNFetchBlobPackage(),
+            new RNCameraPackage()
       );
     }
 

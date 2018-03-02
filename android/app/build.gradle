@@ -107,6 +107,14 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+       signingConfigs {
+            release {
+                storeFile file("my-release-key.keystore")
+                storePassword "hfs123"
+                keyAlias "my-key-alias"
+                keyPassword "hfs123"
+            }
+        }
     splits {
         abi {
             reset()
@@ -119,6 +127,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -137,6 +146,12 @@ android {
 }
 
 dependencies {
+ compile (project(':react-native-camera')) {
+        exclude group: "com.google.android.gms"
+    }
+    compile ("com.google.android.gms:play-services-vision:10.2.0") {
+        force = true;
+    }
     compile project(':react-native-vector-icons')
     compile project(':react-native-network-info')
     compile project(':react-native-camera')
