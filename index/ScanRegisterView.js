@@ -66,12 +66,14 @@ export default class ScanRegisterView extends React.Component {
     }
 
     createKey=()=>{
-        const bits = 2048;
-        const exponent = '10001';
-        var rsa = new RSAKey();
-        rsa.generate(bits, exponent);
-        this.publicKey = rsa.getPublicString(); // return json encoded string
-        this.privateKey = rsa.getPrivateString(); // return js
+        if(!this.publicKey&&!this.privateKey){
+            const bits = 2048;
+            const exponent = '10001';
+            var rsa = new RSAKey();
+            rsa.generate(bits, exponent);
+            this.publicKey = rsa.getPublicString(); // return json encoded string
+            this.privateKey = rsa.getPrivateString(); // return js
+        }
     }
 
     _doRegister = ()=>{
