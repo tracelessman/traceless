@@ -85,6 +85,7 @@ export default class ScanView extends Component<{}> {
                         msg.id = Store.keyData.id;
                         msg.publicKey = Store.keyData.publicKey;
                         msg.privateKey = Store.keyData.privateKey;
+                        msg.serverPublicKey = Store.keyData.serverPublicKey;
                         msg.server = Store.keyData.server;
                         msg.friends = Store.keyData.friends;
                         msg.groups = Store.keyData.groups;

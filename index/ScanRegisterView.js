@@ -39,18 +39,25 @@ export default class ScanRegisterView extends React.Component {
     afterScan=(data)=>{
         this.isFreeRegister = data.free;
         this.ip=data.server;
-        if(this.isFreeRegister){
-            this.setState({scanVisible:false,step:2});
-        }else{
-            this.uid=data.uid;
-            this.needCheckCode = data.needCheckCode;
-            if(this.needCheckCode){
+        this.serverPublicKey=data.publicKey;
+        if(this.ip&&this.serverPublicKey){
+            if(this.isFreeRegister){
                 this.setState({scanVisible:false,step:2});
             }else{
-                this.setState({scanVisible:false});
-                this.register();
+                this.uid=data.uid;
+                this.needCheckCode = data.needCheckCode;
+                if(this.needCheckCode){
+                    this.setState({scanVisible:false,step:2});
+                }else{
+                    this.setState({scanVisible:false});
+                    this.register();
+                }
             }
+        }else{
+            this.setState({scanVisible:false});
+            //alert("无效二维码");
         }
+
     }
 
     nameTextChange=(v)=>{
@@ -86,7 +93,7 @@ export default class ScanRegisterView extends React.Component {
             if(data.err){
                 alert(data.err);
             }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey);
+                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,UUID());
                 AppUtil.reset();
             }
         },()=>{

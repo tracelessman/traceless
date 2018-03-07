@@ -27,6 +27,7 @@ export default class LoginView extends React.Component {
             this.publicKey = keyData.publicKey;
             this.privateKey = keyData.privateKey;
             this.name = keyData.name;
+            this.clientId = keyData.clientId;
 
         }else{
             this.state={
@@ -54,7 +55,7 @@ export default class LoginView extends React.Component {
             return;
         }
         this.setState({logining:true});
-        WSChannel.login(this.name,this.state.id,this.ip,(msg)=>{
+        WSChannel.login(this.name,this.state.id,this.clientId,this.ip,(msg)=>{
             if(!msg.err){
                 // Store.setCurrentUid(this.state.id);
                 this.setState({login:true,logining:false});

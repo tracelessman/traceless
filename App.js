@@ -48,7 +48,7 @@ export default class App extends Component<{}> {
                 var cur = data[0];
                 //登录
                 this.setState({data:data,logining:true});
-                WSChannel.login(cur.name,cur.id,cur.server,(msg)=>{
+                WSChannel.login(cur.name,cur.id,cur.clientId,cur.server,(msg)=>{
                     this.seed++;
                     if(!msg.err){
                         // Store.setCurrentUid(cur.id) ;
