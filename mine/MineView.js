@@ -20,13 +20,17 @@ export default class MineView extends Component<{}> {
     }
 
     reset=()=>{
-        Store.reset();
-        AppUtil.reset();
+        Store.reset(function () {
+            AppUtil.reset();
+        });
+
     }
 
     clear=()=>{
-        Store.clear();
-        AppUtil.reset();
+        Store.clear(function () {
+            AppUtil.reset();
+        });
+
     }
 
     showScanView=()=>{
