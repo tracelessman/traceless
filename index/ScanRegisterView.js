@@ -147,10 +147,38 @@ export default class ScanRegisterView extends React.Component {
                 </View>
                 {
                     this.state.step==1?
-                        <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
-                            <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
-                            <Text style={{lineHeight:50}}>扫码注册</Text>
-                        </TouchableOpacity>
+                        <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
+                            <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
+                                <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
+                                <Text style={{lineHeight:50}}>扫码注册</Text>
+                            </TouchableOpacity>
+                            {this.state.registering ?
+                                <View style={{
+                                    width: "90%",
+                                    height: 40,
+                                    marginTop: 24,
+                                    borderColor: "#535353",
+                                    backgroundColor: "#636363",
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    flex: 0,
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        textAlign: "center",
+                                        color: "white"
+                                    }}>{this.state.registerStep}</Text>
+                                    <Image source={require('../images/loading.gif')}
+                                                                     style={{width: 18, height: 18, marginLeft: 10}}
+                                                                     resizeMode="contain"></Image>
+                                </View>
+                                :
+                                null
+                            }
+                        </View>
                             :
                         <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
                             {this.isFreeRegister ?
