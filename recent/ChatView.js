@@ -18,7 +18,6 @@ import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
 
-
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
@@ -229,16 +228,21 @@ export default class ChatView extends Component<{}> {
 
                if(records[i].id){
                    recordEls.push(  <View key={i} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>
-                       <View style={{width:200,borderWidth:1,backgroundColor:"#ffffff",borderRadius:2}}>
+                       {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
+                       <Image source={require('../images/head2.jpeg')} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
+                       <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10}}>
                        {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
                    </View>);
                }else{
                    recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <View style={{width:200,borderWidth:1,backgroundColor:"#ffffff",borderRadius:2}}>
+                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
                            {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
-                       </View><Text>  {name}  </Text>
+                       </View>
+                       {/*<Text>  {name}  </Text>*/}
+                       <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                       <Image source={require('../images/head1.jpeg')} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
                    </View>);
                }
            }
