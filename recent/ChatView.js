@@ -17,6 +17,7 @@ import WSChannel from "../channel/LocalWSChannel";
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -87,6 +88,7 @@ export default class ChatView extends Component<{}> {
     componentWillMount =()=> {
         Store.on("receiveMessage",this.onReceiveMessage);
         Store.on("sendMessage",this.onSendMessage);
+        Store.on("updateMessageState",this.onSendMessage);
         Store.on("receiveGroupMessage",this.onReceiveMessage);
         Store.on("sendGroupMessage",this.onSendMessage);
 
@@ -102,6 +104,7 @@ export default class ChatView extends Component<{}> {
     componentWillUnmount =()=> {
         Store.un("receiveMessage",this.onReceiveMessage);
         Store.un("sendMessage",this.onSendMessage);
+        Store.un("updateMessageState",this.onSendMessage);
         Store.un("receiveGroupMessage",this.onReceiveMessage);
         Store.un("sendGroupMessage",this.onSendMessage);
 
@@ -133,11 +136,12 @@ export default class ChatView extends Component<{}> {
                 });
             }else{
                 WSChannel.sendMessage(this.otherSide.id,this.text,()=>{
-                    Store.sendMessage(this.otherSide.id,this.text);
                     this.text="";
                     this.refs["text"].clear();
                     this.refs["scrollView"].scrollToEnd();
                 });
+
+
             }
         }
 
@@ -217,6 +221,22 @@ export default class ChatView extends Component<{}> {
         this.chatView.setState({biggerImageVisible:true,biggerImageUri:this.imgUri});
     }
 
+    getIconNameByState=function (state) {
+        if(state===0){
+            return "md-arrow-round-up";
+        }else if(state===1){
+            return "md-refresh";
+        }else if(state===2){
+            return "md-checkmark-circle-outline";
+        }else if(state===3){
+            return "ios-checkmark-circle-outline";
+        }else if(state===4){
+            return "ios-mail-open-outline";
+        }else if(state===5){
+            return "ios-bonfire-outline";
+        }
+        return "ios-help"
+    }
 
     render() {
        var records = this.records;
@@ -236,7 +256,9 @@ export default class ChatView extends Component<{}> {
                        </View>
                    </View>);
                }else{
+                   var iconName = this.getIconNameByState(records[i].state);
                    recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
+                       <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
                        <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
                            {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
