@@ -89,6 +89,7 @@ export default class ChatView extends Component<{}> {
         Store.on("receiveMessage",this.onReceiveMessage);
         Store.on("sendMessage",this.onSendMessage);
         Store.on("updateMessageState",this.onSendMessage);
+        Store.on("updateGroupMessageState",this.onSendMessage);
         Store.on("receiveGroupMessage",this.onReceiveMessage);
         Store.on("sendGroupMessage",this.onSendMessage);
 
@@ -105,6 +106,7 @@ export default class ChatView extends Component<{}> {
         Store.un("receiveMessage",this.onReceiveMessage);
         Store.un("sendMessage",this.onSendMessage);
         Store.un("updateMessageState",this.onSendMessage);
+        Store.un("updateGroupMessageState",this.onSendMessage);
         Store.un("receiveGroupMessage",this.onReceiveMessage);
         Store.un("sendGroupMessage",this.onSendMessage);
 
@@ -129,7 +131,6 @@ export default class ChatView extends Component<{}> {
         if(this.text){
             if(this.isGroupChat){
                 WSChannel.sendGroupMessage(this.otherSide.id,this.text,()=>{
-                    Store.sendGroupMessage(this.otherSide.id,this.text);
                     this.text="";
                     this.refs["text"].clear();
                     this.refs["scrollView"].scrollToEnd();
