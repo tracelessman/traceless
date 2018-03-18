@@ -152,12 +152,10 @@ export default class ChatView extends Component<{}> {
     sendImage=(uri,data)=>{
         if(this.isGroupChat){
             WSChannel.sendGroupImage(this.otherSide.id,uri,data,()=>{
-                Store.sendGroupImage(this.otherSide.id,uri,data,);
                 this.refs["scrollView"].scrollToEnd();
             });
         }else{
             WSChannel.sendImage(this.otherSide.id,uri,data,()=>{
-                Store.sendImage(this.otherSide.id,uri,data,);
                 this.refs["scrollView"].scrollToEnd();
             });
         }
