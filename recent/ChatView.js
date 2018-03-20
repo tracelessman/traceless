@@ -149,13 +149,13 @@ export default class ChatView extends Component<{}> {
 
     }
 
-    sendImage=(uri,data)=>{
+    sendImage=(data)=>{
         if(this.isGroupChat){
-            WSChannel.sendGroupImage(this.otherSide.id,uri,data,()=>{
+            WSChannel.sendGroupImage(this.otherSide.id,data,()=>{
                 this.refs["scrollView"].scrollToEnd();
             });
         }else{
-            WSChannel.sendImage(this.otherSide.id,uri,data,()=>{
+            WSChannel.sendImage(this.otherSide.id,data,()=>{
                 this.refs["scrollView"].scrollToEnd();
             });
         }
@@ -189,11 +189,12 @@ export default class ChatView extends Component<{}> {
                  // if(response.fileSize>1*1024*1024){
 
 
-                    ImageResizer.createResizedImage(imageUri, 600, 600, "JPEG", 30, 0, null).then((res) => {
+                    ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
                         RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
                             // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
                             // console.info("send img:"+'data:image/jpeg;base64,' + data);
-                            this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
+                            // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
+                            this.sendImage('data:image/jpeg;base64,' + data);
                             // this.setState({
                             //     avatarSource: source
                             // });
@@ -236,6 +237,29 @@ export default class ChatView extends Component<{}> {
         }
         return "ios-help"
     }
+    
+    resend=function () {
+        if(this.ChatView.isGroupChat){
+            var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
+            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                if(rec.text){
+                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
+                }else{
+                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
+                }
+            }
+
+        }else{
+            var rec = Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId);
+            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                if(rec.text)
+                    WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
+                else
+                    WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
+            }
+
+        }
+    }
 
     render() {
        var records = this.records;
@@ -256,8 +280,11 @@ export default class ChatView extends Component<{}> {
                    </View>);
                }else{
                    var iconName = this.getIconNameByState(records[i].state);
+                   var msgId = records[i].msgId;
                    recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
+                       <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.resend}>
+                            <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
+                       </TouchableOpacity>
                        <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
                            {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
                        </View>

@@ -96,9 +96,6 @@ export default class ScanRegisterView extends React.Component {
                 Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,UUID());
                 AppUtil.reset();
             }
-        },()=>{
-            this.setState({registering:false});
-            alert("访问服务器失败");
         });
     }
 
