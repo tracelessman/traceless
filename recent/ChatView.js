@@ -237,8 +237,8 @@ export default class ChatView extends Component<{}> {
         }
         return "ios-help"
     }
-    
-    resend=function () {
+
+    doTouchMsgState=function () {
         if(this.ChatView.isGroupChat){
             var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
             if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
@@ -247,6 +247,8 @@ export default class ChatView extends Component<{}> {
                 }else{
                     WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
                 }
+            }else{
+                this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
             }
 
         }else{
@@ -282,7 +284,7 @@ export default class ChatView extends Component<{}> {
                    var iconName = this.getIconNameByState(records[i].state);
                    var msgId = records[i].msgId;
                    recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.resend}>
+                       <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
                        </TouchableOpacity>
                        <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
