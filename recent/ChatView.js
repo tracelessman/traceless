@@ -267,9 +267,27 @@ export default class ChatView extends Component<{}> {
        var records = this.records;
        var recordEls = [];
        if(records){
+           var lastSpTime;
            var name = Store.getCurrentName();
+           var now = new Date();
            for(var i=0;i<records.length;i++){
                var imgUri = records[i].img;
+               if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
+                   lastSpTime = records[i].time;
+                   if(lastSpTime){
+                       var timeStr="";
+                       var date = new Date();
+                       date.setTime(lastSpTime);
+                       if(now.getFullYear()==date.getFullYear()&&now.getMonth()==date.getMonth()&&now.getDate()==date.getDate()){
+                           timeStr+="今天 ";
+                       }else if(now.getFullYear()==date.getFullYear()){
+                           timeStr+=(date.getMonth()+1)+"月"+date.getDate()+"日 ";
+                       }
+                       timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
+                       recordEls.push(<Text style={{marginTop:10,color:"#a0a0a0",fontSize:11}}>{timeStr}</Text>);
+
+                   }
+               }
 
                if(records[i].id){
                    recordEls.push(  <View key={i} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
