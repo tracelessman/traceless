@@ -17,7 +17,7 @@ import WSChannel from "../channel/LocalWSChannel";
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
-
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -88,6 +88,8 @@ export default class ChatView extends Component<{}> {
     componentWillMount =()=> {
         Store.on("receiveMessage",this.onReceiveMessage);
         Store.on("sendMessage",this.onSendMessage);
+        Store.on("updateMessageState",this.onSendMessage);
+        Store.on("updateGroupMessageState",this.onSendMessage);
         Store.on("receiveGroupMessage",this.onReceiveMessage);
         Store.on("sendGroupMessage",this.onSendMessage);
 
@@ -103,6 +105,8 @@ export default class ChatView extends Component<{}> {
     componentWillUnmount =()=> {
         Store.un("receiveMessage",this.onReceiveMessage);
         Store.un("sendMessage",this.onSendMessage);
+        Store.un("updateMessageState",this.onSendMessage);
+        Store.un("updateGroupMessageState",this.onSendMessage);
         Store.un("receiveGroupMessage",this.onReceiveMessage);
         Store.un("sendGroupMessage",this.onSendMessage);
 
@@ -127,33 +131,31 @@ export default class ChatView extends Component<{}> {
         if(this.text){
             if(this.isGroupChat){
                 WSChannel.sendGroupMessage(this.otherSide.id,this.text,()=>{
-                    Store.sendGroupMessage(this.otherSide.id,this.text);
                     this.text="";
                     this.refs["text"].clear();
                     this.refs["scrollView"].scrollToEnd();
                 });
             }else{
                 WSChannel.sendMessage(this.otherSide.id,this.text,()=>{
-                    Store.sendMessage(this.otherSide.id,this.text);
                     this.text="";
                     this.refs["text"].clear();
                     this.refs["scrollView"].scrollToEnd();
                 });
+
+
             }
         }
 
 
     }
 
-    sendImage=(uri,data)=>{
+    sendImage=(data)=>{
         if(this.isGroupChat){
-            WSChannel.sendGroupImage(this.otherSide.id,uri,data,()=>{
-                Store.sendGroupImage(this.otherSide.id,uri,data,);
+            WSChannel.sendGroupImage(this.otherSide.id,data,()=>{
                 this.refs["scrollView"].scrollToEnd();
             });
         }else{
-            WSChannel.sendImage(this.otherSide.id,uri,data,()=>{
-                Store.sendImage(this.otherSide.id,uri,data,);
+            WSChannel.sendImage(this.otherSide.id,data,()=>{
                 this.refs["scrollView"].scrollToEnd();
             });
         }
@@ -187,11 +189,12 @@ export default class ChatView extends Component<{}> {
                  // if(response.fileSize>1*1024*1024){
 
 
-                    ImageResizer.createResizedImage(imageUri, 600, 600, "JPEG", 30, 0, null).then((res) => {
+                    ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
                         RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
                             // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
                             // console.info("send img:"+'data:image/jpeg;base64,' + data);
-                            this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
+                            // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
+                            this.sendImage('data:image/jpeg;base64,' + data);
                             // this.setState({
                             //     avatarSource: source
                             // });
@@ -218,27 +221,96 @@ export default class ChatView extends Component<{}> {
         this.chatView.setState({biggerImageVisible:true,biggerImageUri:this.imgUri});
     }
 
+    getIconNameByState=function (state) {
+        if(state===0){
+            return "md-arrow-round-up";
+        }else if(state===1){
+            return "md-refresh";
+        }else if(state===2){
+            return "md-checkmark-circle-outline";
+        }else if(state===3){
+            return "ios-checkmark-circle-outline";
+        }else if(state===4){
+            return "ios-mail-open-outline";
+        }else if(state===5){
+            return "ios-bonfire-outline";
+        }
+        return "ios-help"
+    }
+
+    doTouchMsgState=function () {
+        if(this.ChatView.isGroupChat){
+            var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
+            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                if(rec.text){
+                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
+                }else{
+                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
+                }
+            }else{
+                this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
+            }
+
+        }else{
+            var rec = Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId);
+            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                if(rec.text)
+                    WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
+                else
+                    WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
+            }
+
+        }
+    }
 
     render() {
        var records = this.records;
        var recordEls = [];
        if(records){
+           var lastSpTime;
            var name = Store.getCurrentName();
+           var now = new Date();
            for(var i=0;i<records.length;i++){
                var imgUri = records[i].img;
+               if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
+                   lastSpTime = records[i].time;
+                   if(lastSpTime){
+                       var timeStr="";
+                       var date = new Date();
+                       date.setTime(lastSpTime);
+                       if(now.getFullYear()==date.getFullYear()&&now.getMonth()==date.getMonth()&&now.getDate()==date.getDate()){
+                           timeStr+="今天 ";
+                       }else if(now.getFullYear()==date.getFullYear()){
+                           timeStr+=(date.getMonth()+1)+"月"+date.getDate()+"日 ";
+                       }
+                       timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
+                       recordEls.push(<Text style={{marginTop:10,color:"#a0a0a0",fontSize:11}}>{timeStr}</Text>);
+
+                   }
+               }
 
                if(records[i].id){
                    recordEls.push(  <View key={i} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>
-                       <View style={{width:200,borderWidth:1,backgroundColor:"#ffffff",borderRadius:2}}>
+                       {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
+                       <Image source={require('../images/head2.jpeg')} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
+                       <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10}}>
                        {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
                    </View>);
                }else{
+                   var iconName = this.getIconNameByState(records[i].state);
+                   var msgId = records[i].msgId;
                    recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       <View style={{width:200,borderWidth:1,backgroundColor:"#ffffff",borderRadius:2}}>
+                       <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
+                            <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
+                       </TouchableOpacity>
+                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
                            {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
-                       </View><Text>  {name}  </Text>
+                       </View>
+                       {/*<Text>  {name}  </Text>*/}
+                       <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                       <Image source={require('../images/head1.jpeg')} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
                    </View>);
                }
            }

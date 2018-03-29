@@ -39,18 +39,25 @@ export default class ScanRegisterView extends React.Component {
     afterScan=(data)=>{
         this.isFreeRegister = data.free;
         this.ip=data.server;
-        if(this.isFreeRegister){
-            this.setState({scanVisible:false,step:2});
-        }else{
-            this.uid=data.uid;
-            this.needCheckCode = data.needCheckCode;
-            if(this.needCheckCode){
+        this.serverPublicKey=data.publicKey;
+        if(this.ip&&this.serverPublicKey){
+            if(this.isFreeRegister){
                 this.setState({scanVisible:false,step:2});
             }else{
-                this.setState({scanVisible:false});
-                this.register();
+                this.uid=data.uid;
+                this.needCheckCode = data.needCheckCode;
+                if(this.needCheckCode){
+                    this.setState({scanVisible:false,step:2});
+                }else{
+                    this.setState({scanVisible:false});
+                    this.register();
+                }
             }
+        }else{
+            this.setState({scanVisible:false});
+            //alert("无效二维码");
         }
+
     }
 
     nameTextChange=(v)=>{
@@ -66,12 +73,14 @@ export default class ScanRegisterView extends React.Component {
     }
 
     createKey=()=>{
-        const bits = 2048;
-        const exponent = '10001';
-        var rsa = new RSAKey();
-        rsa.generate(bits, exponent);
-        this.publicKey = rsa.getPublicString(); // return json encoded string
-        this.privateKey = rsa.getPrivateString(); // return js
+        if(!this.publicKey&&!this.privateKey){
+            const bits = 2048;
+            const exponent = '10001';
+            var rsa = new RSAKey();
+            rsa.generate(bits, exponent);
+            this.publicKey = rsa.getPublicString(); // return json encoded string
+            this.privateKey = rsa.getPrivateString(); // return js
+        }
     }
 
     _doRegister = ()=>{
@@ -84,12 +93,9 @@ export default class ScanRegisterView extends React.Component {
             if(data.err){
                 alert(data.err);
             }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey);
+                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,UUID());
                 AppUtil.reset();
             }
-        },()=>{
-            this.setState({registering:false});
-            alert("访问服务器失败");
         });
     }
 
@@ -138,10 +144,38 @@ export default class ScanRegisterView extends React.Component {
                 </View>
                 {
                     this.state.step==1?
-                        <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
-                            <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
-                            <Text style={{lineHeight:50}}>扫码注册</Text>
-                        </TouchableOpacity>
+                        <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
+                            <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
+                                <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
+                                <Text style={{lineHeight:50}}>扫码注册</Text>
+                            </TouchableOpacity>
+                            {this.state.registering ?
+                                <View style={{
+                                    width: "90%",
+                                    height: 40,
+                                    marginTop: 24,
+                                    borderColor: "#535353",
+                                    backgroundColor: "#636363",
+                                    borderWidth: 1,
+                                    borderRadius: 5,
+                                    flex: 0,
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    <Text style={{
+                                        fontSize: 18,
+                                        textAlign: "center",
+                                        color: "white"
+                                    }}>{this.state.registerStep}</Text>
+                                    <Image source={require('../images/loading.gif')}
+                                                                     style={{width: 18, height: 18, marginLeft: 10}}
+                                                                     resizeMode="contain"></Image>
+                                </View>
+                                :
+                                null
+                            }
+                        </View>
                             :
                         <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
                             {this.isFreeRegister ?

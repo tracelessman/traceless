@@ -15,6 +15,7 @@ import ChatView from '../recent/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
+import GroupMsgStateView from '../recent/GroupMsgStateView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const MainTabs = TabNavigator({
@@ -129,6 +130,11 @@ var MainStack = StackNavigator({
         screen:ScanView,
         navigationOptions:{
             headerTitle: '扫描二维码'
+        }
+    },GroupMsgStateView:{
+        screen:GroupMsgStateView,
+        navigationOptions:{
+            headerTitle: '消息状态'
         }
     }
 }, {
