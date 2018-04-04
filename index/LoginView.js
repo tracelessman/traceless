@@ -105,8 +105,10 @@ export default class LoginView extends React.Component {
     }
 
     reset=()=>{
-        Store.reset();
-        AppUtil.reset();
+        WSChannel.reset();
+        Store.reset(function () {
+            AppUtil.reset();
+        });
     }
 
     render() {

@@ -20,6 +20,7 @@ export default class MineView extends Component<{}> {
     }
 
     reset=()=>{
+        WSChannel.reset();
         Store.reset(function () {
             AppUtil.reset();
         });
