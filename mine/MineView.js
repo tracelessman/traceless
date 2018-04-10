@@ -20,6 +20,7 @@ export default class MineView extends Component<{}> {
     }
 
     reset=()=>{
+        WSChannel.reset();
         Store.reset(function () {
             AppUtil.reset();
         });
@@ -48,12 +49,12 @@ export default class MineView extends Component<{}> {
                     <Text>昵称：  </Text><TextInput  style={{flex:1,color:"gray"}} underlineColorAndroid='transparent' defaultValue={Store.getCurrentName()} editable={false} />
                 </View>
                 <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <TouchableOpacity onPress={this.clear} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>清除本地聊天缓存  </Text>
-                    </View>
-                </TouchableOpacity>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
+                {/*<TouchableOpacity onPress={this.clear} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>*/}
+                    {/*<View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>*/}
+                        {/*<Text>清除本地聊天缓存  </Text>*/}
+                    {/*</View>*/}
+                {/*</TouchableOpacity>*/}
+                {/*<View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>*/}
                 <TouchableOpacity onPress={this.reset} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
                         <Text>重置  </Text>

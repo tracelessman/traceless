@@ -297,6 +297,10 @@ export default class ChatView extends Component<{}> {
                        <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10}}>
                        {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
+                       {
+                           records[i].read?
+                       <Ionicons name={this.getIconNameByState(4)} size={14}  style={{marginRight:5,lineHeight:40}}/>:null
+                       }
                    </View>);
                }else{
                    var iconName = this.getIconNameByState(records[i].state);

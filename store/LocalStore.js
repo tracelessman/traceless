@@ -10,6 +10,9 @@ db.transaction((tx)=>{
     tx.executeSql("create table if not exists traceless(id INTEGER PRIMARY KEY NOT NULL,data TEXT)",[],function () {
     },function (err) {
     });
+    tx.executeSql("create table if not exists mq(id INTEGER PRIMARY KEY NOT NULL,req TEXT NOT NULL,lastSendTime INTEGER)",[],function () {
+    },function (err) {
+    });
 });
 
 var Store = require("../store/Store");
@@ -79,6 +82,50 @@ Store.queryFromLocal=function (key,callback) {
     //         callback(result);
     //     }
     // });
+};
+Store.push2MQ=function (req,callback) {
+    db.transaction((tx)=>{
+        tx.executeSql("insert into mq(id,req,lastSendTime) values(?,?,?)",[req.id,JSON.stringify(req),Date.now()],function () {
+            if(callback)
+                callback();
+        },function (err) {
+            console.info(err);
+        });
+    });
+};
+Store.removeFromMQ=function (reqId,callback) {
+    db.transaction((tx)=>{
+        tx.executeSql("delete from mq where id=?",[reqId],function () {
+            if(callback)
+                callback();
+        },function (err) {
+            console.info(err);
+        });
+    });
+};
+Store.eachTimeoutMsg=function (callback,complete) {
+    var n = Date.now();
+    db.transaction((tx)=>{
+        tx.executeSql("select * from mq where lastSendTime is not null and "+n+"-lastSendTime>180000 order by id",[],function (tx,results) {
+            var len = results.rows.length;
+            for(var i=0;i<len;i++){
+                callback(results.rows.item(i));
+            }
+            complete(len);
+        },function (err) {
+            console.info(err);
+        });
+    });
+};
+Store.updateLastSendTime=function (id,time,callback) {
+    db.transaction((tx)=>{
+        tx.executeSql("update mq set lastSendTime=? where id=?",[time,id],function () {
+            if(callback)
+                callback();
+        },function (err) {
+            console.info(err);
+        });
+    });
 };
 export default Store;
 
