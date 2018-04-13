@@ -272,6 +272,13 @@ export default class ChatView extends Component<{}> {
            var now = new Date();
            for(var i=0;i<records.length;i++){
                var imgUri = records[i].img;
+               var imgW = 180;
+               var imgH = 180;
+               if(records[i].img&&records[i].img.data){
+                   imgUri = records[i].img.data;
+                   imgW = records[i].img.width;
+                   imgH = records[i].img.height;
+               }
                if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
                    lastSpTime = records[i].time;
                    if(lastSpTime){
@@ -294,8 +301,8 @@ export default class ChatView extends Component<{}> {
                        {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
                        <Image source={require('../images/head2.jpeg')} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
                        <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10}}>
-                       {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
+                       <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
+                       {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
                        {
                            records[i].read?
@@ -309,8 +316,8 @@ export default class ChatView extends Component<{}> {
                        <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
                        </TouchableOpacity>
-                       <View style={{width:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10}}>
-                           {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:200,height:200}} resizeMode="contain"/></TouchableOpacity>}
+                       <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
+                           {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>}
                        </View>
                        {/*<Text>  {name}  </Text>*/}
                        <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
