@@ -263,6 +263,25 @@ export default class ChatView extends Component<{}> {
         }
     }
 
+    _getMessage=(rec)=>{
+        if(rec.text){
+            return <Text>{rec.text}</Text>;
+
+        }else if(rec.img) {
+            var imgUri = rec.img;
+            var imgW = 180;
+            var imgH = 180;
+            if(rec.img&&rec.img.data){
+                imgUri = rec.img.data;
+                imgW = rec.img.width;
+                imgH = rec.img.height;
+            }
+           return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
+        }else if(rec.file){
+            return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{rec.file.name}</Text></TouchableOpacity>;
+        }
+    }
+
     render() {
        var records = this.records;
        var recordEls = [];
@@ -271,14 +290,6 @@ export default class ChatView extends Component<{}> {
            var name = Store.getCurrentName();
            var now = new Date();
            for(var i=0;i<records.length;i++){
-               var imgUri = records[i].img;
-               var imgW = 180;
-               var imgH = 180;
-               if(records[i].img&&records[i].img.data){
-                   imgUri = records[i].img.data;
-                   imgW = records[i].img.width;
-                   imgH = records[i].img.height;
-               }
                if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
                    lastSpTime = records[i].time;
                    if(lastSpTime){
@@ -302,12 +313,8 @@ export default class ChatView extends Component<{}> {
                        <Image source={require('../images/head2.jpeg')} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
                        <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
                        <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
-                       {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>}
+                           {this._getMessage(records[i])}
                        </View>
-                       {
-                           records[i].read?
-                       <Ionicons name={this.getIconNameByState(4)} size={14}  style={{marginRight:5,lineHeight:40}}/>:null
-                       }
                    </View>);
                }else{
                    var iconName = this.getIconNameByState(records[i].state);
@@ -317,7 +324,7 @@ export default class ChatView extends Component<{}> {
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
                        </TouchableOpacity>
                        <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
-                           {records[i].text?<Text>{records[i].text}</Text>:<TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>}
+                           {this._getMessage(records[i])}
                        </View>
                        {/*<Text>  {name}  </Text>*/}
                        <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
