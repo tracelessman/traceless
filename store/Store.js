@@ -615,6 +615,13 @@ var Store = {
     },
     foreSave:function (callback) {
         this._save(callback);
+    },
+    setPersonalPic:function (pic) {
+        this.keyData.pic = pic;
+        this._save();
+    },
+    getPersonalPic:function () {
+        return this.keyData.pic;
     }
     // rejectMKFriends : function (index) {
     //     for(var i=0;i<this.data.length;i++) {

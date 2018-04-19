@@ -437,6 +437,15 @@ var WSChannel={
     resendGroupFileHandler:function(msg,callback){
         Store.receiveGroupFile(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
     },
+    setPersonalPic:function (pic,callback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("setPersonalPic",{pic:pic},(data)=>{
+            if(!data.err){
+                Store.setPersonalPic(pic);
+            }
+            callback(data);
+        });
+        this._sendRequest(req,timeoutCallback);
+    }
 };
 Store.on("readChatRecords",function (data) {
     var uid = data.uid;
