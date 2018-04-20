@@ -16,6 +16,7 @@ import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
+import UidView from '../mine/UidView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -140,6 +141,12 @@ var MainStack = StackNavigator({
         screen:QrcodeView,
         navigationOptions:{
             headerTitle: '个人二维码'
+        }
+    },
+    UidView:{
+        screen:UidView,
+        navigationOptions:{
+            headerTitle: '标识'
         }
     },
     GroupMsgStateView:{

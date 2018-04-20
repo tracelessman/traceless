@@ -1754,7 +1754,7 @@
 				7550B06D1FCD1B1000AFB678 /* ad hoc distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "traceless" */ = {
 			isa = XCConfigurationList;
@@ -1764,7 +1764,7 @@
 				7550B06C1FCD1B1000AFB678 /* ad hoc distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "traceless" */ = {
 			isa = XCConfigurationList;
@@ -1774,7 +1774,7 @@
 				7550B06B1FCD1B1000AFB678 /* ad hoc distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
