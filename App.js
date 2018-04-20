@@ -17,9 +17,20 @@ import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
-import JPushModule from 'jpush-react-native';
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
+AppUtil.setJpush({
+    clickHandler(){
+        console.log('clickHandler')
+    },
+    tag:'test'
+}).then((result)=>{
+    const {registrationId} = result
+    console.log(result)
+
+}).catch(err=>{
+    console.log(err)
+})
 
 export default class App extends Component<{}> {
 
@@ -33,23 +44,6 @@ export default class App extends Component<{}> {
     }
 
     componentDidMount=()=>{
-        // JPushModule.getRegistrationID(registrationId => {
-        //     console.log(registrationId)
-        // })
-        // // JPushModule.setAlias('test', success => {
-        // //     console.log(success)
-        // // })
-        // JPushModule.addTags(['always'], success => {
-        //     console.log(success)
-        // })
-        // JPushModule.notifyJSDidLoad(resultCode=>{
-        //     console.log(resultCode)
-        // });
-        //
-        // JPushModule.addReceiveNotificationListener((message) => {
-        //     console.log( message);
-        // })
-
         this.try2Login();
     }
 
