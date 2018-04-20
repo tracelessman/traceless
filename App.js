@@ -33,22 +33,22 @@ export default class App extends Component<{}> {
     }
 
     componentDidMount=()=>{
-        JPushModule.getRegistrationID(registrationId => {
-            console.log(registrationId)
-        })
-        // JPushModule.setAlias('test', success => {
+        // JPushModule.getRegistrationID(registrationId => {
+        //     console.log(registrationId)
+        // })
+        // // JPushModule.setAlias('test', success => {
+        // //     console.log(success)
+        // // })
+        // JPushModule.addTags(['always'], success => {
         //     console.log(success)
         // })
-        JPushModule.addTags(['always'], success => {
-            console.log(success)
-        })
-        JPushModule.notifyJSDidLoad(resultCode=>{
-            console.log(resultCode)
-        });
-
-        JPushModule.addReceiveNotificationListener((message) => {
-            console.log( message);
-        })
+        // JPushModule.notifyJSDidLoad(resultCode=>{
+        //     console.log(resultCode)
+        // });
+        //
+        // JPushModule.addReceiveNotificationListener((message) => {
+        //     console.log( message);
+        // })
 
         this.try2Login();
     }
