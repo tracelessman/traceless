@@ -4,33 +4,72 @@
 
 import React, { Component } from 'react';
 import {
+    Alert,
+    Image,
     Text,
-    View,TextInput,TouchableOpacity,Modal
+    View,TextInput,TouchableOpacity,Modal,ScrollView
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
+import WSChannel from "../channel/WSChannel"
+import { List, ListItem,Avatar,Card ,Icon} from 'react-native-elements'
+import ImagePicker from 'react-native-image-crop-picker';
+import RNFetchBlob from 'react-native-fetch-blob'
 
 
 export default class MineView extends Component<{}> {
-
-
-
     constructor(props){
         super(props);
+        let picUrl = Store.getPersonalPic()
+        let avatarSource = {
+            uri:picUrl
+        }
+        if(!picUrl){
+            avatarSource = require("../images/defaultAvatar.png")
+
+        }
+
+        this.state = {
+            avatarSource
+        }
     }
 
+
+
     reset=()=>{
-        WSChannel.reset();
-        Store.reset(function () {
-            AppUtil.reset();
-        });
+        Alert.alert(
+            '提示',
+            '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
+            [
+                {text: '取消', onPress: () => {}, style: 'cancel'},
+                {text: '确认', onPress: () => {
+                        WSChannel.reset();
+                        Store.reset(function () {
+                            AppUtil.reset();
+                        })
+                    }},
+            ],
+            { cancelable: false }
+        )
+
 
     }
 
     clear=()=>{
-        Store.clear(function () {
-            AppUtil.reset();
-        });
+        Alert.alert(
+            '提示',
+            '清除聊天记录后不可恢复,请确认是否继续本操作?',
+            [
+                {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: '确认', onPress: () => {
+                        Store.clear(function () {
+                            AppUtil.reset();
+                        });
+                    }},
+            ],
+            { cancelable: false }
+        )
+
 
     }
 
@@ -38,36 +77,136 @@ export default class MineView extends Component<{}> {
         this.props.navigation.navigate("ScanView");
     }
 
+    setAvatar(image){
+        RNFetchBlob.fs.readFile(image.path, 'base64')
+            .then((data) => {
+                const uri = 'data:image/jpeg;base64,'+ data
+
+                WSChannel.setPersonalPic(uri,data=>{
+                    this.setState({
+                        avatarSource:{
+                            uri
+                        }
+                    })
+                },()=>{
+                    console.log('timeout')
+                    Alert.alert('连接服务器超时,请检查当前网络')
+                })
+            }).catch(err=>{
+            console.log(err)
+        })
+    }
+
     render() {
+
+
+
+        const list2 = [
+            {
+                title:`标识`,
+                subtitle:Store.getCurrentUid(),
+                icon:'contacts',
+                onPress:()=>{
+                },
+            },
+            {
+                title:`清除本地聊天缓存`,
+                icon:'refresh',
+                onPress:this.clear,
+            },
+            {
+                title:`重置`,
+                icon:'delete-forever',
+                onPress:this.reset
+            },
+            {
+                title:`授权其他设备`,
+                icon:'crop-free',
+                onPress:this.showScanView
+            },
+        ]
+
+        const pickerOption = {
+            width: 300,
+            height: 300,
+            cropping: true
+        }
+        const style = {
+            listStyle:{
+                backgroundColor:'white',marginTop:20,
+            }
+        }
+
         return (
-            <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
-                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                    <Text>标识：  </Text><TextInput style={{flex:1,color:"gray"}} underlineColorAndroid='transparent' defaultValue={Store.getCurrentUid()} editable={false} />
+            <ScrollView >
+                <View style={style.listStyle}>
+                    <ListItem
+                        title={Store.getCurrentName()}
+                        rightIcon={
+                            <Icon name='qrcode' type="font-awesome" iconStyle={{margin:10}}  color='gray'
+                                  raised
+                                  onPress={()=>{
+                                      this.props.navigation.navigate('QrcodeView',{
+                                          qrcode:{
+                                              uid:Store.getCurrentUid(),
+                                              ip:Store.getCurrentServer(),
+                                              code:'traceless',
+                                              action:"addFriend"
+                                          },
+                                          avatarUrl:this.state.avatarSource.uri
+                                      })
+                                  }}
+                            />}
+                        avatar={<Avatar
+                            large
+                            containerStyle={{marginRight:5}}
+                            source={this.state.avatarSource}
+                            onPress={() => {
+                                Alert.alert(
+                                    '设置头像',
+                                    '请选择头像设置方式',
+                                    [
+                                        {text: '取消', onPress: () => console.log('Ask me later pressed')},
+                                        {text: '拍照', onPress: () => {
+                                                ImagePicker.openCamera(pickerOption).then(image => {
+                                                    this.setAvatar(image)
+                                                })
+                                            }},
+                                        {text: '从相册获得', onPress: () => {
+                                                ImagePicker.openPicker(pickerOption).then(image => {
+                                                    this.setAvatar(image)
+                                                }).catch(err=>{
+                                                    console.log(err)
+                                                })
+                                            }},
+                                    ],
+                                    { cancelable: false }
+                                )
+
+
+                            }}
+                            activeOpacity={0.7}
+                        />}
+                        titleStyle={{fontSize:18,color:'#424242'}}
+                    />
+
                 </View>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                    <Text>昵称：  </Text><TextInput  style={{flex:1,color:"gray"}} underlineColorAndroid='transparent' defaultValue={Store.getCurrentName()} editable={false} />
+                <View style={style.listStyle}>
+                    {
+                        list2.map((item, i) => (
+                            <ListItem
+                                key={i}
+                                title={item.title}
+
+                                rightIcon={item.rightIconColor?{style:{color:item.rightIconColor}}:{}}
+                                leftIcon={{name:item.icon,style:{}}}
+                                subtitle={item.subtitle}
+                                onPress={item.onPress}
+                            />
+                        ))
+                    }
                 </View>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <TouchableOpacity onPress={this.clear} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>清除本地聊天缓存  </Text>
-                    </View>
-                </TouchableOpacity>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <TouchableOpacity onPress={this.reset} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>重置  </Text>
-                    </View>
-                </TouchableOpacity>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <TouchableOpacity onPress={this.showScanView} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>授权其他设备  </Text>
-                    </View>
-                </TouchableOpacity>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-            </View>
+            </ScrollView>
         );
     }
 

@@ -3,6 +3,9 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
+import com.horcrux.svg.SvgPackage;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import fr.bamlab.rnimageresizer.ImageResizerPackage;
@@ -14,11 +17,17 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import org.reactnative.camera.RNCameraPackage;
 import org.pgsqlite.SQLitePluginPackage;
+import cn.jpush.reactnativejpush.JPushPackage;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
+
+// 设置为 true 将不会弹出 toast
+    private boolean SHUTDOWN_TOAST = true;
+    // 设置为 true 将不会打印 log
+    private boolean SHUTDOWN_LOG = true;
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -30,13 +39,17 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SvgPackage(),
+            new RNFSPackage(),
+            new PickerPackage(),
             new VectorIconsPackage(),
             new RNNetworkInfoPackage(),
             new ImageResizerPackage(),
             new ImagePickerPackage(),
             new RNFetchBlobPackage(),
             new RNCameraPackage(),
-              new SQLitePluginPackage()
+              new SQLitePluginPackage(),
+              new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
       );
     }
 

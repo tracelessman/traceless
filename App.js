@@ -6,10 +6,10 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,AsyncStorage
+    Platform,
+    StyleSheet,
+    Text,
+    View,AsyncStorage
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -17,7 +17,9 @@ import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
+import JPushModule from 'jpush-react-native';
 
+console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
 export default class App extends Component<{}> {
 
@@ -31,6 +33,23 @@ export default class App extends Component<{}> {
     }
 
     componentDidMount=()=>{
+        JPushModule.getRegistrationID(registrationId => {
+            console.log(registrationId)
+        })
+        // JPushModule.setAlias('test', success => {
+        //     console.log(success)
+        // })
+        JPushModule.addTags(['always'], success => {
+            console.log(success)
+        })
+        JPushModule.notifyJSDidLoad(resultCode=>{
+            console.log(resultCode)
+        });
+
+        JPushModule.addReceiveNotificationListener((message) => {
+            console.log( message);
+        })
+
         this.try2Login();
     }
 
@@ -92,17 +111,17 @@ export default class App extends Component<{}> {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    container: {
+        flex: 1
+    },
+    welcome: {
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+    },
+    instructions: {
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 5,
+    },
 });

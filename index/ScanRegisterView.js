@@ -122,113 +122,120 @@ export default class ScanRegisterView extends React.Component {
 
     render() {
         return (
+
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
-            <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
-                <View style={{width:"100%",height:80,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
-                    {
-                        this.state.step==1?null:<TouchableOpacity style={{}} onPress={this.cancel}>
-                            <Text style={{fontSize:16,paddingLeft:10}}>取消</Text>
-                        </TouchableOpacity>
-                    }
+                <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
+                    <View style={{width:"100%",height:80,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
+                        {
+                            this.state.step==1?null:<TouchableOpacity style={{}} onPress={this.cancel}>
+                                <Text style={{fontSize:16,paddingLeft:10}}>取消</Text>
+                            </TouchableOpacity>
+                        }
 
-                </View>
-                 {/*<View style={{width:100,height:100,borderWidth:1,borderStyle:"solid",borderColor:"#f0f0f0",marginTop:30,marginBottom:30,overflow:"hidden"}}>*/}
+                    </View>
+                    {/*<View style={{width:100,height:100,borderWidth:1,borderStyle:"solid",borderColor:"#f0f0f0",marginTop:30,marginBottom:30,overflow:"hidden"}}>*/}
                     {/*<Icon name="user" size={70}  color="#d0d0d0" style={{textAlign:"center",lineHeight:90}}/>*/}
-                 {/*</View>*/}
-                <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
+                    {/*</View>*/}
+                    <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
 
+                    <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
+                        <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
+                        <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":this.isFreeRegister?"来个炫酷的昵称":"请输入口令"}</Text>
+                    </View>
+                    {
+                        this.state.step==1?
+                            <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
+                                <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",
+                                    borderBottomWidth:1,borderColor:"#f9e160",justifyContent:'flex-start',alignItems:"center"}}
+                                                  onPress={this.showScanView}>
+                                    <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
+                                    <Text style={{}}>扫码注册</Text>
 
-                <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
-                    <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
-                    <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":this.isFreeRegister?"来个炫酷的昵称":"请输入口令"}</Text>
-                </View>
-                {
-                    this.state.step==1?
-                        <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
-                            <TouchableOpacity style={{height:50,backgroundColor:"#ffffff",width:"100%",flexDirection:"row",borderBottomWidth:1,borderColor:"#f9e160"}} onPress={this.showScanView}>
-                                <Icon name="qrcode" size={30}  color="#f9e160" style={{margin:10}}/>
-                                <Text style={{lineHeight:50}}>扫码注册</Text>
-                            </TouchableOpacity>
-                            {this.state.registering ?
-                                <View style={{
-                                    width: "90%",
-                                    height: 40,
-                                    marginTop: 24,
-                                    borderColor: "#535353",
-                                    backgroundColor: "#636363",
-                                    borderWidth: 1,
-                                    borderRadius: 5,
-                                    flex: 0,
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <Text style={{
-                                        fontSize: 18,
-                                        textAlign: "center",
-                                        color: "white"
-                                    }}>{this.state.registerStep}</Text>
-                                    <Image source={require('../images/loading.gif')}
-                                                                     style={{width: 18, height: 18, marginLeft: 10}}
-                                                                     resizeMode="contain"></Image>
-                                </View>
-                                :
-                                null
-                            }
-                        </View>
+                                </TouchableOpacity>
+                                {this.state.registering ?
+                                    <View style={{
+                                        width: "90%",
+                                        height: 40,
+                                        marginTop: 24,
+                                        borderColor: "#535353",
+                                        backgroundColor: "#636363",
+                                        borderWidth: 1,
+                                        borderRadius: 5,
+                                        flex: 0,
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 18,
+                                            textAlign: "center",
+                                            color: "white"
+                                        }}>{this.state.registerStep}</Text>
+                                        <Image source={require('../images/loading.gif')}
+                                               style={{width: 18, height: 18, marginLeft: 10}}
+                                               resizeMode="contain"></Image>
+                                    </View>
+                                    :
+                                    null
+                                }
+                            </View>
                             :
-                        <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                            {this.isFreeRegister ?
-                                <View style={{
-                                    height: 50,
-                                    width: "100%",
-                                    flexDirection: "row",
-                                    backgroundColor: "#ffffff"
-                                }}>
-                                    <Icon name="user-circle" size={30} color="#f9e160"
-                                          style={{textAlign: "center", margin: 10}}/>
-                                    <TextInput autoFocus={true} style={{
+                            <View style={{height:120,backgroundColor:"#ffffff",width:"100%",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+                                {this.isFreeRegister ?
+                                    <View style={{
                                         height: 50,
-                                        backgroundColor: "#ffffff",
                                         width: "100%",
-                                        color: "gray"
-                                    }} underlineColorAndroid='transparent' defaultValue={""}
-                                               onChangeText={this.nameTextChange}/>
-                                </View>
-                                :
-                                <View style={{
-                                    height: 50,
-                                    width: "100%",
-                                    flexDirection: "row",
-                                    backgroundColor: "#ffffff"
-                                }}>
-                                    <Icon name="lock" size={30} color="#f9e160"
-                                          style={{textAlign: "center", margin: 10}}/>
-                                    <TextInput autoFocus={true} style={{
+                                        flexDirection: "row",
+                                        backgroundColor: "#ffffff"
+                                    }}>
+                                        <Icon name="user-circle" size={30} color="#f9e160"
+                                              style={{textAlign: "center", margin: 10}}/>
+                                        <TextInput autoFocus={true} style={{
+                                            height: 50,
+                                            backgroundColor: "#ffffff",
+                                            width: "100%",
+                                            color: "gray"
+                                        }} underlineColorAndroid='transparent' defaultValue={""}
+                                                   onChangeText={this.nameTextChange}/>
+                                    </View>
+                                    :
+                                    <View style={{
                                         height: 50,
-                                        backgroundColor: "#ffffff",
                                         width: "100%",
-                                        color: "gray"
-                                    }} underlineColorAndroid='transparent' defaultValue={""}
-                                               onChangeText={this.checkCodeTextChange}/>
-                                </View>
-                            }
-                            <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
-                            <TouchableOpacity disabled={this.state.registering} onPress={this.register} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
-                                <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
-                                {this.state.registering?<Image source={require('../images/loading.gif')} style={{width:18,height:18,marginLeft:10}} resizeMode="contain"></Image>:null}
-                            </TouchableOpacity>
-                        </View>
-                }
-                <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
+                                        flexDirection: "row",
+                                        backgroundColor: "#ffffff"
+                                    }}>
+                                        <Icon name="lock" size={30} color="#f9e160"
+                                              style={{textAlign: "center", margin: 10}}/>
+                                        <TextInput autoFocus={true} style={{
+                                            height: 50,
+                                            backgroundColor: "#ffffff",
+                                            width: "100%",
+                                            color: "gray"
+                                        }} underlineColorAndroid='transparent' defaultValue={""}
+                                                   onChangeText={this.checkCodeTextChange}/>
+                                    </View>
+                                }
+                                <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
+                                <TouchableOpacity disabled={this.state.registering} onPress={this.register} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+                                    <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
+                                    {this.state.registering?<Image source={require('../images/loading.gif')} style={{width:18,height:18,marginLeft:10}} resizeMode="contain"></Image>:null}
+                                </TouchableOpacity>
+                            </View>
+                    }
+                    <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
+                    </View>
+                    <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0"}}>
+                        <Text style={{lineHeight:60,color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
+                    </View>
+                    <Modal visible={this.state.scanVisible}
+                           onRequestClose={()=>{
+                               this.setState({scanVisible:false})
+                           }}
+                    >
+                        <ScanView action="register" parent={this}></ScanView>
+                    </Modal>
                 </View>
-                <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0"}}>
-                    <Text style={{lineHeight:60,color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
-                </View>
-                <Modal visible={this.state.scanVisible}>
-                    <ScanView action="register" parent={this}></ScanView>
-                </Modal>
-            </View>
             </TouchableWithoutFeedback>
         );
 

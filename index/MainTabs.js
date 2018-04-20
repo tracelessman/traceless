@@ -15,8 +15,11 @@ import ChatView from '../recent/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
+import QrcodeView from '../mine/QrcodeView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+
+const iconSize = 26
 
 const MainTabs = TabNavigator({
         RecentTab: {
@@ -27,9 +30,9 @@ const MainTabs = TabNavigator({
 
                 tabBarIcon: ({ tintColor, focused }) => (
                     focused?
-                    <Icon name="message-outline" size={30}  color="#f9e160"/>
+                        <Icon name="message-outline" size={iconSize}  color="#f9e160" />
                         :
-                        <Icon name="message-outline" size={30}  color="#d0d0d0"/>
+                        <Icon name="message-outline" size={iconSize}  color="#d0d0d0"/>
 
                 )
             }
@@ -41,9 +44,9 @@ const MainTabs = TabNavigator({
                 title:'通讯录',
 
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Icon name="table-of-contents" size={30}  color="#f9e160"/>
+                    focused?<Icon name="table-of-contents" size={iconSize}  color="#f9e160"/>
                         :
-                        <Icon name="table-of-contents" size={30}  color="#d0d0d0"/>
+                        <Icon name="table-of-contents" size={iconSize}  color="#d0d0d0"/>
                 )
             }
         },
@@ -53,9 +56,9 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '我的',
                 title:'我的',
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Icon name="account-outline" size={30}  color="#f9e160"/>
+                    focused?<Icon name="account-outline" size={iconSize}  color="#f9e160"/>
                         :
-                        <Icon name="account-outline" size={30}  color="#d0d0d0"/>
+                        <Icon name="account-outline" size={iconSize}  color="#d0d0d0"/>
                 )
             },
 
@@ -107,7 +110,7 @@ var MainStack = StackNavigator({
     },
     FriendInfoView:{
         screen:FriendInfoView,
-            navigationOptions:{
+        navigationOptions:{
             headerTitle: '详细资料'
         }
     },
@@ -126,12 +129,20 @@ var MainStack = StackNavigator({
         navigationOptions:{
             headerTitle: '群成员'
         }
-    },ScanView:{
+    },
+    ScanView:{
         screen:ScanView,
         navigationOptions:{
             headerTitle: '扫描二维码'
         }
-    },GroupMsgStateView:{
+    },
+    QrcodeView:{
+        screen:QrcodeView,
+        navigationOptions:{
+            headerTitle: '个人二维码'
+        }
+    },
+    GroupMsgStateView:{
         screen:GroupMsgStateView,
         navigationOptions:{
             headerTitle: '消息状态'

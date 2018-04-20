@@ -61,7 +61,7 @@ var WSChannel={
                 };
 
                 this.ws.onerror = function incoming(event) {
-                    console.info("error: "+event.toString());
+                    console.trace(event);
 
                 };
                 this.ws.onclose = (event)=>{

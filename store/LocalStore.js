@@ -21,7 +21,7 @@ function _update(data,callback) {
     db.transaction((tx)=>{
 
         tx.executeSql("update traceless set data=? where id=1",[data],function () {
-            console.info("update:"+data);
+            // console.info("update:"+data);
             if(callback)
                 callback();
         },function (err) {

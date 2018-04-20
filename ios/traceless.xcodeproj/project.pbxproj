@@ -717,6 +717,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				B302545C90404B8A9A0A4E51 /* Resources */,
 				E942FD2DFF314AC591910219 /* Frameworks */,
+				FD552A9120897FA800F4A838 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -767,6 +768,20 @@
 				D56F86E06FE342539490A931 /* libsqlite3.0.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FD552A9120897FA800F4A838 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A25AAA51827848D683B9CACE /* libRNFetchBlob.a */,
+				88405B6CB39A444889C8FEA8 /* libRNImagePicker.a */,
+				BE9F7CBB0B314EA69BAB5A0C /* libRCTImageResizer.a */,
+				B687A5F2470345ABB0ACFE60 /* libRCTCamera.a */,
+				FA2BF484BC1244F4BFCC6EBA /* libRNNetworkInfo.a */,
+				B8F91635C2CA40AEA9C5BAC0 /* libRNVectorIcons.a */,
+				2C85BF342B444C39B4A65411 /* libSQLite.a */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
