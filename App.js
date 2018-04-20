@@ -19,18 +19,21 @@ import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
-AppUtil.setJpush({
-    clickHandler(){
-        console.log('clickHandler')
-    },
-    tag:'test'
-}).then((result)=>{
-    const {registrationId} = result
-    console.log(result)
+if(Platform.OS === 'android'){
+    AppUtil.setJpush({
+        clickHandler(){
+            console.log('clickHandler')
+        },
+        tag:'test'
+    }).then((result)=>{
+        const {registrationId} = result
+        console.log(result)
 
-}).catch(err=>{
-    console.log(err)
-})
+    }).catch(err=>{
+        console.log(err)
+    })
+}
+
 
 export default class App extends Component<{}> {
 
