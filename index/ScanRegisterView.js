@@ -74,7 +74,7 @@ export default class ScanRegisterView extends React.Component {
 
     createKey=()=>{
         if(!this.publicKey&&!this.privateKey){
-            const bits = 2048;
+            const bits = 1024;
             const exponent = '10001';
             var rsa = new RSAKey();
             rsa.generate(bits, exponent);
