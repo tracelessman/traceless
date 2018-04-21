@@ -1,16 +1,12 @@
-/**
- * Created by renbaogang on 2017/10/31.
- */
 
 import React, { Component } from 'react';
 import {
-    Alert,
     Text,
     View,
-    TextInput,TouchableOpacity,Image
+    TextInput,
+    Button,TouchableOpacity,Image
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
-import { Container, Header, Content, Item, Input, Icon ,Button} from 'native-base';
 
 
 export default class AddContactView extends Component<{}> {
@@ -52,18 +48,13 @@ export default class AddContactView extends Component<{}> {
 
         }
         return (
-            <View>
-                <Header searchBar rounded style={{backgroundColor:'#2d8cf0'}}>
-                    <Item>
-                        <Icon name="ios-search" />
-                        <Input placeholder="请输入对方昵称或标识" />
-                        <Icon name="ios-people" onPress={()=>{
-                            Alert.alert('dfd')
-                        }} />
-                    </Item>
-                </Header>
+            <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",width:"90%",height:40,marginTop:20}}>
+                    <Text>请输入对方昵称或标识：</Text><TextInput  style={{flex:1,color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.doSearch} onChangeText={this.textChange} returnKeyType="search"/>
+                </View>
+                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
+                {searchResult}
             </View>
-
         );
     }
 
