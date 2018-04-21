@@ -180,11 +180,11 @@ var WSChannel={
         this._sendRequest(req,timeoutCallback);
     },
     applyMakeFriends:function (targetId,callback,timeoutCallback) {
-        var req = WSChannel.newRequestMsg("applyMakeFriends",{name:Store.getCurrentName(),publicKey:Store.getPublicKey()},callback,targetId);
+        var req = WSChannel.newRequestMsg("applyMakeFriends",{name:Store.getCurrentName(),publicKey:Store.getPublicKey(),pic:Store.getPersonalPic()},callback,targetId);
         this._sendRequest(req,timeoutCallback);
     },
     applyMakeFriendsHandler:function(msg,callback){
-        Store.receiveMKFriends(msg.uid,msg.data.name,msg.data.publicKey);
+        Store.receiveMKFriends(msg.uid,msg.data.name,msg.data.publicKey,msg.data.pic);
         callback();
     },
     acceptMakeFriends:function (targetId,callback,timeoutCallback) {
