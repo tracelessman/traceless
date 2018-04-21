@@ -19,7 +19,7 @@ import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-
+import Tab from './Tab'
 const iconSize = 26
 
 const MainTabs = TabNavigator({
@@ -30,10 +30,7 @@ const MainTabs = TabNavigator({
                 title:'最近',
 
                 tabBarIcon: ({ tintColor, focused }) => (
-                    focused?
-                        <Icon name="message-outline" size={iconSize}  color="#f9e160" />
-                        :
-                        <Icon name="message-outline" size={iconSize}  color="#d0d0d0"/>
+                    <Tab type="recent" focused={focused}></Tab>
 
                 )
             }
