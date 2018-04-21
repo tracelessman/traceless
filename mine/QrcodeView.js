@@ -1,6 +1,4 @@
-/**
- * Created by renbaogang on 2018/2/8.
- */
+
 import React, { Component} from 'react';
 import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput,StyleSheet} from 'react-native';
 import Camera from 'react-native-camera';

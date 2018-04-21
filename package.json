@@ -13,6 +13,7 @@
   "dependencies": {
     "jcore-react-native": "^1.2.5",
     "jpush-react-native": "^2.1.13",
+    "native-base": "^2.4.2",
     "react": "16.0.0",
     "react-native": "0.50.4",
     "react-native-camera": "1.0.1",

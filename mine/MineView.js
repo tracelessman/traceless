@@ -12,7 +12,7 @@ import {
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
 import WSChannel from "../channel/WSChannel"
-import { List, ListItem,Avatar,Card ,Icon} from 'react-native-elements'
+import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'react-native-fetch-blob'
 
@@ -107,6 +107,9 @@ export default class MineView extends Component<{}> {
                 subtitle:Store.getCurrentUid(),
                 icon:'contacts',
                 onPress:()=>{
+                    this.props.navigation.navigate('UidView',{
+                        uid:Store.getCurrentUid()
+                    })
                 },
             },
             {
