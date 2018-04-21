@@ -19,21 +19,6 @@ import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
-if(Platform.OS === 'android'){
-    AppUtil.setJpush({
-        clickHandler(){
-            console.log('clickHandler')
-        },
-        tag:'test'
-    }).then((result)=>{
-        const {registrationId} = result
-        console.log(result)
-
-    }).catch(err=>{
-        console.log(err)
-    })
-}
-
 
 export default class App extends Component<{}> {
 
@@ -48,6 +33,32 @@ export default class App extends Component<{}> {
 
     componentDidMount=()=>{
         this.try2Login();
+        Store.on("uidChanged",this._onSystemNotify);
+    }
+
+    _onSystemNotify=(uid)=>{
+        if(uid){
+            if(Platform.OS === 'android'){
+                AppUtil.setJpush({
+                    clickHandler(msg){
+                        if(msg.targetUid==Store.getCurrentUid()){
+                            AppUtil.reset({view:"ChatView",param:{friend:Store.getFriend(msg.fromUid)}});
+                        }
+                    },
+                    tag:uid
+                }).then((result)=>{
+                    const {registrationId} = result
+                    console.log(result)
+
+                }).catch(err=>{
+                    console.log(err)
+                })
+            }
+        }
+    }
+
+    componentWillUnmount =()=> {
+        Store.un("uidChanged",this._onSystemNotify);
     }
 
     reset=(t)=>{
