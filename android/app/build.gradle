@@ -155,7 +155,6 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-fs')
     compile project(':react-native-svg')
 compile 'com.facebook.fresco:fresco:1.5.0'
  compile 'com.facebook.fresco:animated-gif:1.5.0'

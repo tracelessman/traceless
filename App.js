@@ -17,6 +17,7 @@ import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
+import { Root } from "native-base"
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -110,9 +111,12 @@ export default class App extends Component<{}> {
         }
 
         return (
-            <View style={styles.container}>
-                {content}
-            </View>
+            <Root>
+                <View style={styles.container}>
+                    {content}
+                </View>
+            </Root>
+
         );
     }
 
