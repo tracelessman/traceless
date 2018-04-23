@@ -146,7 +146,7 @@ export default class AddContactView extends Component<{}> {
             }
         }
 
-        const view1 = (<ScanView action="register" parent={this}></ScanView>)
+        const view1 = (<ScanView action="addFriend" parent={this}></ScanView>)
         const view2 = (
             <Container>
                 <Header searchBar rounded style={{backgroundColor:'#2d8cf0'}}>
