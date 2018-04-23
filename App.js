@@ -39,13 +39,14 @@ export default class App extends Component<{}> {
     _onSystemNotify=(uid)=>{
         if(uid){
             if(Platform.OS === 'android'){
+                var tag = uid.replace(/\-/gi, '');
                 AppUtil.setJpush({
                     clickHandler(msg){
                         if(msg.targetUid==Store.getCurrentUid()){
                             AppUtil.reset({view:"ChatView",param:{friend:Store.getFriend(msg.fromUid)}});
                         }
                     },
-                    tag:uid
+                    tag:tag
                 }).then((result)=>{
                     const {registrationId} = result
                     console.log(result)
