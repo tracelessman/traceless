@@ -130,7 +130,7 @@ export default class ChatView extends Component<{}> {
     send=()=>{
         if(this.text){
             if(this.isGroupChat){
-                WSChannel.sendGroupMessage(this.otherSide.id,this.text,()=>{
+                WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,()=>{
                     this.text="";
                     this.refs["text"].clear();
                     this.refs["scrollView"].scrollToEnd();
@@ -151,7 +151,7 @@ export default class ChatView extends Component<{}> {
 
     sendImage=(data)=>{
         if(this.isGroupChat){
-            WSChannel.sendGroupImage(this.otherSide.id,data,()=>{
+            WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,()=>{
                 this.refs["scrollView"].scrollToEnd();
             });
         }else{
@@ -243,9 +243,9 @@ export default class ChatView extends Component<{}> {
             var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
             if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
                 if(rec.text){
-                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
+                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.text);
                 }else{
-                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
+                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.img)
                 }
             }else{
                 this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
