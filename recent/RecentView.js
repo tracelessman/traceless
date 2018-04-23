@@ -78,7 +78,7 @@ export default class RecentView extends Component<{}> {
                 var re = recent[i];
                 var redTip=null;
                 if(re.newReceive){
-                    redTip = <View style={{width:14,height:14,borderRadius:14,backgroundColor:"red",overflow:"hidden",flexDirection:"row",justifyContent:"center",alignItems:"center"}}><Text style={{fontSize:10,color:"#ffffff",textAlign:"center",lineHeight:18}}>{re.newMsgNum}</Text></View>
+                    redTip = <View style={{width:14,height:14,borderRadius:14,backgroundColor:"red",overflow:"hidden",flexDirection:"row",justifyContent:"center",alignItems:"center"}}><Text style={{fontSize:10,color:"#ffffff",textAlign:"center"}}>{re.newMsgNum}</Text></View>
                 }
                 recentList.push(<TouchableOpacity key={i} RecentView={this} id={re.id} onPress={this.chat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
@@ -97,7 +97,7 @@ export default class RecentView extends Component<{}> {
                 var group = groups[i];
                 var redTip=null;
                 if(group.newReceive){
-                    redTip = <View style={{width:18,height:18,borderRadius:18,backgroundColor:"red",overflow:"hidden"}}><Text style={{fontSize:10,color:"#ffffff",textAlign:"center",lineHeight:18}}>{group.newMsgNum}</Text></View>
+                    redTip = <View style={{width:14,height:14,borderRadius:14,backgroundColor:"red",overflow:"hidden"}}><Text style={{fontSize:9,color:"#ffffff",textAlign:"center"}}>{group.newMsgNum}</Text></View>
                 }
                 groupAry.push(<TouchableOpacity key={i} RecentView={this} group={group}  onPress={this.groupChat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>

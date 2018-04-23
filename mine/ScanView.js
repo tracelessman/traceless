@@ -25,7 +25,7 @@ export default class ScanView extends Component<{}> {
                     this.setState({msg:"等待目标设备响应..."});
                     this.data = d;
                     this.authorizeOther();
-                }else if(d.action=="register"&&this.action=="register"){
+                }else if(d.action==this.action){
                     this.setState({msg:"扫码成功..."});
                     this.data = d;
                     this.parent.afterScan(d);
@@ -90,7 +90,7 @@ export default class ScanView extends Component<{}> {
                         msg.friends = Store.keyData.friends;
                         msg.groups = Store.keyData.groups;
                         ws.send(JSON.stringify(msg));
-                        scanV.setState({msg:"注册中，请稍后..."});
+                        scanV.setState({msg:"请稍后..."});
                     };
                 }else{
                     scanV.setState({msg:"目标设备和手机并非连接同一WIFI"});
