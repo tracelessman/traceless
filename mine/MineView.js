@@ -103,8 +103,7 @@ export default class MineView extends Component<{}> {
 
         const list2 = [
             {
-                title:`标识`,
-                subtitle:Store.getCurrentUid(),
+                title:`身份标识`,
                 icon:'contacts',
                 onPress:()=>{
                     this.props.navigation.navigate('UidView',{

@@ -110,9 +110,6 @@ export default class AddContactView extends Component<{}> {
                                 <Text>
                                     {data.name}
                                 </Text>
-                                <Text numberOfLines={this.state.numberOfLines}  onPress={this.toggelLine}>
-                                    {data.uid}
-                                </Text>
                                 </Body>
                                 <Right>
                                     <Button transparent onPress={()=>{
