@@ -117,7 +117,7 @@ export default class AddContactView extends Component<{}> {
                                     <Button transparent onPress={()=>{
                                         this.addFriend(data.uid)
                                     }}>
-                                        <Icon name='ios-send' />
+                                        <Icon name='md-add' />
                                     </Button>
                                 </Right>
                             </ListItem>}
