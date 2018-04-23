@@ -88,12 +88,13 @@ export default class ScanRegisterView extends React.Component {
         this.setState({registerStep:"注册中......"});
 
         var uid=this.uid||UUID();
-        WSChannel.register(this.ip,uid,this.name,this.publicKey,this.checkCode,(data)=>{
+        var cid=UUID();
+        WSChannel.register(this.ip,uid,cid,this.name,this.publicKey,this.checkCode,(data)=>{
             this.setState({registering:false});
             if(data.err){
                 alert(data.err);
             }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,UUID());
+                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,cid);
                 AppUtil.reset();
             }
         });
