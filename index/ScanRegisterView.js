@@ -39,8 +39,7 @@ export default class ScanRegisterView extends React.Component {
     afterScan=(data)=>{
         this.isFreeRegister = data.free;
         this.ip=data.server;
-        this.serverPublicKey=data.publicKey;
-        if(this.ip&&this.serverPublicKey){
+        if(this.ip){
             if(this.isFreeRegister){
                 this.setState({scanVisible:false,step:2});
             }else{
@@ -94,7 +93,7 @@ export default class ScanRegisterView extends React.Component {
             if(data.err){
                 alert(data.err);
             }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,this.serverPublicKey,cid);
+                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
                 AppUtil.reset();
             }
         });
@@ -109,7 +108,7 @@ export default class ScanRegisterView extends React.Component {
             alert("请输入口令");
             return;
         }
-        this.setState({registering:true,registerStep:"创建密钥中，这需要一定的时间......"});
+        this.setState({registering:true,registerStep:"创建密钥中......"});
 
         setTimeout( ()=> {
             this._doRegister();
@@ -126,7 +125,7 @@ export default class ScanRegisterView extends React.Component {
 
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
                 <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
-                    <View style={{width:"100%",height:80,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
+                    <View style={{width:"100%",height:50,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
                         {
                             this.state.step==1?null:<TouchableOpacity style={{}} onPress={this.cancel}>
                                 <Text style={{fontSize:16,paddingLeft:10}}>取消</Text>
@@ -219,15 +218,15 @@ export default class ScanRegisterView extends React.Component {
                                 }
                                 <View style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f9e160"}}></View>
                                 <TouchableOpacity disabled={this.state.registering} onPress={this.register} style={{width:"90%",height:40,marginTop:24,borderColor:"#535353",backgroundColor:"#636363",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
-                                    <Text style={{fontSize:18,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
+                                    <Text style={{fontSize:16,textAlign:"center",color:"white"}}>{this.state.registering?this.state.registerStep:"完成"}</Text>
                                     {this.state.registering?<Image source={require('../images/loading.gif')} style={{width:18,height:18,marginLeft:10}} resizeMode="contain"></Image>:null}
                                 </TouchableOpacity>
                             </View>
                     }
                     <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
                     </View>
-                    <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0"}}>
-                        <Text style={{lineHeight:60,color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
+                    <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0",flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
+                        <Text style={{color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
                     </View>
                     <Modal visible={this.state.scanVisible}
                            onRequestClose={()=>{
