@@ -4,7 +4,8 @@ import {
     Alert,
     Text,
     View,
-    TextInput,TouchableOpacity,Image
+    TextInput,TouchableOpacity,Image,
+    Platform
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
@@ -147,9 +148,10 @@ export default class AddContactView extends Component<{}> {
         }
 
         const view1 = (<ScanView action="addFriend" parent={this}></ScanView>)
+        const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
         const view2 = (
             <Container>
-                <Header searchBar rounded style={{backgroundColor:'#2d8cf0'}}>
+                <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
                         <Icon name="ios-search"  onPress={this.doSearch} />
                         <Input placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
