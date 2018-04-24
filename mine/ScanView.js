@@ -68,13 +68,13 @@ export default class ScanView extends Component<{}> {
                         var msg = JSON.parse(message.data);
                         if(msg.state){//done
                             ws.close();
-                        }
-                        if(msg.msg){
+                            scanV.setState({msg:"授权成功"});
+                        }else if(msg.msg){
                             scanV.setState({msg:msg.msg});
                         }
                     };
                     ws.onerror = function incoming(event) {
-                        scanV.setState({msg:"网络连接错误 "+event?event.toString():""});
+                        scanV.setState({msg:"网络连接错误 "+(event?event.toString():"")});
                     };
                     ws.onclose = (event)=>{
 
@@ -108,9 +108,8 @@ export default class ScanView extends Component<{}> {
 
     render() {
         if(this.data){
-
             return (
-                <View style={styles.container}>
+                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",paddingTop:50}}>
                     <Text>{this.state.msg}</Text>
                 </View>);
         }else{
