@@ -13,6 +13,7 @@ import {
     Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,List,Thumbnail,Left,Right,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
+import AddFriendIcon from './AddFriendIcon'
 
 
 export default class AddContactView extends Component<{}> {
@@ -37,14 +38,18 @@ export default class AddContactView extends Component<{}> {
     }
 
     addFriend = (fid)=>{
-        WSChannel.applyMakeFriends(fid, (result)=> {
-            Toast.show({
-                text: '好友申请已发送，等待对方审核',
-                position: "top",
-                type:"success",
-                duration: 3000
+        return new Promise(resolve => {
+            WSChannel.applyMakeFriends(fid, (result)=> {
+                resolve()
+                Toast.show({
+                    text: '好友申请已发送，等待对方审核',
+                    position: "top",
+                    type:"success",
+                    duration: 1500
+                })
             })
         })
+
     }
 
     textChange=(v)=>{
@@ -112,11 +117,7 @@ export default class AddContactView extends Component<{}> {
                                 </Text>
                                 </Body>
                                 <Right>
-                                    <Button transparent onPress={()=>{
-                                        this.addFriend(data.uid)
-                                    }}>
-                                        <Icon name='md-add' />
-                                    </Button>
+                                    <AddFriendIcon uid={data.uid}></AddFriendIcon>
                                 </Right>
                             </ListItem>}
                     />

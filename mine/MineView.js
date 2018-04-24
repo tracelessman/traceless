@@ -1,6 +1,3 @@
-/**
- * Created by renbaogang on 2017/10/31.
- */
 
 import React, { Component } from 'react';
 import {
@@ -25,16 +22,12 @@ export default class MineView extends Component<{}> {
             uri:picUrl
         }
         if(!picUrl){
-            avatarSource = require("../images/defaultAvatar.png")
-
+            avatarSource = AppUtil.getDefaultAvatarSource()
         }
-
         this.state = {
             avatarSource
         }
     }
-
-
 
     reset=()=>{
         Alert.alert(
@@ -51,8 +44,6 @@ export default class MineView extends Component<{}> {
             ],
             { cancelable: false }
         )
-
-
     }
 
     clear=()=>{
@@ -69,8 +60,6 @@ export default class MineView extends Component<{}> {
             ],
             { cancelable: false }
         )
-
-
     }
 
     showScanView=()=>{

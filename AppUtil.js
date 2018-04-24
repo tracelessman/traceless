@@ -52,6 +52,9 @@ var AppUtil={
             })
 
         }
+    },
+    getDefaultAvatarSource(){
+        return require('./images/defaultAvatar.png')
     }
 };
 export default AppUtil;
