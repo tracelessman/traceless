@@ -18,12 +18,7 @@ export default class MineView extends Component<{}> {
     constructor(props){
         super(props);
         let picUrl = Store.getPersonalPic()
-        let avatarSource = {
-            uri:picUrl
-        }
-        if(!picUrl){
-            avatarSource = AppUtil.getDefaultAvatarSource()
-        }
+        const avatarSource = AppUtil.getAvatarSource(picUrl)
         this.state = {
             avatarSource
         }

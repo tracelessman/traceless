@@ -53,8 +53,14 @@ var AppUtil={
 
         }
     },
-    getDefaultAvatarSource(){
-        return require('./images/defaultAvatar.png')
+    getAvatarSource(pic){
+        let result
+        if(pic){
+            result = {uri:pic}
+        }else{
+            result = require('./images/defaultAvatar.png')
+        }
+        return result
     }
 };
 export default AppUtil;
