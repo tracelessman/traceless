@@ -10,7 +10,8 @@ import {
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,List,Thumbnail,Left,Right,Toast
+    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,
+    List,Thumbnail,Left,Right,Toast,Spinner
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 import AddFriendIcon from './AddFriendIcon'
@@ -20,14 +21,17 @@ export default class AddContactView extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={searchResult:null,numberOfLines:2,isScanMode:false};
+        this.state={searchResult:null,numberOfLines:2,isScanMode:false,isWaiting:false};
     }
 
     doSearch=()=>{
         if(this.searchText){
+            this.setState({isWaiting:true})
             WSChannel.searchFriends(this.searchText,(data)=>{
-                // var result = [{id:"id1",name:"name1"},{id:"id2",name:"name2"}];
-                this.setState({searchResult:data.result});
+                const searchResult = data.result.filter((item)=>{
+                   return  item.uid !== Store.getCurrentUid()
+                })
+                this.setState({searchResult,isWaiting:false})
             });
         }else{
             Toast.show({
@@ -68,7 +72,7 @@ export default class AddContactView extends Component<{}> {
             if(uid && ip){
                 if(ip === Store.getCurrentServer()){
                     if(uid === Store.getCurrentUid()){
-                        errorMsg = '该二维码标识是当前用户标识,不能发送好友请求'
+                        errorMsg = '该二维码标识是当前用户标识,不能向自己发送好友请求'
                     }
                 }else{
                     errorMsg = '服务器地址与当前应用的服务器地址不符,请核对后重试'
@@ -101,7 +105,7 @@ export default class AddContactView extends Component<{}> {
 
     render() {
         var searchResult = [];
-        if(this.state.searchResult){
+        if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
                 searchResult = (
                     <List
@@ -123,7 +127,7 @@ export default class AddContactView extends Component<{}> {
                     />
                 )
 
-            }else{
+            }else {
                 searchResult = (
                     <ListItem thumbnail style={{height:80}}>
                         <Left>
@@ -160,6 +164,7 @@ export default class AddContactView extends Component<{}> {
 
                 </Header>
                 <Content style={{marginTop:10}}>
+                    {this.state.isWaiting?<Spinner />:null}
                      {searchResult}
                 </Content>
             </Container>

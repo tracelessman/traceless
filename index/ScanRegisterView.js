@@ -18,14 +18,25 @@ export default class ScanRegisterView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state={scanVisible:false,step:1};
+        this.state={scanVisible:false,step:1,isShowingLogo:true};
     }
 
-    componentDidMount=()=>{
+    componentDidMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', ()=>{
+            this.setState({
+                isShowingLogo:false
+            })
+        });
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', ()=>{
+            this.setState({
+                isShowingLogo:true
+            })
+        });
+    }
 
-        // setTimeout( ()=> {
-
-        // },10);
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove()
+        this.keyboardDidHideListener.remove()
     }
 
     showScanView=()=>{
@@ -56,7 +67,6 @@ export default class ScanRegisterView extends React.Component {
             this.setState({scanVisible:false});
             //alert("无效二维码");
         }
-
     }
 
     nameTextChange=(v)=>{
@@ -121,6 +131,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
     render() {
+        const logoView = <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
         return (
 
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
@@ -136,8 +147,8 @@ export default class ScanRegisterView extends React.Component {
                     {/*<View style={{width:100,height:100,borderWidth:1,borderStyle:"solid",borderColor:"#f0f0f0",marginTop:30,marginBottom:30,overflow:"hidden"}}>*/}
                     {/*<Icon name="user" size={70}  color="#d0d0d0" style={{textAlign:"center",lineHeight:90}}/>*/}
                     {/*</View>*/}
-                    <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
 
+                    {this.state.isShowingLogo?logoView:null}
                     <View style={{height:40,backgroundColor:"#f0f0f0",width:"100%",flexDirection:"row",alignItems:"center"}}>
                         <View style={{width:4,height:18,backgroundColor:"#f9e160",marginLeft:10}}></View>
                         <Text style={{color:"#a0a0a0",paddingLeft:2,fontSize:12}}>{this.state.step==1?"注册":this.isFreeRegister?"来个炫酷的昵称":"请输入口令"}</Text>
