@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import {
     Text,
-    View,Image,
+    View,Image,ScrollView,
     TouchableOpacity
 } from 'react-native';
 import AppUtil from "../AppUtil"
@@ -23,8 +23,8 @@ export default class RecentView extends Component<{}> {
             // },
             // headerTintColor: '#ffffff',
             headerRight:<TouchableOpacity onPress={()=>{navigation.navigate("AddGroupView")}}
-                                          style={{marginRight:20}}>
-                <Icon name="account-multiple-plus" size={22} />
+                                          style={{height:50,width:50,paddingTop:14,paddingLeft:14}}>
+                <Icon name="account-multiple-plus" size={22} style={{}}/>
             </TouchableOpacity>,
         }
     );
@@ -114,8 +114,10 @@ export default class RecentView extends Component<{}> {
 
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+                <ScrollView ref="scrollView" style={{width:"100%"}}>
                 {recentList}
                 {groupAry}
+                </ScrollView>
             </View>
         );
     }

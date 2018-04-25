@@ -1,12 +1,20 @@
-/**
- * Created by renbaogang on 2017/11/9.
- */
-
 import React, { Component} from 'react';
 import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput} from 'react-native';
 import Store from '../store/LocalStore'
 import  WSChannel from '../channel/LocalWSChannel'
+import AppUtil from "../AppUtil"
 export default class AddGroupView extends Component<{}> {
+
+    static navigationOptions =({ navigation, screenProps }) => (
+        {
+            headerRight:
+                <TouchableOpacity style={{marginRight:20}}>
+                    <Button color="#2d8cf0" title="确定"
+                                onPress={()=>navigation.state.params.navigateAddGroupPress()}
+                                style={{marginRight:20}}/>
+                </TouchableOpacity>
+        }
+    );
 
     constructor(props){
         super(props);
@@ -50,8 +58,13 @@ export default class AddGroupView extends Component<{}> {
         })
         WSChannel.addGroup(id,this.name,members,()=>{
             Store.addGroup(id,this.name,members);
+            this.props.navigation.goBack();
         });
 
+    }
+
+    componentDidMount(){
+        this.props.navigation.setParams({ navigateAddGroupPress:this.createGroup })
     }
 
     render() {
@@ -59,26 +72,24 @@ export default class AddGroupView extends Component<{}> {
         var all = Store.getAllFriends();
         for(var i=0;i<all.length;i++){
             var f = all[i];
+            let imageSource = AppUtil.getAvatarSource(f.pic);
             friends.push(<TouchableOpacity key={i}  style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                    <Text>    {f.name}  </Text><Switch AddGroupView={this} friend={f} value={this.isSelected(f)} onValueChange={this.select}></Switch>
+                <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"96%",height:60,marginTop:5}}>
+                    <Image source={imageSource} style={{flex:3,marginTop:5,width:50,height:50,alignSelf:"flex-start"}} resizeMode="contain"></Image>
+                    <Text style={{flex:13,margin:5}}>{f.name}</Text>
+                    <Switch AddGroupView={this} friend={f} value={this.isSelected(f)} onValueChange={this.select} style={{flex:3,height:50}}></Switch>
                 </View>
             </TouchableOpacity>);
-            friends.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+            friends.push(<View key={i+"line"} style={{width:"96%",height:0,borderTopWidth:0.5,borderColor:"#d0d0d0"}}></View>);
 
         }
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
-                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                    <Text>名称：</Text>
+                <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"96%",height:40,marginTop:10}}>
+                    <Text>群名称：</Text>
                     <TextInput  style={{flex:1,color:"gray"}} underlineColorAndroid='transparent' defaultValue={""} onChangeText={this.nameTextChange} />
                 </View>
-                <View style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>
-                <TouchableOpacity style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Button title="确定" onPress={this.createGroup}/><Button title="清空" onPress={this.clear}/>
-                    </View>
-                </TouchableOpacity>
+                <View style={{width:"96%",height:0,borderTopWidth:0.5,borderColor:"#d0d0d0"}}></View>
                 {friends}
             </View>
         );
