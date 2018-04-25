@@ -68,7 +68,7 @@ export default class ContactView extends Component<{}> {
                 <TouchableOpacity onPress={this.go2RequireListView} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"96%",height:40,marginTop:20}}>
                         <Icon name="call-received" size={22} style={{flex:2,marginLeft:5}}/>
-                        <Text style={{flex:17,margin:0,ffontWeight:"bold",color:"#282828"}}>好友请求</Text>
+                        <Text style={{flex:17,margin:0,fontWeight:"bold",color:"#282828"}}>好友请求</Text>
                         <Text style={{flex:2,color:"red",fontStyle: 'italic', fontSize: 11}}>{Store.hasNewReceivedMKFriends()?"new":""}</Text>
                         <Icon name="chevron-right" size={22} style={{flex:1,margin:5}}/>
                     </View>
