@@ -39,12 +39,21 @@ export default class ChatView extends Component<{}> {
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
         this.text="";
-        if(this.isGroupChat){
-            this.records = Store.readGroupChatRecords(this.otherSide.id);
-        }else{
-            this.records = Store.readAllChatRecords(this.otherSide.id);
-        }
+
         this._keySeed = 0;
+    }
+
+    refreshRecordList=()=>{
+        if(this.isGroupChat){
+            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords);
+        }else{
+            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords);
+        }
+    }
+
+    _getRecords=(rec)=>{
+        this.records = rec;
+        this.setState({messageChange:true});
     }
 
     _keyboardDidShow=(e)=>{
@@ -81,19 +90,15 @@ export default class ChatView extends Component<{}> {
 
     onReceiveMessage=(fromId)=>{
         if(fromId==this.otherSide.id){
-            if(this.isGroupChat){
-                this.records = Store.readGroupChatRecords(this.otherSide.id);
-            }else{
-                this.records = Store.readAllChatRecords(this.otherSide.id);
-            }
-            this.setState({messageChange:true});
+            this.refreshRecordList();
         }
 
     }
 
     onSendMessage=(targetId)=>{
-        if(targetId==this.otherSide.id)
-        this.setState({messageChange:true});
+        if(targetId==this.otherSide.id){
+            this.refreshRecordList();
+        }
     }
 
     componentWillMount =()=> {
@@ -131,6 +136,7 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount=()=>{
+        this.refreshRecordList();
        setTimeout(()=>{
            this.refs["scrollView"].scrollToEnd();
        },50)
@@ -199,7 +205,9 @@ export default class ChatView extends Component<{}> {
             }
             else {
                 var imageUri = response.uri;
-                this.sendImage('data:image/jpeg;base64,' + response.data);
+                var img = {data:response.data,width:response.width,height:response.height}
+                this.sendImage(img);
+
                  // if(response.fileSize>1*1024*1024){
 
 
@@ -254,45 +262,52 @@ export default class ChatView extends Component<{}> {
 
     doTouchMsgState=function () {
         if(this.ChatView.isGroupChat){
-            var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
-            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-                if(rec.text){
-                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.text);
-                }else{
-                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.img)
+            Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
+                if(rec){
+                    if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                        if(rec.type==Store.MESSAGE_TYEP_TEXT){
+                            WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.content);
+                        }else if(rec.type==Store.MESSAGE_TYPE_IMAGE){
+                            WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,JSON.parse(rec.content))
+                        }
+                    }else{
+                        this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
+                    }
                 }
-            }else{
-                this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
-            }
+            });
 
         }else{
-            var rec = Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId);
-            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-                if(rec.text)
-                    WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
-                else
-                    WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
-            }
+            Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
+                if(rec&&rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                    if(rec.type==Store.MESSAGE_TYEP_TEXT)
+                        WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);
+                    else if(rec.type==Store.MESSAGE_TYPE_IMAGE)
+                        WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))
+                }
+            });
+
 
         }
     }
 
     _getMessage=(rec)=>{
-        if(rec.text){
-            return <Text>{rec.text}</Text>;
+        if(rec.type==Store.MESSAGE_TYEP_TEXT){
+            return <Text>{rec.content}</Text>;
 
-        }else if(rec.img) {
-            var imgUri = rec.img;
+        }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
+            var img = JSON.parse(rec.content);
+            var imgUri = img;
             var imgW = 180;
             var imgH = 180;
-            if(rec.img&&rec.img.data){
-                imgUri = rec.img.data;
-                imgW = rec.img.width;
-                imgH = rec.img.height;
+            if(img&&img.data){
+                imgUri = "file://"+img.data;
+                //imgW = img.width;
+                //imgH = img.height;
             }
            return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
-        }else if(rec.file){
-            return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{rec.file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
+        }else if(rec.type==Store.MESSAGE_TYPE_FILE){
+            var file = JSON.parse(rec.content);
+            return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
         }
     }
 
@@ -321,8 +336,8 @@ export default class ChatView extends Component<{}> {
                    }
                }
                this._keySeed++;
-               if(records[i].id){
-                   var otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).pic:this.otherSide.pic);
+               if(records[i].senderUid){
+                   var otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
                    recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
