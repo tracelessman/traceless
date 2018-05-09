@@ -18,6 +18,7 @@ import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import AppUtil from "../AppUtil"
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -33,56 +34,71 @@ export default class ChatView extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={biggerImageVisible:false,marignBAnim: new Animated.Value(0),marignTAnim:0};
+        this.state={biggerImageVisible:false,heightAnim: 0};
         this.isGroupChat = this.props.navigation.state.params.group?true:false;
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
         this.text="";
+
+        this._keySeed = 0;
+    }
+
+    refreshRecordList=()=>{
         if(this.isGroupChat){
-            this.records = Store.readGroupChatRecords(this.otherSide.id);
+            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords);
         }else{
-            this.records = Store.readAllChatRecords(this.otherSide.id);
+            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords);
         }
+    }
+
+    _getRecords=(rec)=>{
+        this.records = rec;
+        this.setState({messageChange:true});
     }
 
     _keyboardDidShow=(e)=>{
         let keyY = e.endCoordinates.screenY;
-        this.setState({marginTAnim:keyY-Dimensions.get('window').height});
+        this.setState({heightAnim:Dimensions.get('window').height-keyY});
+        // if(Platform.OS=="ios"){
+        //     this.setState({marignBAnim:Dimensions.get('window').height-keyY});
+            // Animated.timing(
+            //     this.state.marignBAnim,
+            //     {
+            //         toValue: Dimensions.get('window').height-keyY,
+            //         duration: 50
+            //     }
+            // ).start();
+        // }
 
-        Animated.timing(
-            this.state.marignBAnim,
-            {
-                toValue: Dimensions.get('window').height-keyY,
-                duration: 300
-            }
-        ).start();
+
     }
     _keyboardDidHide=(e)=>{
-        this.setState({marginTAnim:0});
-        Animated.timing(
-            this.state.marignBAnim,
-            {
-                toValue: 0,
-                duration: 300
-            }
-        ).start();
+        this.setState({heightAnim:0});
+        // if(Platform.OS=="ios"){
+        //     this.setState({marginTAnim:0});
+        //     this.setState({marignBAnim:0});
+            // Animated.timing(
+            //     this.state.marignBAnim,
+            //     {
+            //         toValue: 0,
+            //         duration: 50
+            //     }
+            // ).start();
+        // }
+
     }
 
     onReceiveMessage=(fromId)=>{
         if(fromId==this.otherSide.id){
-            if(this.isGroupChat){
-                this.records = Store.readGroupChatRecords(this.otherSide.id);
-            }else{
-                this.records = Store.readAllChatRecords(this.otherSide.id);
-            }
-            this.setState({messageChange:true});
+            this.refreshRecordList();
         }
 
     }
 
     onSendMessage=(targetId)=>{
-        if(targetId==this.otherSide.id)
-        this.setState({messageChange:true});
+        if(targetId==this.otherSide.id){
+            this.refreshRecordList();
+        }
     }
 
     componentWillMount =()=> {
@@ -120,7 +136,10 @@ export default class ChatView extends Component<{}> {
     }
 
     componentDidMount=()=>{
-        this.refs["scrollView"].scrollToEnd();
+        this.refreshRecordList();
+       setTimeout(()=>{
+           this.refs["scrollView"].scrollToEnd();
+       },50)
     }
 
     componentDidUpdate=()=>{
@@ -186,21 +205,24 @@ export default class ChatView extends Component<{}> {
             }
             else {
                 var imageUri = response.uri;
+                var img = {data:response.data,width:response.width,height:response.height}
+                this.sendImage(img);
+
                  // if(response.fileSize>1*1024*1024){
 
 
-                    ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
-                        RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
-                            // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
-                            // console.info("send img:"+'data:image/jpeg;base64,' + data);
-                            // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
-                            this.sendImage('data:image/jpeg;base64,' + data);
-                            // this.setState({
-                            //     avatarSource: source
-                            // });
-                        });
-                    }).catch((err) => {
-                    });
+                    // ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
+                    //     RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
+                    //         // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
+                    //         // console.info("send img:"+'data:image/jpeg;base64,' + data);
+                    //         // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
+                    //         this.sendImage('data:image/jpeg;base64,' + data);
+                    //         // this.setState({
+                    //         //     avatarSource: source
+                    //         // });
+                    //     });
+                    // }).catch((err) => {
+                    // });
                 // }else{
                 //      this.sendImage(imageUri,'data:image/jpeg;base64,' + response.data);
                 // }
@@ -240,45 +262,52 @@ export default class ChatView extends Component<{}> {
 
     doTouchMsgState=function () {
         if(this.ChatView.isGroupChat){
-            var rec = Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId);
-            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-                if(rec.text){
-                    WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.text);
-                }else{
-                    WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.img)
+            Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
+                if(rec){
+                    if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                        if(rec.type==Store.MESSAGE_TYEP_TEXT){
+                            WSChannel.resendGroupMessage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,rec.content);
+                        }else if(rec.type==Store.MESSAGE_TYPE_IMAGE){
+                            WSChannel.resendGroupImage(rec.msgId,this.ChatView.otherSide.id,this.ChatView.otherSide.name,JSON.parse(rec.content))
+                        }
+                    }else{
+                        this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
+                    }
                 }
-            }else{
-                this.ChatView.props.navigation.navigate("GroupMsgStateView",{gid:this.ChatView.otherSide.id,msgId:this.msgId});
-            }
+            });
 
         }else{
-            var rec = Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId);
-            if(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
-                if(rec.text)
-                    WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.text);
-                else
-                    WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,rec.img)
-            }
+            Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
+                if(rec&&rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
+                    if(rec.type==Store.MESSAGE_TYEP_TEXT)
+                        WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);
+                    else if(rec.type==Store.MESSAGE_TYPE_IMAGE)
+                        WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))
+                }
+            });
+
 
         }
     }
 
     _getMessage=(rec)=>{
-        if(rec.text){
-            return <Text>{rec.text}</Text>;
+        if(rec.type==Store.MESSAGE_TYEP_TEXT){
+            return <Text>{rec.content}</Text>;
 
-        }else if(rec.img) {
-            var imgUri = rec.img;
+        }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
+            var img = JSON.parse(rec.content);
+            var imgUri = img;
             var imgW = 180;
             var imgH = 180;
-            if(rec.img&&rec.img.data){
-                imgUri = rec.img.data;
-                imgW = rec.img.width;
-                imgH = rec.img.height;
+            if(img&&img.data){
+                imgUri = "file://"+img.data;
+                //imgW = img.width;
+                //imgH = img.height;
             }
            return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
-        }else if(rec.file){
-            return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{rec.file.name}</Text></TouchableOpacity>;
+        }else if(rec.type==Store.MESSAGE_TYPE_FILE){
+            var file = JSON.parse(rec.content);
+            return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
         }
     }
 
@@ -287,7 +316,7 @@ export default class ChatView extends Component<{}> {
        var recordEls = [];
        if(records){
            var lastSpTime;
-           var name = Store.getCurrentName();
+           var picSource = AppUtil.getAvatarSource(Store.getPersonalPic());
            var now = new Date();
            for(var i=0;i<records.length;i++){
                if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
@@ -306,11 +335,12 @@ export default class ChatView extends Component<{}> {
 
                    }
                }
-
-               if(records[i].id){
-                   recordEls.push(  <View key={i} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
+               this._keySeed++;
+               if(records[i].senderUid){
+                   var otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
+                   recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
-                       <Image source={require('../images/head2.jpeg')} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
+                       <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
                        <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
                        <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
                            {this._getMessage(records[i])}
@@ -319,7 +349,7 @@ export default class ChatView extends Component<{}> {
                }else{
                    var iconName = this.getIconNameByState(records[i].state);
                    var msgId = records[i].msgId;
-                   recordEls.push(<View key={i} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
+                   recordEls.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
                        </TouchableOpacity>
@@ -328,7 +358,7 @@ export default class ChatView extends Component<{}> {
                        </View>
                        {/*<Text>  {name}  </Text>*/}
                        <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                       <Image source={require('../images/head1.jpeg')} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
+                       <Image source={picSource} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
                    </View>);
                }
            }
@@ -340,19 +370,22 @@ export default class ChatView extends Component<{}> {
 
 
         return (
-            <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",backgroundColor:"#f0f0f0"}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",marginTop:this.state.marginTAnim}}>
-                        <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center"}}>
+            <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
+                <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:(Platform.OS=="ios"?this.state.heightAnim:0)}}>
+                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}}>
+                        <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {recordEls}
-                            <View style={{height:100}}/>
                         </View>
+
                     </ScrollView>
-                <Animated.View style={{marginBottom:this.state.marignBAnim,width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0"}}>
-                    <TextInput ref="text" style={{flex:1,color:"gray",borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#ffffff",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
-                    <TouchableOpacity onPress={this.showImagePicker}>
-                        <Image source={require('../images/photo.png')} style={{width:40,height:35,marginRight:5}} resizeMode="contain"></Image>
-                    </TouchableOpacity>
-                </Animated.View>
+
+                    <View style={{width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden"}}>
+                        <TextInput ref="text" style={{flex:1,color:"gray",borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#f0f0f0",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
+                        <TouchableOpacity onPress={this.showImagePicker}>
+                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5,}}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
                 <Modal
                     animationType={"fade"}
