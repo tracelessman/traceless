@@ -5,13 +5,20 @@
 
 import React, { Component } from 'react';
 import {
-    Text,
     View,Image,ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    ListView,
+    Alert
 } from 'react-native';
-import AppUtil from "../AppUtil"
 import Store from "../store/LocalStore"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIcon ,
+    Item, Input ,Card,CardItem,Body,Badge,
+    Thumbnail,Left,Right,Toast,Spinner
+} from 'native-base';
+import AppUtil from "../AppUtil";
+const {getAvatarSource} = AppUtil
+const {alert} = Alert
 
 export default class RecentView extends Component<{}> {
 
@@ -31,6 +38,10 @@ export default class RecentView extends Component<{}> {
 
     constructor(props){
         super(props);
+        const recent = Store.getAllRecent();
+        this.state = {
+            listViewData : recent
+        }
     }
 
     update=(fromId)=>{
@@ -60,36 +71,29 @@ export default class RecentView extends Component<{}> {
         }
     }
 
-    chat=function () {
-        var f = Store.getFriend(this.id);
-        this.RecentView.props.navigation.navigate("ChatView",{friend:f});
+    chat(uid) {
+        var f = Store.getFriend(uid);
+        this.props.navigation.navigate("ChatView",{friend:f});
     }
 
     groupChat=function () {
         this.RecentView.props.navigation.navigate("ChatView",{group:this.group});
     }
+    test(){
+        alert('test')
+    }
+
+    deleteRow(secId, rowId, rowMap) {
+        rowMap[`${secId}${rowId}`].props.closeRow();
+        const newData = [...this.state.listViewData];
+        newData.splice(rowId, 1);
+        this.setState({ listViewData: newData });
+    }
 
 
     render() {
-        var recent = Store.getAllRecent();
-        var recentList=[];
-        if(recent){
-            for(var i=0;i<recent.length;i++){
-                var re = recent[i];
-                var redTip=null;
-                if(re.newReceive){
-                    redTip = <View style={{width:14,height:14,borderRadius:14,backgroundColor:"red",overflow:"hidden",flexDirection:"row",justifyContent:"center",alignItems:"center"}}><Text style={{fontSize:10,color:"#ffffff",textAlign:"center"}}>{re.newMsgNum}</Text></View>
-                }
-                recentList.push(<TouchableOpacity key={i} RecentView={this} id={re.id} onPress={this.chat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Text>    {Store.getFriend(re.id).name}  </Text>{redTip}
-                    </View>
-                </TouchableOpacity>);
-                recentList.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
 
-            }
 
-        }
         var groups = Store.getGroups();
         var groupAry=[];
         if(groups){
@@ -115,7 +119,50 @@ export default class RecentView extends Component<{}> {
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
                 <ScrollView ref="scrollView" style={{width:"100%"}}>
-                {recentList}
+                    <List
+                        dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
+                        renderRow={data =>
+
+                                <ListItem thumbnail style={{}} >
+                                    <Left style={{marginLeft:10}}>
+                                        <Thumbnail   source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                                    </Left>
+                                    <Body >
+                                    <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
+                                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:45}}>
+                                        <View>
+                                            <Text style={{fontSize:25,fontWeight:'bold'}}>
+                                                {Store.getFriend(data.id).name}
+                                            </Text>
+                                        </View>
+                                        <View>
+                                            {data.newReceive?
+                                                <Badge style={{}}>
+                                                    <Text style={{}}>{data.newMsgNum}</Text>
+                                                </Badge>
+                                                :null}
+                                        </View>
+                                    </View>
+                                    </TouchableOpacity>
+
+                                    </Body>
+
+                                </ListItem>
+
+                           }
+
+                        // renderLeftHiddenRow={data =>
+                        //     <Button full onPress={() => alert(data)}>
+                        //         <NBIcon active name="information-circle" />
+                        //     </Button>}
+                        renderRightHiddenRow={(data, secId, rowId, rowMap) =>
+                            <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+                                <NBIcon active name="trash" />
+                            </Button>}
+                        // leftOpenValue={75}
+                        rightOpenValue={-75}
+                    />
+                {/*{recentList}*/}
                 {groupAry}
                 </ScrollView>
             </View>

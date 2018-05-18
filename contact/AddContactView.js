@@ -15,6 +15,8 @@ import {
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 import AddFriendIcon from './AddFriendIcon'
+import AppUtil from "../AppUtil";
+const {getAvatarSource} = AppUtil
 
 
 export default class AddContactView extends Component<{}> {
@@ -28,9 +30,14 @@ export default class AddContactView extends Component<{}> {
         if(this.searchText){
             this.setState({isWaiting:true})
             WSChannel.searchFriends(this.searchText,(data)=>{
-                const searchResult = data.result.filter((item)=>{
-                   return  item.uid !== Store.getCurrentUid()
+                const friendAry = Store.getAllFriends()
+                const friendIdAry = friendAry.map(ele=>{
+                    return ele.id
                 })
+                const searchResult = data.result.filter((item)=>{
+                   return  item.uid !== Store.getCurrentUid() && !friendIdAry.includes(item.uid)
+                })
+
                 this.setState({searchResult,isWaiting:false})
             });
         }else{
@@ -104,6 +111,7 @@ export default class AddContactView extends Component<{}> {
     }
 
     render() {
+
         var searchResult = [];
         if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
@@ -113,7 +121,7 @@ export default class AddContactView extends Component<{}> {
                         renderRow={data =>
                             <ListItem thumbnail>
                                 <Left>
-                                    <Thumbnail square size={35} source={data.pic?{uri:data.pic}:require('../images/defaultAvatar.png')} />
+                                    <Thumbnail square size={35} source={getAvatarSource(data.pic)} />
                                 </Left>
                                 <Body>
                                 <Text>

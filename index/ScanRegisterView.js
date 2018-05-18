@@ -78,7 +78,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
     cancel=()=>{
-        this.setState({step:1});
+        this.setState({step:1,registering:false});
     }
 
     createKey=()=>{
@@ -136,7 +136,7 @@ export default class ScanRegisterView extends React.Component {
 
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
                 <View style={{display:"flex",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",flex:1,backgroundColor:"#ffffff"}}>
-                    <View style={{width:"100%",height:50,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center"}}>
+                    <View style={{width:"100%",height:50,backgroundColor:"#ffffff",flexDirection:"column",justifyContent:"center",marginTop:10}}>
                         {
                             this.state.step==1?null:<TouchableOpacity style={{}} onPress={this.cancel}>
                                 <Text style={{fontSize:16,paddingLeft:10}}>取消</Text>

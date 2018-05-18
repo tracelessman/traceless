@@ -331,7 +331,7 @@ export default class ChatView extends Component<{}> {
                            timeStr+=(date.getMonth()+1)+"月"+date.getDate()+"日 ";
                        }
                        timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
-                       recordEls.push(<Text style={{marginTop:10,color:"#a0a0a0",fontSize:11}}>{timeStr}</Text>);
+                       recordEls.push(<Text  style={{marginTop:10,color:"#a0a0a0",fontSize:11}} key={timeStr}>{timeStr}</Text>);
 
                    }
                }
