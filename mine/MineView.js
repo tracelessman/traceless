@@ -156,6 +156,8 @@ export default class MineView extends Component<{}> {
                                         {text: '拍照', onPress: () => {
                                                 ImagePicker.openCamera(pickerOption).then(image => {
                                                     this.setAvatar(image)
+                                                }).catch(err=>{
+                                                    console.log(err)
                                                 })
                                             }},
                                         {text: '从相册获得', onPress: () => {

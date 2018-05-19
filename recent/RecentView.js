@@ -19,6 +19,7 @@ import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIco
 import AppUtil from "../AppUtil";
 const {getAvatarSource} = AppUtil
 const {alert} = Alert
+const _ = require('lodash')
 
 export default class RecentView extends Component<{}> {
 
@@ -45,7 +46,9 @@ export default class RecentView extends Component<{}> {
     }
 
     update=(fromId)=>{
-        this.setState({update:true});
+
+              this.updateRecent()
+        // this.setState({update:true});
     }
 
     componentWillMount =()=> {
@@ -64,15 +67,81 @@ export default class RecentView extends Component<{}> {
         Store.un("receiveGroupMessage",this.update);
     }
     componentDidMount=()=>{
+
+        this.updateRecent()
         var target = AppUtil.getResetTarget();
         if(target){
             this.props.navigation.navigate(target.view,target.param);
             AppUtil.clearResetTarget();
         }
+
+    }
+
+    componentWillUpdate(){
+
+    }
+
+    updateRecent(){
+      const recent = Store.getAllRecent();
+      console.log(recent)
+
+      this.state.listViewData = recent
+      let promiseAry = []
+      for(let ele of this.state.listViewData){
+          promiseAry.push(this.getLastMsg(ele.id))
+      }
+      Promise.all(promiseAry).then(resultMsgAry=>{
+          let newData = this.state.listViewData
+          for(let i =0;i<newData.length;i++){
+              if(resultMsgAry[i]){
+                  newData[i].lastMsg = resultMsgAry[i].content
+                  newData[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
+              }
+
+          }
+          this.setState({listViewData:newData})
+      })
+
+    }
+
+    getDisplayTime(date){
+        let result = ''
+        const now = new Date()
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        const day = date.getDate()
+        const hour = date.getHours()
+        const minute = date.getMinutes()
+        const second = date.getSeconds()
+        if(year === now.getFullYear()){
+            if(month === now.getMonth() && day === now.getDate()){
+              let prefix = ''
+              if(hour < 12){
+                prefix = '上午'
+              }else if(hour > 12){
+                prefix = '下午'
+              }
+              result = `${prefix} ${hour}:${this.pad(minute)}`
+            }else{
+                result = `${this.pad(month+1)}-${day}`
+            }
+        }else{
+            result = `${year}-${this.pad(month+1)}月-${day}日`
+        }
+        return result
+    }
+
+    pad(num){
+      num = String(num)
+      if(num.length === 1){
+        num = '0'+num
+      }
+      return num
     }
 
     chat(uid) {
         var f = Store.getFriend(uid);
+
         this.props.navigation.navigate("ChatView",{friend:f});
     }
 
@@ -84,16 +153,21 @@ export default class RecentView extends Component<{}> {
     }
 
     deleteRow(secId, rowId, rowMap) {
-        rowMap[`${secId}${rowId}`].props.closeRow();
-        const newData = [...this.state.listViewData];
-        newData.splice(rowId, 1);
-        this.setState({ listViewData: newData });
+        alert('delete')
     }
 
+    getLastMsg(chatId){
+        return new Promise(resolve=>{
+            Store._getLocalRecords(chatId,(res)=>{
+
+                let result = res[res.length-1]
+                resolve(result)
+            })
+        })
+
+    }
 
     render() {
-
-
         var groups = Store.getGroups();
         var groupAry=[];
         if(groups){
@@ -131,16 +205,25 @@ export default class RecentView extends Component<{}> {
                                     <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
                                     <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:45}}>
                                         <View>
-                                            <Text style={{fontSize:25,fontWeight:'bold'}}>
+                                            <Text style={{fontSize:18,fontWeight:"500"}}>
                                                 {Store.getFriend(data.id).name}
                                             </Text>
+                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
+                                                {data.lastMsg}
+                                            </Text>
                                         </View>
-                                        <View>
+                                        <View style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:5}}>
+                                                {data.time}
+                                            </Text>
+                                            <View>
                                             {data.newReceive?
                                                 <Badge style={{}}>
                                                     <Text style={{}}>{data.newMsgNum}</Text>
                                                 </Badge>
                                                 :null}
+                                            </View>
+
                                         </View>
                                     </View>
                                     </TouchableOpacity>
@@ -162,7 +245,7 @@ export default class RecentView extends Component<{}> {
                         // leftOpenValue={75}
                         rightOpenValue={-75}
                     />
-                {/*{recentList}*/}
+
                 {groupAry}
                 </ScrollView>
             </View>
@@ -170,5 +253,3 @@ export default class RecentView extends Component<{}> {
     }
 
 }
-
-

@@ -11,7 +11,9 @@ import {
     TouchableOpacity
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
-import AppUtil from "../AppUtil"
+import AppUtil from "../AppUtil";
+const {getAvatarSource} = AppUtil
+import { List, ListItem,Avatar,Card ,Icon} from 'react-native-elements'
 
 
 export default class FriendInfoView extends Component<{}> {
@@ -20,6 +22,7 @@ export default class FriendInfoView extends Component<{}> {
         super(props);
         this.state = {};
         this.friend = this.props.navigation.state.params.friend;
+        console.log(this.friend)
     }
 
     sendMessage=()=>{
@@ -30,7 +33,16 @@ export default class FriendInfoView extends Component<{}> {
     render() {
         var friend = this.friend;
         return (
+
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+            <Avatar
+              rounded
+              containerStyle={{ marginTop: 45,marginBottom:20}}
+              avatarStyle={{height:100,width:100}}
+              source={getAvatarSource(this.friend.pic)}
+              onPress={() => {}}
+              activeOpacity={1}
+            />
                 <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
                     <Text>标识：</Text><Text>{friend.id}</Text>
                 </View>

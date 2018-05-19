@@ -9,6 +9,9 @@ import {
 import Store from '../store/LocalStore'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import AppUtil from "../AppUtil";
+const {getAvatarSource} = AppUtil
+import { List, ListItem,Avatar,Card } from 'react-native-elements'
 
 export default class ContactView extends Component<{}> {
 
@@ -45,6 +48,7 @@ export default class ContactView extends Component<{}> {
     }
 
     go2FriendInfoView=(f)=>{
+
         this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
     }
 
@@ -54,9 +58,15 @@ export default class ContactView extends Component<{}> {
         var friends = [];
         var all = Store.getAllFriends();
         for(var i=0;i<all.length;i++){
-            var f = all[i];
+            let f = all[i];
+
             friends.push(<TouchableOpacity key={i} onPress={()=>{this.go2FriendInfoView(f)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                 <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
+                <Avatar
+                  source={getAvatarSource(f.pic)}
+                  onPress={() => {}}
+                  activeOpacity={1}
+                />
                     <Text>    {f.name}  </Text>
                 </View>
             </TouchableOpacity>);
