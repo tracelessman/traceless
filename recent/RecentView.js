@@ -1,7 +1,3 @@
-/**
- * Created by renbaogang on 2017/10/31.
- */
-
 
 import React, { Component } from 'react';
 import {
@@ -119,6 +115,8 @@ export default class RecentView extends Component<{}> {
                 prefix = '上午'
               }else if(hour > 12){
                 prefix = '下午'
+              }else if(hour === 12){
+                prefix = '中午'
               }
               result = `${prefix} ${hour}:${this.pad(minute)}`
             }else{
@@ -160,6 +158,20 @@ export default class RecentView extends Component<{}> {
             Store._getLocalRecords(chatId,(res)=>{
 
                 let result = res[res.length-1]
+
+                const {type} = result
+                const {length} = result.content
+                const maxDisplay = 15
+                if(type === Store.MESSAGE_TYEP_TEXT){
+                    if(length > maxDisplay){
+                      result.content = result.content.substring(0,maxDisplay)+"......"
+                    }
+                }else if(type === Store.MESSAGE_TYPE_IMAGE){
+                  result.content = '[图片]'
+                }else if(type === Store.MESSAGE_TYEP_FILE){
+                  result.content = '[文件]'
+                }
+
                 resolve(result)
             })
         })
