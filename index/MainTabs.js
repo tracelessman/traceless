@@ -18,6 +18,7 @@ import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
+import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tab from './Tab'
 const iconSize = 26
@@ -151,6 +152,12 @@ var MainStack = StackNavigator({
         navigationOptions:{
             headerTitle: '消息状态'
         }
+    },
+    AddGroupMemberView:{
+      screen:AddGroupMemberView,
+      navigationOptions:{
+          headerTitle: '添加群成员'
+      }
     }
 }, {
     transitionConfig:function transitionConfig(){

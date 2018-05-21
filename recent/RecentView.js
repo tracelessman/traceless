@@ -83,7 +83,6 @@ export default class RecentView extends Component<{}> {
 
     updateRecent(){
       const recent = Store.getAllRecent();
-      console.log(recent)
 
       this.state.listViewData = recent
       let promiseAry = []
