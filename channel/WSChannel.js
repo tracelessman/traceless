@@ -451,6 +451,15 @@ var WSChannel={
             callback(data);
         });
         this._sendRequest(req,timeoutCallback);
+    },
+    addGroupMember:function (gid,uid) {
+
+    },
+    leaveGroup:function (gid) {
+
+    },
+    deleteContact:function (uid) {
+
     }
 };
 Store.on("readChatRecords",function (data) {
