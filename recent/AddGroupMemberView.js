@@ -80,7 +80,15 @@ export default class AddGroupMemberView extends Component<{}> {
                                 </Text>
                                 </Body>
                                 <Right>
-                                    <AddMemberIcon uid={data.uid}></AddMemberIcon>
+                                    <AddMemberIcon checked={()=>{
+                                      WSChannel.addGroupMember(this.group.id,data.uid)
+                                          Toast.show({
+                                               text: `成功添加群成员${data.name}`,
+                                               position: "top",
+                                               type:"success",
+                                               duration: 3000
+                                           })
+                                    }}></AddMemberIcon>
                                 </Right>
                             </ListItem>}
                     />

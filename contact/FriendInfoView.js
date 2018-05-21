@@ -8,7 +8,8 @@ import {
     View,
     TextInput,
     Button,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import AppUtil from "../AppUtil";
@@ -35,14 +36,10 @@ export default class FriendInfoView extends Component<{}> {
         return (
 
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
-            <Avatar
-              rounded
-              containerStyle={{ marginTop: 45,marginBottom:20}}
-              avatarStyle={{height:100,width:100}}
-              source={getAvatarSource(this.friend.pic)}
-              onPress={() => {}}
-              activeOpacity={1}
-            />
+<Image source={getAvatarSource(this.friend.pic)}
+style={{margin:10,width:100,height:100,borderRadius:5}} resizeMode="contain"></Image>
+
+
                 <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
                     <Text>标识：</Text><Text>{friend.id}</Text>
                 </View>

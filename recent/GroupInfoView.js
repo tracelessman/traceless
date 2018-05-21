@@ -1,6 +1,3 @@
-/**
- * Created by renbaogang on 2017/11/10.
- */
 
 import React, { Component } from 'react';
 import {
@@ -15,34 +12,29 @@ import { Container, Header, Content, List, ListItem ,Icon ,
     Thumbnail,Left,Right,Toast,Spinner
 } from 'native-base'
 const {alert} = Alert
-
+import WSChannel from "../channel/WSChannel"
 
 export default class GroupInfoView extends Component<{}> {
   static navigationOptions =({ navigation, screenProps }) => {
-    console.log(navigation)
-    return      {
 
+    return      {
             headerRight:  <TouchableOpacity style={{marginRight:15}} onPress={()=>{
               navigation.navigate("AddGroupMemberView",{group:navigation.state.params.group})
             }}  >
                <Icon name='person-add' />
-
             </TouchableOpacity>,
-
         }
-
   }
     constructor(props){
         super(props);
        this.group = this.props.navigation.state.params.group;
-       console.log(this.group)
-        console.log(Store.getCurrentUid())
         this.isManager = this.group.id.startsWith(Store.getCurrentUid())
-        console.log(this.isManager)
     }
+    leaveGroup = ()=>{
+      WSChannel.leaveGroup(this.group.id)
 
-
-
+      this.props.navigation.popToTop()
+    }
 
     render() {
         var friends = [];
@@ -62,21 +54,9 @@ export default class GroupInfoView extends Component<{}> {
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
 
                 {friends}
-                <View style={{display:"flex",flexDirection:"column",alignItems:"flex-end",justifyContent:"flex-end"}}>
-                <View>
-                {this.isManager?
-                  (<Button style={{padding:20,margin:20}} onPress={()=>{alert('退出')}} >
-                        <Text style={{color:'white'}}>删除该群</Text>
-                    </Button>)
-                  :
-                  (<Button style={{padding:20,margin:20}} onPress={()=>{alert('退出')}} >
-                        <Text style={{color:'white'}}>退出该群</Text>
-                    </Button>)
-                }
-                </View>
-
-
-                </View>
+                <TouchableOpacity onPress={()=>{this.leaveGroup()}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+                    <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>退出该群</Text>
+                </TouchableOpacity>
 
 
             </View>

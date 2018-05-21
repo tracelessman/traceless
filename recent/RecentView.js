@@ -7,6 +7,7 @@ import {
     Alert
 } from 'react-native';
 import Store from "../store/LocalStore"
+import WSChannel from "../channel/WSChannel"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIcon ,
     Item, Input ,Card,CardItem,Body,Badge,
@@ -149,8 +150,9 @@ export default class RecentView extends Component<{}> {
         alert('test')
     }
 
-    deleteRow(secId, rowId, rowMap) {
-        alert('delete')
+    deleteRow(data) {
+      WSChannel.deleteContact(data.id)
+      this.update()
     }
 
     getLastMsg(chatId){
@@ -203,7 +205,14 @@ export default class RecentView extends Component<{}> {
 
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+            {(!this.state.listViewData.length && !groupAry.length)?
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+                  <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
+              </TouchableOpacity>
+               :null}
+
                 <ScrollView ref="scrollView" style={{width:"100%"}}>
+
                     <List
                         dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
                         renderRow={data =>
@@ -224,12 +233,12 @@ export default class RecentView extends Component<{}> {
                                             </Text>
                                         </View>
                                         <View style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:5}}>
+                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
                                                 {data.time}
                                             </Text>
                                             <View>
                                             {data.newReceive?
-                                                <Badge style={{}}>
+                                                <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
                                                     <Text style={{}}>{data.newMsgNum}</Text>
                                                 </Badge>
                                                 :null}
@@ -250,7 +259,7 @@ export default class RecentView extends Component<{}> {
                         //         <NBIcon active name="information-circle" />
                         //     </Button>}
                         renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+                            <Button full danger onPress={_ => this.deleteRow(data)}>
                                 <NBIcon active name="trash" />
                             </Button>}
                         // leftOpenValue={75}

@@ -25,19 +25,9 @@ export default class AddFriendIcon extends Component<{}> {
 
 
 
-    addFriend = (fid)=>{
+    check = ()=>{
       this.setState({isSending:true})
-      alert('成功添加群成员')
-        // WSChannel.applyMakeFriends(fid, (result)=> {
-        //     this.setState({isSending:true})
-        //     Toast.show({
-        //         text: '好友申请已发送，等待对方审核',
-        //         position: "top",
-        //         type:"success",
-        //         duration: 3000
-        //     })
-        // })
-
+      this.props.checked()
     }
 
 
@@ -56,7 +46,7 @@ export default class AddFriendIcon extends Component<{}> {
         const view2 = (
             <View>
                 <Button transparent onPress={()=>{
-                    this.addFriend(this.props.uid)
+                    this.check()
                 }}>
                     <Icon name='md-add' />
                 </Button>
