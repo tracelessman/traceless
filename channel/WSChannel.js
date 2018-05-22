@@ -452,8 +452,19 @@ var WSChannel={
         });
         this._sendRequest(req,timeoutCallback);
     },
-    addGroupMember:function (gid,uid) {
-
+    addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{
+            if(data.err){
+                if(errCallback)
+                    errCallback(data.err);
+            }else{
+                Store.addGroupMembers(gid,uids);
+            }
+        },null,null,msgId);
+        this._sendRequest(req,timeoutCallback);
+    },
+    addGroupMembersHandler:function (msg,callback) {
+        Store.addGroupMembers(msg.groupId,msg.newMembers,msg.allMembers);
     },
     leaveGroup:function (gid) {
 

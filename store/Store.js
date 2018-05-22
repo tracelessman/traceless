@@ -404,6 +404,29 @@ var Store = {
     getGroup:function (id) {
         return this._getGroup(id,false);
     },
+    addGroupMembers:function (gid,newMembers,allMembers) {
+        var group = this.getGroup(gid);
+        if(!group){
+            this.addGroup(gid,name,allMembers);
+        }
+        if(group){
+
+            if(allMembers)
+                group.members = allMembers;
+            else{
+                newMembers.forEach( (m)=> {
+                    var oldMember = this.getMember(gid,m.uid);
+                    if(!oldMember){
+                        var f = this.getFriend(m.uid);
+                        m.name = f.name;
+                        m.pic = f.pic;
+                        group.members.push(m);
+                    }
+                });
+            }
+            this.fire("groupMembersChanged",gid);
+        }
+    },
     readGroupChatRecords:function (id,ignoreState,callback) {
         this._getLocalRecords(id, (records) =>{
             var g = this._getGroup(id,true);
