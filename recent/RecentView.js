@@ -14,6 +14,7 @@ import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIco
     Thumbnail,Left,Right,Toast,Spinner
 } from 'native-base';
 import AppUtil from "../AppUtil";
+import GroupAvatar from "./GroupAvatar";
 const {getAvatarSource} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
@@ -21,7 +22,6 @@ const _ = require('lodash')
 export default class RecentView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => (
-
         {
             // headerStyle: {
             //     backgroundColor: '#434343'
@@ -43,9 +43,7 @@ export default class RecentView extends Component<{}> {
     }
 
     update=(fromId)=>{
-
               this.updateRecent()
-        // this.setState({update:true});
     }
 
     componentWillMount =()=> {
@@ -64,14 +62,12 @@ export default class RecentView extends Component<{}> {
         Store.un("receiveGroupMessage",this.update);
     }
     componentDidMount=()=>{
-
         this.updateRecent()
         var target = AppUtil.getResetTarget();
         if(target){
             this.props.navigation.navigate(target.view,target.param);
             AppUtil.clearResetTarget();
         }
-
     }
 
     componentWillUpdate(){
@@ -93,11 +89,9 @@ export default class RecentView extends Component<{}> {
                   newData[i].lastMsg = resultMsgAry[i].content
                   newData[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
               }
-
           }
           this.setState({listViewData:newData})
       })
-
     }
 
     getDisplayTime(date){
@@ -109,6 +103,9 @@ export default class RecentView extends Component<{}> {
         const hour = date.getHours()
         const minute = date.getMinutes()
         const second = date.getSeconds()
+        const timeDiff = now.getTime() - date.getTime()
+        const dayDiff = Math.floor(timeDiff / (1000*60*60*24))
+
         if(year === now.getFullYear()){
             if(month === now.getMonth() && day === now.getDate()){
               let prefix = ''
@@ -126,6 +123,10 @@ export default class RecentView extends Component<{}> {
         }else{
             result = `${year}-${this.pad(month+1)}月-${day}日`
         }
+        console.log(dayDiff)
+        if(dayDiff === 1){
+          result = '昨天'
+        }
         return result
     }
 
@@ -139,7 +140,6 @@ export default class RecentView extends Component<{}> {
 
     chat(uid) {
         var f = Store.getFriend(uid);
-
         this.props.navigation.navigate("ChatView",{friend:f});
     }
 
@@ -158,7 +158,6 @@ export default class RecentView extends Component<{}> {
     getLastMsg(chatId){
         return new Promise(resolve=>{
             Store._getLocalRecords(chatId,(res)=>{
-
                 let result = res[res.length-1]
 
                 const {type} = result
@@ -192,7 +191,7 @@ export default class RecentView extends Component<{}> {
                 }
                 groupAry.push(<TouchableOpacity key={i} RecentView={this} group={group}  onPress={this.groupChat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <Image source={require('../images/mulChat.png')} style={{width:20,height:20}} resizeMode="contain"></Image>
+                        <GroupAvatar group={group} ></GroupAvatar>
                         <Text>    {group.name}  </Text>
                         {redTip}
                     </View>
@@ -210,13 +209,10 @@ export default class RecentView extends Component<{}> {
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
                :null}
-
                 <ScrollView ref="scrollView" style={{width:"100%"}}>
-
                     <List
                         dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
                         renderRow={data =>
-
                                 <ListItem thumbnail style={{}} >
                                     <Left style={{marginLeft:10}}>
                                         <Thumbnail   source={getAvatarSource(Store.getFriend(data.id).pic)} />
@@ -243,13 +239,10 @@ export default class RecentView extends Component<{}> {
                                                 </Badge>
                                                 :null}
                                             </View>
-
                                         </View>
                                     </View>
                                     </TouchableOpacity>
-
                                     </Body>
-
                                 </ListItem>
 
                            }

@@ -406,8 +406,11 @@ var Store = {
     },
     addGroupMembers:function (gid,newMembers,allMembers) {
         var group = this.getGroup(gid);
+        console.log(group)
+        console.log(newMembers)
+
         if(!group){
-            this.addGroup(gid,name,allMembers);
+            this.addGroup(gid,group.name,allMembers);
         }
         if(group){
 
@@ -424,7 +427,7 @@ var Store = {
                     }
                 });
             }
-            this.fire("groupMembersChanged",gid);
+            this._fire("groupMembersChanged",gid);
         }
     },
     readGroupChatRecords:function (id,ignoreState,callback) {

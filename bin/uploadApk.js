@@ -8,16 +8,34 @@ const crypto = require('crypto')
 
 const start = Date.now()
 
-ssh.connect({
-    host: '123.207.145.167',
-    username: 'root',
-    password: 'proxy@hfs'
-}).then(()=>{
+let config = {
+    host:'localhost',
+    username: 'spirit',
+    privateKey: '/Users/spirit/.ssh/id_rsa'
+}
+
+// config = {
+//     host:'123.207.145.167',
+//     username: 'root',
+//     password: 'proxy@hfs'
+// }
+ssh.connect(config).then(()=>{
     const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
     const algorithm =  crypto.createHash('md5')
     let hashValue = algorithm.update(fs.readFileSync(localApkPath)).digest('hex')
+    let updateInfo = {
+        hash:hashValue,
+        version:require('../package.json').version
+    }
+    const localUpdatePath = __dirname+'/update.json'
+    fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
-    ssh.putFile(localApkPath ,'/opt/traceless-transfer/public/pkg/traceless.apk').then(function() {
+    const fileAry = [{
+        local:localApkPath,remote:'/opt/traceless-transfer/public/pkg/traceless.apk'
+    },{
+        local:localUpdatePath,remote:'/opt/traceless-transfer/public/pkg/update.json'
+    }]
+    ssh.putFiles(fileAry).then(function() {
         ssh.execCommand('md5sum traceless.apk', { cwd:'/opt/traceless-transfer/public/pkg' }).then(function(result) {
             if(result.stderr){
                 console.log('STDOUT: ' + result.stdout)
@@ -27,6 +45,9 @@ ssh.connect({
                 if(remoteHashValue === hashValue){
                     console.log('apk uploaded successfully')
                     console.log(`time elapsed is ${(Date.now()-start)/1000} s`)
+                    fs.unlink(localUpdatePath,(err)=>{
+                        console.log(err)
+                    })
                     process.exit()
                 }else{
                     throw new Error('apk uploading failed')

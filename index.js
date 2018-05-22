@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import UpdateCheck from './UpdateCheck';
 
-AppRegistry.registerComponent('traceless', () => App);
+AppRegistry.registerComponent('traceless', () => UpdateCheck);
