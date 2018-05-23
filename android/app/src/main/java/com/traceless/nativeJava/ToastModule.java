@@ -3,6 +3,7 @@ package com.traceless.nativeJava;
 import android.widget.Toast;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -38,4 +39,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.reactContext.startActivity(intent);
          }
+     @ReactMethod
+        private void test(String test) {
+                Log.wtf("tag",test);
+        }
 }

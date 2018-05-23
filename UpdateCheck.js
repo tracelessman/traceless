@@ -25,7 +25,6 @@ const url = "http://123.207.145.167:3000"
 const versionLocal = require('./package').version
 const semver = require('semver')
 
-
 // console.log(md5.hex_md5('test'))
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
