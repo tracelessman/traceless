@@ -24,7 +24,7 @@ fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 console.log('packing apk ..................')
 
 childProcess.exec(`
-    npm run pack:android && git commit -am "${version} @${new Date()}" && git push
+     git commit -am "${version} @${new Date()}" && git push
 `,(error,stdout,stderr)=>{
     if (error) {
         console.error(`exec error: ${error}`);
