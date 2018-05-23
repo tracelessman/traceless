@@ -78,7 +78,18 @@ export default class UpdateCheck extends Component<{}> {
                 const {hash,version} = data
 
                 if(semver.gt(version,versionLocal)){
-                    this.updateApp()
+                  Alert.alert(
+                      '提示',
+                      `有最新版本${version},是否马上升级?`,
+                      [
+                          {text: '取消', onPress: () => {}, style: 'cancel'},
+                          {text: '确认', onPress: () => {
+                                this.updateApp()
+                              }},
+                      ],
+                      { cancelable: false }
+                  )
+
                 }
             }).catch(function (error) {
             console.log(error);

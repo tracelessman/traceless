@@ -373,6 +373,7 @@ var Store = {
         this._save();
     },
     getGroups:function () {
+
         var groups = this.keyData.groups;
         if(!groups){
             groups = [];

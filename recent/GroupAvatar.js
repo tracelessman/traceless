@@ -16,44 +16,29 @@ import ScanView from '../mine/ScanView'
 const {alert} = Alert
 
 
-export default class AddFriendIcon extends Component<{}> {
+export default class GroupAvatar extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={isSending:false};
-    }
 
 
 
-    check = ()=>{
-      this.setState({isSending:true})
-      this.props.checked()
     }
 
 
     render() {
+        const picAry = [Store.getPersonalPic()]
 
-
-        const view1 = (
-            <View>
-                <Button transparent onPress={()=>{
-                }}>
-                    <Icon name='md-checkmark' />
-                </Button>
+        for(let member of this.props.group.members){
+            if(member.uid !== Store.getCurrentUid()){
+              picAry.push(Store.getFriend(member.uid))
+            }
+        }
+        return   (
+          <View style={{display:'flex',justifyContent:"center",alignItems:"center"}}>
+              <Image source={require('../images/mulChat.png')} style={{width:20,height:20}} resizeMode="contain"></Image>
             </View>
-
         )
-        const view2 = (
-            <View>
-                <Button transparent onPress={()=>{
-                    this.check()
-                }}>
-                    <Icon name='md-add' />
-                </Button>
-            </View>
-
-        )
-        return this.state.isSending?view1:view2
     }
 
 }

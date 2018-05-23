@@ -19,6 +19,7 @@ const {getAvatarSource} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
 
+
 export default class RecentView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => (
@@ -123,7 +124,6 @@ export default class RecentView extends Component<{}> {
         }else{
             result = `${year}-${this.pad(month+1)}月-${day}日`
         }
-        console.log(dayDiff)
         if(dayDiff === 1){
           result = '昨天'
         }
