@@ -5,6 +5,27 @@ var Store = require("../store/Store")
 
 
 var WSChannel={
+    _listeners:new Map(),
+    on:function (event,fun) {
+        var ary=this._listeners.get(event)
+        if(!ary){
+            ary = [];
+            this._listeners.set(event,ary);
+        }
+        ary.push(fun);
+    },
+    un:function (event,fun) {
+        var ary=this._listeners.get(event);
+        ary.splice(ary.indexOf(fun),1);
+    },
+    _fire:function (event,params) {
+        var ary=this._listeners.get(event)
+        if(ary){
+            ary.forEach(function(o){
+                o(params);
+            });
+        }
+    },
     timeout:60000,
     _lastPongTime:null,
     seed:Date.now(),
@@ -177,6 +198,7 @@ var WSChannel={
                 Store.foreSave();
 
                 callback(msg);
+                WSChannel._fire("afterLogin");
                 WSChannel.checkTimeoutMsg();
 
             });
