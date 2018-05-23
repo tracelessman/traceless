@@ -67,9 +67,9 @@ export default class UpdateCheck extends Component<{}> {
         })
         // const filePath = RNFS.DocumentDirectoryPath + '/com.traceless.apk';
         const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
-        console.log(filePath)
+        // console.log(filePath)
         // NativeModules.ToastExample.install(filePath);
-        const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/app-release.apk'
+        const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
 
         // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
 
