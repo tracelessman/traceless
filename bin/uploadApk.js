@@ -9,16 +9,10 @@ const crypto = require('crypto')
 const start = Date.now()
 
 let config = {
-    host:'localhost',
-    username: 'spirit',
-    privateKey: '/Users/spirit/.ssh/id_rsa'
+    host:'123.207.145.167',
+    username: 'root',
+    password: 'proxy@hfs'
 }
-
-// config = {
-//     host:'123.207.145.167',
-//     username: 'root',
-//     password: 'proxy@hfs'
-// }
 ssh.connect(config).then(()=>{
     const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
     const algorithm =  crypto.createHash('md5')
