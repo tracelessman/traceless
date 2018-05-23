@@ -241,13 +241,13 @@ var Store = {
         }
         return this.keyData.recent;
     },
-    deleteRecent:function (id) {
+    deleteRecent:function (id,callback) {
         var recents = this.getAllRecent();
         for(var j=0;j<recents.length;j++){
             if(recents[j].id==id){
                 recents.splice(j,1);
                 this._save(()=>{
-                    this._deleteLocalRecords(id);
+                    this._deleteLocalRecords(id,callback);
                 });
                 break;
             }
