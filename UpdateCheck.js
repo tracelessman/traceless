@@ -97,7 +97,7 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     checkUpdate = ()=>{
-        axios.get(`https://raw.githubusercontent.com/tracelessman/traceless/publish/update.json`)
+        axios.get(`https://raw.githubusercontent.com/tracelessman/traceless/publish/bin/update.json`)
             .then( (response)=> {
                 const {data} = response
                 const {hash,version} = data
