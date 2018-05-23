@@ -9,7 +9,8 @@ import {
     Platform,
     StyleSheet,
     Text,
-    View,AsyncStorage
+    View,AsyncStorage,
+    NativeModules
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -17,9 +18,9 @@ import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
-import { Root } from "native-base"
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
+
 
 export default class App extends Component<{}> {
 
@@ -112,12 +113,9 @@ export default class App extends Component<{}> {
         }
 
         return (
-            <Root>
-                <View style={styles.container}>
-                    {content}
-                </View>
-            </Root>
-
+            <View style={styles.container}>
+                {content}
+            </View>
         );
     }
 

@@ -14,7 +14,7 @@ export default class Tab extends React.Component {
         }
 
     }
-    componentWillMount =()=> {
+    componentDidMount =()=> {
         if(this.type=="recent"){
             Store.on("receiveMessage",this.notify)
             Store.on("receiveGroupMessage",this.notify)

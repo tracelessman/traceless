@@ -17,6 +17,7 @@ import ScanView from '../mine/ScanView'
 import AddMemberIcon from './AddMemberIcon'
 import AppUtil from "../AppUtil";
 const {getAvatarSource} = AppUtil
+const _ = require('lodash')
 
 
 export default class AddGroupMemberView extends Component<{}> {
@@ -46,10 +47,16 @@ export default class AddGroupMemberView extends Component<{}> {
                 this.setState({searchResult,isWaiting:false})
             });
         }else{
-            Toast.show({
-                text: '请输入需要搜索的字符',
-                position: "bottom",
-            })
+          const friendAry = _.cloneDeep(Store.getAllFriends())
+
+          const searchResult = friendAry.filter((item)=>{
+             return  !this.alreadyMemberIdAry.includes(item.id)
+          }).map(item=>{
+            item.uid = item.id
+            return item
+          })
+
+          this.setState({searchResult,isWaiting:false})
         }
     }
 
@@ -58,6 +65,9 @@ export default class AddGroupMemberView extends Component<{}> {
     }
     toggelLine=()=>{
         this.setState({numberOfLines:2})
+    }
+    componentDidMount(){
+      this.doSearch()
     }
 
 
@@ -81,10 +91,10 @@ export default class AddGroupMemberView extends Component<{}> {
                                 </Body>
                                 <Right>
                                     <AddMemberIcon checked={()=>{
-                                      WSChannel.addGroupMember(this.group.id,data.uid)
+                                      WSChannel.addGroupMembers(this.group.id,[data])
                                           Toast.show({
                                                text: `成功添加群成员${data.name}`,
-                                               position: "top",
+                                               position: "bottom",
                                                type:"success",
                                                duration: 3000
                                            })
@@ -101,7 +111,7 @@ export default class AddGroupMemberView extends Component<{}> {
                         </Left>
                         <Body>
                         <Text>
-                            没有结果
+
                         </Text>
                         </Body>
                     </ListItem>
@@ -117,9 +127,7 @@ export default class AddGroupMemberView extends Component<{}> {
                     <Item>
                         <Icon name="ios-search"  onPress={this.doSearch} />
                         <Input placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
-
                     </Item>
-
                 </Header>
                 <Content style={{marginTop:10}}>
                     {this.state.isWaiting?<Spinner />:null}

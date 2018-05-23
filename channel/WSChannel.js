@@ -453,14 +453,16 @@ var WSChannel={
         this._sendRequest(req,timeoutCallback);
     },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
+        console.log(uids)
         var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{
+            console.log(data)
             if(data.err){
                 if(errCallback)
                     errCallback(data.err);
             }else{
                 Store.addGroupMembers(gid,uids);
             }
-        },null,null,msgId);
+        },null,null,null);
         this._sendRequest(req,timeoutCallback);
     },
     addGroupMembersHandler:function (msg,callback) {

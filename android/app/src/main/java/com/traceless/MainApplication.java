@@ -3,6 +3,8 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
+import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -17,6 +19,7 @@ import com.facebook.soloader.SoLoader;
 import org.reactnative.camera.RNCameraPackage;
 import org.pgsqlite.SQLitePluginPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
+import com.traceless.nativeJava.AnExampleReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +41,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeAPKPackage(),
+            new RNFSPackage(),
             new SvgPackage(),
             new PickerPackage(),
             new VectorIconsPackage(),
@@ -47,7 +52,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFetchBlobPackage(),
             new RNCameraPackage(),
               new SQLitePluginPackage(),
-              new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
+              new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG),
+              new AnExampleReactPackage()
       );
     }
 
