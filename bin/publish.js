@@ -31,7 +31,7 @@ childProcess.exec(`
         return;
     }
     console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
+    console.log(`${stderr}`);
     console.log(`time elapsed ${(Date.now()-start)/1000} s`)
-    
+
 })
