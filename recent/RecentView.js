@@ -151,8 +151,9 @@ export default class RecentView extends Component<{}> {
     }
 
     deleteRow(data) {
-      WSChannel.deleteContact(data.id)
-      this.update()
+      Store.deleteRecent(data.id,()=>{
+          this.update()
+      })
     }
 
     getLastMsg(chatId){

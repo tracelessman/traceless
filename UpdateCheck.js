@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Text,
     View,AsyncStorage,
-    NativeModules
+    NativeModules,Alert
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
