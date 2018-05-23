@@ -51,7 +51,6 @@ export default class App extends Component<{}> {
                     tag:tag
                 }).then((result)=>{
                     const {registrationId} = result
-                    console.log(result)
 
                 }).catch(err=>{
                     console.log(err)

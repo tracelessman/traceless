@@ -13,6 +13,7 @@ import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
+const versionLocal = require('../package').version
 
 
 export default class MineView extends Component<{}> {
@@ -83,9 +84,6 @@ export default class MineView extends Component<{}> {
     }
 
     render() {
-
-
-
         const list2 = [
             {
                 title:`身份标识`,
@@ -110,6 +108,10 @@ export default class MineView extends Component<{}> {
                 title:`授权其他设备`,
                 icon:'crop-free',
                 onPress:this.showScanView
+            },
+            {
+                title:`当前版本:${versionLocal}`,
+                icon:'new-releases',
             },
         ]
 
