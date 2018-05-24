@@ -42,17 +42,13 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
         console.error(`exec error: ${error}`);
         return;
     }
-    console.log(`stdout: ${stdout}`);
-    console.log(`${stderr}`);
-    console.log(`time elapsed ${(Date.now()-start)/1000} s`)
+
     validate()
 
 })
 
 function validate(){
-
     const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
-
     axios.get(apkUrl).then( (res)=> {
       // 'status', 'statusText', 'headers',
           if(res.status !== 200){
@@ -60,6 +56,10 @@ function validate(){
             console.log(res.status)
             console.log(res.statusText)
             console.log(res.headers)
+          }else{
+            console.log(`stdout: ${stdout}`);
+            console.log(`${stderr}`);
+            console.log(`time elapsed ${(Date.now()-start)/1000} s`)
           }
 
         }).catch(err=>{
