@@ -23,8 +23,9 @@ const axios = require('axios')
 // const url = "http://123.207.145.167:3000"
 const versionLocal = require('./package').version
 const semver = require('semver')
-
+const config = require('./config')
 // console.log(md5.hex_md5('test'))
+const {updateJsonUrl,apkUrl} = config
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -62,7 +63,7 @@ export default class UpdateCheck extends Component<{}> {
 
 
     checkUpdate = ()=>{
-        axios.get(`https://raw.githubusercontent.com/tracelessman/traceless/publish/bin/update.json`)
+        axios.get(updateJsonUrl)
             .then( (response)=> {
                 const {data} = response
                 const {hash,version} = data
@@ -71,40 +72,39 @@ export default class UpdateCheck extends Component<{}> {
                     const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
                     // console.log(filePath)
                     // NativeModules.ToastExample.install(filePath);
-                    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
 
                     // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
-                    Alert.alert(
-                        '提示',
-                        `有最新版本${version},是否马上升级?`,
-                        [
-                            {text: '取消', onPress: () => {}, style: 'cancel'},
-                            {text: '确认', onPress: () => {
-                                    Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
-                                }},
-                        ],
-                        { cancelable: false }
-                    )
+                    // Alert.alert(
+                    //     '提示',
+                    //     `有最新版本${version},是否马上升级?`,
+                    //     [
+                    //         {text: '取消', onPress: () => {}, style: 'cancel'},
+                    //         {text: '确认', onPress: () => {
+                    //                 Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
+                    //             }},
+                    //     ],
+                    //     { cancelable: false }
+                    // )
 
-                    return
+                    // return
 
-                    // RNFetchBlob.config({
-                    //     useDownloadManager : true,
-                    //     fileCache : true,
-                    //     path:filePath
-                    // }).fetch('GET',apkUrl)
-                    //     .progress({ count : 10 }, (received, total) => {
-                    //         console.log(received)
-                    //         console.log(total)
-                    //         console.log('progress', received / total)
-                    //     })
-                    //     .then((res)=>{
-                    //         this.installApp(filePath,hash,version)
-                    //     })
-                    //     .catch((err) => {
-                    //         console.log(err)
-                    //
-                    //     })
+                    RNFetchBlob.config({
+                        useDownloadManager : true,
+                        fileCache : true,
+                        path:filePath
+                    }).fetch('GET',apkUrl)
+                        .progress({ count : 10 }, (received, total) => {
+                            console.log(received)
+                            console.log(total)
+                            console.log('progress', received / total)
+                        })
+                        .then((res)=>{
+                            this.installApp(filePath,hash,version)
+                        })
+                        .catch((err) => {
+                            console.log(err)
+
+                        })
 
 
 
