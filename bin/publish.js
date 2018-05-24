@@ -24,7 +24,8 @@ if(argv.p || !fs.existsSync(localApkPath)){
         npm run pack:android
     `)
 }
-const publishFolderPath = path.resolve(__dirname,'../pkg')
+const folderName = 'pkg'
+const publishFolderPath = path.resolve(__dirname,`../${folderName}`)
 fse.ensureDirSync(publishFolderPath)
 fse.copySync(localApkPath,path.resolve(publishFolderPath,'traceless.apk'))
 
@@ -41,7 +42,7 @@ fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
 
 let cmd = `
-     git add publish && git commit -am "${version} @${new Date()}" && git push
+     git add ${folderName} && git commit -am "${version} @${new Date()}" && git push
 `
 
 childProcess.exec(cmd,(error,stdout,stderr)=>{
