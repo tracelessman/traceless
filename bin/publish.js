@@ -15,6 +15,7 @@ childProcess.execSync(`
     git checkout publish
 `)
 if(argv.p){
+    console.log('packing apk ..................')
     childProcess.execSync(`
         npm run pack:android
     `)
@@ -29,7 +30,7 @@ let updateInfo = {
 }
 const localUpdatePath = __dirname+'/update.json'
 fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
-console.log('packing apk ..................')
+
 
 let cmd = `
      git commit -am "${version} @${new Date()}" && git push
