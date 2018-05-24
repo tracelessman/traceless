@@ -73,7 +73,6 @@ export default class UpdateCheck extends Component<{}> {
                     // console.log(filePath)
                     // NativeModules.ToastExample.install(filePath);
 
-                    // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
                     Alert.alert(
                         '提示',
                         `有最新版本${version},是否马上升级?`,
