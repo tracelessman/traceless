@@ -32,7 +32,7 @@ export default class GroupAvatar extends Component<{}> {
 
         for(let member of this.props.group.members){
             if(member.uid !== Store.getCurrentUid()){
-              picAry.push(Store.getFriend(member.uid).pic)
+              picAry.push(member.pic)
             }
             if(picAry.length === 4){
                 break
