@@ -65,7 +65,10 @@ function validate(stdout,stderr){
           }else{
             console.log(`stdout: ${stdout}`);
             console.log(`${stderr}`);
+
+
             console.log(`time elapsed ${(Date.now()-start)/1000} s`)
+              console.log(`new version is ${version}`)
           }
 
         }).catch(err=>{
