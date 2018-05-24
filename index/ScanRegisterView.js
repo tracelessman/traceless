@@ -13,6 +13,7 @@ import UUID from 'uuid/v4';
 import RSAKey from 'react-native-rsa';
 import ScanView from '../mine/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
+const versionLocal = require('../package').version
 
 export default class ScanRegisterView extends React.Component {
 
@@ -237,7 +238,7 @@ export default class ScanRegisterView extends React.Component {
                     <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
                     </View>
                     <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0",flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
-                        <Text style={{color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
+                        <Text style={{color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v{versionLocal}</Text>
                     </View>
                     <Modal visible={this.state.scanVisible}
                            onRequestClose={()=>{
