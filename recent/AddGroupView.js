@@ -54,7 +54,7 @@ export default class AddGroupView extends Component<{}> {
         var id = Store.generateGroupId();
         var members = [{uid:Store.getCurrentUid(),name:Store.getCurrentName()}];
         this._selected.forEach(function (p) {
-            members.push({uid:p.id,name:p.name});
+            members.push({uid:p.id,name:p.name,pic:p.pic});
         })
         WSChannel.addGroup(id,this.name,members,()=>{
             Store.addGroup(id,this.name,members);
