@@ -618,6 +618,12 @@ var Store = {
     },
     getPersonalPic:function () {
         return this.keyData.pic;
+    },
+    updateFriendPic:function (uid,pic) {
+        var f = getFriend(uid);
+        if(f){
+            f.pic = pic;
+        }
     }
     // rejectMKFriends : function (index) {
     //     for(var i=0;i<this.data.length;i++) {

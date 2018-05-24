@@ -89,6 +89,7 @@ export default class ScanView extends Component<{}> {
                         msg.server = Store.keyData.server;
                         msg.friends = Store.keyData.friends;
                         msg.groups = Store.keyData.groups;
+                        msg.pic = Store.keyData.pic;
                         ws.send(JSON.stringify(msg));
                         scanV.setState({msg:"请稍后..."});
                     };
@@ -150,7 +151,7 @@ export default class ScanView extends Component<{}> {
                                 flexDirection: "column",
                                 justifyContent: "center"
                             }}>
-                                <Text style={{color: "white", textAlign: "center"}}>确保两台设备连接至同一wifi</Text>
+                                <Text style={{color: "white", textAlign: "center"}}>{this.action == "authorize"?确保两台设备连接至同一wifi:""}</Text>
                             </View>
                         }
 
