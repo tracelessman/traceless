@@ -8,6 +8,7 @@ const crypto = require('crypto')
 const childProcess = require('child_process')
 const start = Date.now()
 const argv = require('yargs').argv
+const axios = require('axios')
 
 
 
@@ -44,5 +45,25 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
     console.log(`stdout: ${stdout}`);
     console.log(`${stderr}`);
     console.log(`time elapsed ${(Date.now()-start)/1000} s`)
+    validate()
 
 })
+
+function validate(){
+
+    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
+
+    axios.get(apkUrl).then( (res)=> {
+      // 'status', 'statusText', 'headers',
+          if(res.status !== 200){
+            console.error('error!!!!!!!!!')
+            console.log(res.status)
+            console.log(res.statusText)
+            console.log(res.headers)
+          }
+
+        }).catch(err=>{
+          console.error('error!!!!!!!!!')
+          throw err
+        })
+}
