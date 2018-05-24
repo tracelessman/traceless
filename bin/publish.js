@@ -24,7 +24,7 @@ if(argv.p || !fs.existsSync(localApkPath)){
         npm run pack:android
     `)
 }
-const publishFolderPath = path.resolve(__dirname,'../publish')
+const publishFolderPath = path.resolve(__dirname,'../pkg')
 fse.ensureDirSync(publishFolderPath)
 fse.copySync(localApkPath,path.resolve(publishFolderPath,'traceless.apk'))
 
