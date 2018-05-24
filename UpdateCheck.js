@@ -60,40 +60,7 @@ export default class UpdateCheck extends Component<{}> {
 
     }
 
-    updateApp= ()=>{
-        this.setState({
-            mode:"update"
-        })
-        // const filePath = RNFS.DocumentDirectoryPath + '/com.traceless.apk';
-        const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
-        // console.log(filePath)
-        // NativeModules.ToastExample.install(filePath);
-        const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
 
-        // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
-
-        const download = RNFS.downloadFile({
-            fromUrl:apkUrl ,
-            toFile: filePath,
-            progress: res => {
-                let progress = res.bytesWritten / res.contentLength
-                const percent = (progress*100).toFixed(0)+"%"
-                this.setState({
-                    progress,percent
-                })
-
-            },
-            progressDivider: 1
-        });
-
-        download.promise.then(result => {
-            if(result.statusCode == 200){
-                NativeModules.ToastExample.install(filePath);
-            }
-        }).catch(err=>{
-            console.log(err)
-        })
-    }
 
     checkUpdate = ()=>{
         axios.get(`https://raw.githubusercontent.com/tracelessman/traceless/publish/bin/update.json`)
@@ -102,18 +69,45 @@ export default class UpdateCheck extends Component<{}> {
                 const {hash,version} = data
                 const updateApp = this.updateApp
                 if(semver.gt(version,versionLocal)){
-                  Alert.alert(
-                      '提示',
-                      `有最新版本${version},是否马上升级?`,
-                      [
-                          {text: '取消', onPress: () => {}, style: 'cancel'},
-                          {text: '确认', onPress: () => {
-                                updateApp()
-                              }},
-                      ],
-                      { cancelable: false }
-                  )
+                    // const filePath = RNFS.DocumentDirectoryPath + '/com.traceless.apk';
+                    const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
+                    // console.log(filePath)
+                    // NativeModules.ToastExample.install(filePath);
+                    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
 
+                    // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
+
+                    const download = RNFS.downloadFile({
+                        fromUrl:apkUrl ,
+                        toFile: filePath,
+                        progress: res => {
+                            let progress = res.bytesWritten / res.contentLength
+                            const percent = (progress*100).toFixed(0)+"%"
+                            // this.setState({
+                            //     progress,percent
+                            // })
+
+                        },
+                        progressDivider: 1
+                    });
+
+                    download.promise.then(result => {
+                        if(result.statusCode == 200){
+                            Alert.alert(
+                                '提示',
+                                `有最新版本${version},是否马上升级?`,
+                                [
+                                    {text: '取消', onPress: () => {}, style: 'cancel'},
+                                    {text: '确认', onPress: () => {
+                                            NativeModules.ToastExample.install(filePath);
+                                        }},
+                                ],
+                                { cancelable: false }
+                            )
+                        }
+                    }).catch(err=>{
+                        console.log(err)
+                    })
                 }
             }).catch(function (error) {
             console.log(error);
