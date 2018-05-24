@@ -64,4 +64,4 @@ ios/build
 /android/app/build/outputs/*.xml
 /android/app/build/outputs/*.html
 
-build
+!app-release.apk
