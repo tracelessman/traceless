@@ -9,19 +9,24 @@ const childProcess = require('child_process')
 const start = Date.now()
 const argv = require('yargs').argv
 const axios = require('axios')
-
+const fse = require('fs-extra')
 
 
 childProcess.execSync(`
     git checkout publish
 `)
-if(argv.p){
+const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
+if(argv.p || !fs.existsSync(localApkPath)){
     console.log('packing apk ..................')
     childProcess.execSync(`
         npm run pack:android
     `)
 }
-const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
+const publishFolderPath = path.resolve(__dirname,'../publish')
+fse.ensureDirSync(publishFolderPath)
+fse.copySync(localApkPath,path.resolve(publishFolderPath,'traceless.apk'))
+
+
 const algorithm =  crypto.createHash('md5')
 let hashValue = algorithm.update(fs.readFileSync(localApkPath)).digest('hex')
 const version = require('../package.json').version
@@ -29,7 +34,7 @@ let updateInfo = {
     hash:hashValue,
     version
 }
-const localUpdatePath = __dirname+'/update.json'
+const localUpdatePath = path.resolve(publishFolderPath,'update.json')
 fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
 
@@ -43,11 +48,11 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
         return;
     }
 
-    validate()
+    validate(stdout,stderr)
 
 })
 
-function validate(){
+function validate(stdout,stderr){
     const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
     axios.get(apkUrl).then( (res)=> {
       // 'status', 'statusText', 'headers',

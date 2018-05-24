@@ -54,14 +54,6 @@ buck-out/
 
 #custom
 local
-android/build
-ios/build
-/android/app/build/generated
-/android/app/build/intermediates
-/android/app/build/tmp
-/android/app/build/outputs/apk/*.apk
-/android/app/build/outputs/logs
-/android/app/build/outputs/*.xml
-/android/app/build/outputs/*.html
+build
 
-!app-release.apk
+!traceless.apk
