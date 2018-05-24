@@ -39,7 +39,7 @@ fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
 
 let cmd = `
-     git commit -am "${version} @${new Date()}" && git push
+     git add publish && git commit -am "${version} @${new Date()}" && git push
 `
 
 childProcess.exec(cmd,(error,stdout,stderr)=>{
@@ -53,7 +53,7 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
 })
 
 function validate(stdout,stderr){
-    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
+    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/publish/traceless.apk'
     axios.get(apkUrl).then( (res)=> {
       // 'status', 'statusText', 'headers',
           if(res.status !== 200){
