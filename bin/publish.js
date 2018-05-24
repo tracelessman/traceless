@@ -10,6 +10,8 @@ const start = Date.now()
 const argv = require('yargs').argv
 const axios = require('axios')
 const fse = require('fs-extra')
+const config = require('../config')
+const {updateJsonUrl,apkUrl} = config
 
 
 childProcess.execSync(`
@@ -53,7 +55,6 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
 })
 
 function validate(stdout,stderr){
-    const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/publish/traceless.apk'
     axios.get(apkUrl).then( (res)=> {
       // 'status', 'statusText', 'headers',
           if(res.status !== 200){
