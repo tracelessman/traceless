@@ -474,6 +474,13 @@ var WSChannel={
         });
         this._sendRequest(req,timeoutCallback);
     },
+
+    setPersonalPicFromOtherDevice:function(msg){
+        Store.setPersonalPic(msg.data.pic);
+    },
+    setPersonalPicHandler:function(msg){
+        Store.updateFriendPic(msg.uid,msg.data.pic);
+    },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
         console.log(uids)
         var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{

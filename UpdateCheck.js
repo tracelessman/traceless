@@ -5,7 +5,7 @@ import {
     StyleSheet,
     Text,
     View,AsyncStorage,
-    NativeModules,Alert
+    NativeModules,Alert,Linking
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -16,12 +16,11 @@ import ScanRegisterView from './index/ScanRegisterView';
 import { Root ,Spinner} from "native-base"
 const  RNFS = require('react-native-fs');
 import App from './App'
-import md5 from "react-native-md5";
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
 const axios = require('axios')
-const url = "http://123.207.145.167:3000"
+// const url = "http://123.207.145.167:3000"
 const versionLocal = require('./package').version
 const semver = require('semver')
 
@@ -67,7 +66,6 @@ export default class UpdateCheck extends Component<{}> {
             .then( (response)=> {
                 const {data} = response
                 const {hash,version} = data
-                const updateApp = this.updateApp
                 if(semver.gt(version,versionLocal)){
                     // const filePath = RNFS.DocumentDirectoryPath + '/com.traceless.apk';
                     const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
@@ -76,42 +74,94 @@ export default class UpdateCheck extends Component<{}> {
                     const apkUrl = 'https://github.com/tracelessman/traceless/raw/publish/android/app/build/outputs/apk/app-release.apk'
 
                     // const apkUrl = 'http://172.18.1.181:8066/pkg/traceless.apk'
+                    Alert.alert(
+                        '提示',
+                        `有最新版本${version},是否马上升级?`,
+                        [
+                            {text: '取消', onPress: () => {}, style: 'cancel'},
+                            {text: '确认', onPress: () => {
+                                    Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
+                                }},
+                        ],
+                        { cancelable: false }
+                    )
 
-                    const download = RNFS.downloadFile({
-                        fromUrl:apkUrl ,
-                        toFile: filePath,
-                        progress: res => {
-                            let progress = res.bytesWritten / res.contentLength
-                            const percent = (progress*100).toFixed(0)+"%"
-                            // this.setState({
-                            //     progress,percent
-                            // })
+                    return
 
-                        },
-                        progressDivider: 1
-                    });
+                    // RNFetchBlob.config({
+                    //     useDownloadManager : true,
+                    //     fileCache : true,
+                    //     path:filePath
+                    // }).fetch('GET',apkUrl)
+                    //     .progress({ count : 10 }, (received, total) => {
+                    //         console.log(received)
+                    //         console.log(total)
+                    //         console.log('progress', received / total)
+                    //     })
+                    //     .then((res)=>{
+                    //         this.installApp(filePath,hash,version)
+                    //     })
+                    //     .catch((err) => {
+                    //         console.log(err)
+                    //
+                    //     })
 
-                    download.promise.then(result => {
-                        if(result.statusCode == 200){
-                            Alert.alert(
-                                '提示',
-                                `有最新版本${version},是否马上升级?`,
-                                [
-                                    {text: '取消', onPress: () => {}, style: 'cancel'},
-                                    {text: '确认', onPress: () => {
-                                            NativeModules.ToastExample.install(filePath);
-                                        }},
-                                ],
-                                { cancelable: false }
-                            )
-                        }
-                    }).catch(err=>{
-                        console.log(err)
-                    })
+
+
+
+
+                    // const download = RNFS.downloadFile({
+                    //     fromUrl:apkUrl ,
+                    //     toFile: filePath,
+                    //     progress: res => {
+                    //         let progress = res.bytesWritten / res.contentLength
+                    //         const percent = (progress*100).toFixed(0)+"%"
+                    //         console.log(progress)
+                    //         console.log(percent)
+                    //
+                    //         // this.setState({
+                    //         //     progress,percent
+                    //         // })
+                    //
+                    //     },
+                    //     progressDivider: 10
+                    // });
+                    //
+                    // download.promise.then(result => {
+                    //     if(result.statusCode == 200){
+                    //        this.installApp(filePath,hash,version)
+                    //
+                    //     }
+                    // }).catch(err=>{
+                    //     console.log(err)
+                    // })
+
                 }
             }).catch(function (error) {
-            console.log(error);
-        });
+                console.log(error);
+            });
+    }
+
+    installApp = (filePath,hash,version)=>{
+        RNFS.hash(filePath,'md5').then(localHash=>{
+            if(localHash === hash){
+                Alert.alert(
+                    '提示',
+                    `有最新版本${version},是否马上升级?`,
+                    [
+                        {text: '取消', onPress: () => {}, style: 'cancel'},
+                        {text: '确认', onPress: () => {
+                                NativeModules.ToastExample.install(filePath);
+                            }},
+                    ],
+                    { cancelable: false }
+                )
+            }else{
+                setTimeout(()=>{
+                    this.checkUpdate()
+                },1000*60)
+            }
+        })
     }
 
 
