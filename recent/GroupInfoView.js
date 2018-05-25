@@ -13,14 +13,16 @@ import { Container, Header, Content, List, ListItem ,Icon ,
 } from 'native-base'
 const {alert} = Alert
 import WSChannel from "../channel/WSChannel"
+import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
 
 export default class GroupInfoView extends Component<{}> {
   static navigationOptions =({ navigation, screenProps }) => {
 
     return      {
-            headerRight:  <TouchableOpacity style={{marginRight:15}} onPress={()=>{
+            headerRight:  <TouchableOpacity style={{marginRight:15}} onPress={debounceFunc(()=>{
               navigation.navigate("AddGroupMemberView",{group:navigation.state.params.group})
-            }}  >
+            })}  >
                <Icon name='person-add' />
             </TouchableOpacity>,
         }

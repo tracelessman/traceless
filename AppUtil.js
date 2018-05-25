@@ -1,5 +1,6 @@
 import JPushModule from 'jpush-react-native'
 import {Platform, StyleSheet} from 'react-native'
+const _ = require('lodash')
 
 var AppUtil={
     setApp:function (app) {
@@ -61,6 +62,12 @@ var AppUtil={
             result = require('./images/defaultAvatar.png')
         }
         return result
-    }
+    },
+    debounceFunc(func,interval = 1000*2){
+        return _.throttle(func,interval,{
+            leading:true,
+            trailing:false
+        })
+    },
 };
 export default AppUtil;

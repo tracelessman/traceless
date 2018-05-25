@@ -10,7 +10,7 @@ import Store from '../store/LocalStore'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import AppUtil from "../AppUtil";
-const {getAvatarSource} = AppUtil
+const {getAvatarSource,debounceFunc} = AppUtil
 import { List, ListItem,Avatar,Card } from 'react-native-elements'
 
 export default class ContactView extends Component<{}> {
@@ -19,7 +19,7 @@ export default class ContactView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
-         headerRight: <TouchableOpacity onPress={()=>{ navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})}}
+         headerRight: <TouchableOpacity onPress={debounceFunc(()=>{ navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})})}
              style={{marginRight:20}}>
              <Icon name="plus" size={22} />
          </TouchableOpacity>
@@ -47,14 +47,13 @@ export default class ContactView extends Component<{}> {
       }) ;
     }
 
-    go2RequireListView=()=>{
+    go2RequireListView=debounceFunc(()=>{
         this.props.navigation.navigate("RequireListView",{ContactView:this});
-    }
+    })
 
-    go2FriendInfoView=(f)=>{
-
+    go2FriendInfoView=debounceFunc((f)=>{
         this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
-    }
+    })
 
 
 
