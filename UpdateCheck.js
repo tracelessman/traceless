@@ -25,7 +25,7 @@ const versionLocal = require('./package').version
 const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
-const {updateJsonUrl,apkUrl} = config
+const {updateJsonUrl,apkUrl,appName} = config
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -69,23 +69,8 @@ export default class UpdateCheck extends Component<{}> {
                 const {hash,version} = data
                 if(semver.gt(version,versionLocal)){
 
-                    let filePath = RNFS.ExternalDirectoryPath + '/traceless.apk';
-                    // console.log(filePath)
-                    // NativeModules.ToastExample.install(filePath);
+                    let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
 
-                    // Alert.alert(
-                    //     '提示',
-                    //     `有最新版本${version},是否马上升级?`,
-                    //     [
-                    //         {text: '取消', onPress: () => {}, style: 'cancel'},
-                    //         {text: '确认', onPress: () => {
-                    //                 Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
-                    //             }},
-                    //     ],
-                    //     { cancelable: false }
-                    // )
-                    //
-                    // return
 
                     RNFetchBlob.config({
                         useDownloadManager : true,
@@ -104,36 +89,6 @@ export default class UpdateCheck extends Component<{}> {
                             console.log(err)
 
                         })
-
-
-
-
-
-                    // const download = RNFS.downloadFile({
-                    //     fromUrl:apkUrl ,
-                    //     toFile: filePath,
-                    //     progress: res => {
-                    //         let progress = res.bytesWritten / res.contentLength
-                    //         const percent = (progress*100).toFixed(0)+"%"
-                    //         console.log(progress)
-                    //         console.log(percent)
-                    //
-                    //         // this.setState({
-                    //         //     progress,percent
-                    //         // })
-                    //
-                    //     },
-                    //     progressDivider: 10
-                    // });
-                    //
-                    // download.promise.then(result => {
-                    //     if(result.statusCode == 200){
-                    //        this.installApp(filePath,hash,version)
-                    //
-                    //     }
-                    // }).catch(err=>{
-                    //     console.log(err)
-                    // })
 
                 }
             }).catch(function (error) {
