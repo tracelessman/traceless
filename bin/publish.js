@@ -11,7 +11,7 @@ const argv = require('yargs').argv
 const axios = require('axios')
 const fse = require('fs-extra')
 const config = require('../config')
-const {updateJsonUrl,apkUrl} = config
+const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
 
 
 childProcess.execSync(`
@@ -24,10 +24,10 @@ if(argv.p || !fs.existsSync(localApkPath)){
         npm run pack:android
     `)
 }
-const folderName = 'pkg'
+const folderName = publishFolderName
 const publishFolderPath = path.resolve(__dirname,`../${folderName}`)
 fse.ensureDirSync(publishFolderPath)
-fse.copySync(localApkPath,path.resolve(publishFolderPath,'traceless.apk'))
+fse.copySync(localApkPath,path.resolve(publishFolderPath,`${appName}.apk`))
 
 
 const algorithm =  crypto.createHash('md5')
