@@ -68,42 +68,42 @@ export default class UpdateCheck extends Component<{}> {
                 const {data} = response
                 const {hash,version} = data
                 if(semver.gt(version,versionLocal)){
-                    // const filePath = RNFS.DocumentDirectoryPath + '/com.traceless.apk';
-                    const filePath = RNFS.ExternalStorageDirectoryPath + '/com.traceless.apk';
+
+                    let filePath = RNFS.ExternalDirectoryPath + '/traceless.apk';
                     // console.log(filePath)
                     // NativeModules.ToastExample.install(filePath);
 
-                    Alert.alert(
-                        '提示',
-                        `有最新版本${version},是否马上升级?`,
-                        [
-                            {text: '取消', onPress: () => {}, style: 'cancel'},
-                            {text: '确认', onPress: () => {
-                                    Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
-                                }},
-                        ],
-                        { cancelable: false }
-                    )
-
-                    return
-
-                    // RNFetchBlob.config({
-                    //     useDownloadManager : true,
-                    //     fileCache : true,
-                    //     path:filePath
-                    // }).fetch('GET',apkUrl)
-                    //     .progress({ count : 10 }, (received, total) => {
-                    //         console.log(received)
-                    //         console.log(total)
-                    //         console.log('progress', received / total)
-                    //     })
-                    //     .then((res)=>{
-                    //         this.installApp(filePath,hash,version)
-                    //     })
-                    //     .catch((err) => {
-                    //         console.log(err)
+                    // Alert.alert(
+                    //     '提示',
+                    //     `有最新版本${version},是否马上升级?`,
+                    //     [
+                    //         {text: '取消', onPress: () => {}, style: 'cancel'},
+                    //         {text: '确认', onPress: () => {
+                    //                 Linking.openURL(apkUrl).catch(err => console.error('An error occurred', err));
+                    //             }},
+                    //     ],
+                    //     { cancelable: false }
+                    // )
                     //
-                    //     })
+                    // return
+
+                    RNFetchBlob.config({
+                        useDownloadManager : true,
+                        fileCache : true,
+                        path:filePath
+                    }).fetch('GET',apkUrl)
+                        .progress({ count : 10 }, (received, total) => {
+                            // console.log(received)
+                            // console.log(total)
+                            // console.log('progress', received / total)
+                        })
+                        .then((res)=>{
+                            this.installApp(filePath,hash,version)
+                        })
+                        .catch((err) => {
+                            console.log(err)
+
+                        })
 
 
 

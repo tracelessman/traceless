@@ -15,7 +15,7 @@ import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIco
 } from 'native-base';
 import AppUtil from "../AppUtil";
 import GroupAvatar from "./GroupAvatar";
-const {getAvatarSource} = AppUtil
+const {getAvatarSource,debounceFunc} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
 
@@ -28,7 +28,7 @@ export default class RecentView extends Component<{}> {
             //     backgroundColor: '#434343'
             // },
             // headerTintColor: '#ffffff',
-            headerRight:<TouchableOpacity onPress={()=>{navigation.navigate("AddGroupView")}}
+            headerRight:<TouchableOpacity onPress={debounceFunc(()=>{navigation.navigate("AddGroupView")})}
                                           style={{height:50,width:50,paddingTop:14,paddingLeft:14}}>
                 <Icon name="account-multiple-plus" size={22} style={{}}/>
             </TouchableOpacity>,
@@ -138,14 +138,16 @@ export default class RecentView extends Component<{}> {
       return num
     }
 
-    chat(uid) {
-        var f = Store.getFriend(uid);
-        this.props.navigation.navigate("ChatView",{friend:f});
-    }
+    chat = debounceFunc((uid)=>{
+        const f = Store.getFriend(uid);
 
-    groupChat=function () {
-        this.RecentView.props.navigation.navigate("ChatView",{group:this.group});
-    }
+        this.props.navigation.navigate("ChatView",{friend:f});
+    })
+
+
+    groupChat = debounceFunc( (group)=>{
+        this.props.navigation.navigate("ChatView",{group});
+    })
     test(){
         alert('test')
     }
@@ -192,7 +194,7 @@ export default class RecentView extends Component<{}> {
                         <Text style={{}}>{group.newMsgNum}</Text>
                     </Badge>
                 }
-                groupAry.push(<TouchableOpacity key={i} RecentView={this} group={group}  onPress={this.groupChat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
+                groupAry.push(<TouchableOpacity key={i}    onPress={()=>{this.groupChat(group)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:40,marginTop:20}}>
                         <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",marginLeft:10}}>
                             <GroupAvatar group={group} ></GroupAvatar>

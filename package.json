@@ -1,6 +1,6 @@
 {
   "name": "traceless",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -11,12 +11,13 @@
     "showDevMenu": "adb shell input keyevent 82",
     "uploadApk": "node bin/uploadApk",
     "packUploadApk": "npm run pack:android && npm run uploadApk",
-    "publish": "node bin/publish -p"
+    "publish": "node bin/publish"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "jcore-react-native": "^1.2.5",
     "jpush-react-native": "^2.1.13",
+    "lodash": "^4.17.10",
     "native-base": "^2.4.2",
     "react": "16.0.0",
     "react-native": "0.50.4",

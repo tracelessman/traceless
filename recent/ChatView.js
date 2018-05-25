@@ -1,6 +1,3 @@
-/**
- * Created by renbaogang on 2017/11/3.
- */
 
 import React, { Component } from 'react';
 import {
@@ -19,13 +16,14 @@ import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
             headerTitle: navigation.state.params.friend?navigation.state.params.friend.name:navigation.state.params.group.name,
-            headerRight:<TouchableOpacity  onPress={()=>{navigation.navigate("GroupInfoView",{group:navigation.state.params.group})}}
+            headerRight:<TouchableOpacity  onPress={debounceFunc(()=>{navigation.navigate("GroupInfoView",{group:navigation.state.params.group})})}
                                           style={{marginRight:20}}><Image source={require('../images/group.png')} style={{width:navigation.state.params.group?22:0,height:22}} resizeMode="contain"></Image></TouchableOpacity>,
 
         }
