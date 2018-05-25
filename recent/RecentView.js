@@ -197,7 +197,7 @@ export default class RecentView extends Component<{}> {
                             <GroupAvatar group={group} ></GroupAvatar>
                             <Text>    {group.name}  </Text>
                         </View>
-                        <View style={{paddingRight:50,flexDirection:"column",justifyContent:"flex-start",alignItems:"flex-start"}}>
+                        <View style={{paddingRight:58,flexDirection:"column",justifyContent:"flex-start",alignItems:"flex-start"}}>
                             {redTip}
                         </View>
 
