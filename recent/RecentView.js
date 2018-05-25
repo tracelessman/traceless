@@ -41,6 +41,7 @@ export default class RecentView extends Component<{}> {
         this.state = {
             listViewData : recent
         }
+        this.eventAry = ["receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
     }
 
     update=(fromId)=>{
@@ -48,19 +49,15 @@ export default class RecentView extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        Store.on("receiveMessage",this.update);
-        Store.on("readChatRecords",this.update);
-        Store.on("readGroupChatRecords",this.update);
-        Store.on("addGroup",this.update);
-        Store.on("receiveGroupMessage",this.update);
+        for(let event of this.eventAry){
+            Store.on(event,this.update);
+        }
     }
 
     componentWillUnmount =()=> {
-        Store.un("receiveMessage",this.update);
-        Store.un("readChatRecords",this.update);
-        Store.un("readGroupChatRecords",this.update);
-        Store.un("addGroup",this.update);
-        Store.un("receiveGroupMessage",this.update);
+        for(let event of this.eventAry){
+            Store.un(event,this.update);
+        }
     }
     componentDidMount=()=>{
         this.updateRecent()

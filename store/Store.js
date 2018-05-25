@@ -624,6 +624,7 @@ var Store = {
         if(f){
             f.pic = pic;
             this._save();
+            this._fire("updateFriendPic",f)
         }
     }
     // rejectMKFriends : function (index) {

@@ -31,20 +31,24 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.setParams({
             ContactView:this
         });
+        this.eventAry = ["receiveMKFriends","readNewMKFriends","addFriend","updateFriendPic"]
 
     }
 
     componentDidMount(){
-      //有新的好友请求时更新界面
-      Store.on("receiveMKFriends",()=>{
-          this.setState({update:true});
-      });
-      Store.on("readNewMKFriends",()=>{
-          this.setState({update:true});
-      });
-      Store.on("addFriend",()=>{
-          this.setState({update:true});
-      }) ;
+        for(let event of this.eventAry){
+            Store.on(event,this.update);
+        }
+    }
+
+    componentWillUnmount =()=> {
+        for(let event of this.eventAry){
+            Store.un(event,this.update);
+        }
+    }
+
+    update = ()=>{
+        this.setState({update:true});
     }
 
     go2RequireListView=debounceFunc(()=>{
