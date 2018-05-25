@@ -10,12 +10,14 @@
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
     "uploadApk": "node bin/uploadApk",
-    "packUploadApk": "npm run pack:android && npm run uploadApk"
+    "packUploadApk": "npm run pack:android && npm run uploadApk",
+    "publish": "node bin/publish"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "jcore-react-native": "^1.2.5",
     "jpush-react-native": "^2.1.13",
+    "lodash": "^4.17.10",
     "native-base": "^2.4.2",
     "react": "16.0.0",
     "react-native": "0.50.4",
@@ -27,7 +29,6 @@
     "react-native-image-crop-picker": "^0.20.3",
     "react-native-image-picker": "^0.26.7",
     "react-native-image-resizer": "^1.0.0",
-    "react-native-md5": "^1.0.0",
     "react-native-network-info": "^3.0.0",
     "react-native-progress": "^3.4.0",
     "react-native-qrcode-svg": "^5.0.5",

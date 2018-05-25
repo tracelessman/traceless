@@ -15,7 +15,7 @@ import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIco
 } from 'native-base';
 import AppUtil from "../AppUtil";
 import GroupAvatar from "./GroupAvatar";
-const {getAvatarSource} = AppUtil
+const {getAvatarSource,debounceFunc} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
 
@@ -28,7 +28,7 @@ export default class RecentView extends Component<{}> {
             //     backgroundColor: '#434343'
             // },
             // headerTintColor: '#ffffff',
-            headerRight:<TouchableOpacity onPress={()=>{navigation.navigate("AddGroupView")}}
+            headerRight:<TouchableOpacity onPress={debounceFunc(()=>{navigation.navigate("AddGroupView")})}
                                           style={{height:50,width:50,paddingTop:14,paddingLeft:14}}>
                 <Icon name="account-multiple-plus" size={22} style={{}}/>
             </TouchableOpacity>,
@@ -138,14 +138,16 @@ export default class RecentView extends Component<{}> {
       return num
     }
 
-    chat(uid) {
-        var f = Store.getFriend(uid);
-        this.props.navigation.navigate("ChatView",{friend:f});
-    }
+    chat = debounceFunc((uid)=>{
+        const f = Store.getFriend(uid);
 
-    groupChat=function () {
-        this.RecentView.props.navigation.navigate("ChatView",{group:this.group});
-    }
+        this.props.navigation.navigate("ChatView",{friend:f});
+    })
+
+
+    groupChat = debounceFunc( (group)=>{
+        this.props.navigation.navigate("ChatView",{group});
+    })
     test(){
         alert('test')
     }
@@ -188,13 +190,20 @@ export default class RecentView extends Component<{}> {
                 var group = groups[i];
                 var redTip=null;
                 if(group.newReceive){
-                    redTip = <View style={{width:14,height:14,borderRadius:14,backgroundColor:"red",overflow:"hidden"}}><Text style={{fontSize:9,color:"#ffffff",textAlign:"center"}}>{group.newMsgNum}</Text></View>
+                    redTip =  <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
+                        <Text style={{}}>{group.newMsgNum}</Text>
+                    </Badge>
                 }
-                groupAry.push(<TouchableOpacity key={i} RecentView={this} group={group}  onPress={this.groupChat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
-                        <GroupAvatar group={group} ></GroupAvatar>
-                        <Text>    {group.name}  </Text>
-                        {redTip}
+                groupAry.push(<TouchableOpacity key={i}    onPress={()=>{this.groupChat(group)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
+                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:40,marginTop:20}}>
+                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",marginLeft:10}}>
+                            <GroupAvatar group={group} ></GroupAvatar>
+                            <Text>    {group.name}  </Text>
+                        </View>
+                        <View style={{paddingRight:50,flexDirection:"column",justifyContent:"flex-start",alignItems:"flex-start"}}>
+                            {redTip}
+                        </View>
+
                     </View>
                 </TouchableOpacity>);
                 groupAry.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
@@ -215,8 +224,8 @@ export default class RecentView extends Component<{}> {
                         dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
                         renderRow={data =>
                                 <ListItem thumbnail style={{}} >
-                                    <Left style={{marginLeft:10}}>
-                                        <Thumbnail   source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                                    <Left style={{marginLeft:10,}}>
+                                        <Thumbnail square size={40} style={{width:50,height:50}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
                                     </Left>
                                     <Body >
                                     <TouchableOpacity onPress={()=>{this.chat(data.id)}}>

@@ -8,18 +8,20 @@ import {
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
 import WSChannel from "../channel/WSChannel"
 import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
+const versionLocal = require('../package').version
 
 
 export default class MineView extends Component<{}> {
     constructor(props){
         super(props);
         let picUrl = Store.getPersonalPic()
-        const avatarSource = AppUtil.getAvatarSource(picUrl)
+        const avatarSource = getAvatarSource(picUrl)
         this.state = {
             avatarSource
         }
@@ -58,9 +60,9 @@ export default class MineView extends Component<{}> {
         )
     }
 
-    showScanView=()=>{
+    showScanView=debounceFunc(()=>{
         this.props.navigation.navigate("ScanView");
-    }
+    })
 
     setAvatar(image){
         RNFetchBlob.fs.readFile(image.path, 'base64')
@@ -83,18 +85,15 @@ export default class MineView extends Component<{}> {
     }
 
     render() {
-
-
-
         const list2 = [
             {
                 title:`身份标识`,
                 icon:'contacts',
-                onPress:()=>{
+                onPress:debounceFunc(()=>{
                     this.props.navigation.navigate('UidView',{
                         uid:Store.getCurrentUid()
                     })
-                },
+                }),
             },
             {
                 title:`清除本地聊天缓存`,
@@ -110,6 +109,10 @@ export default class MineView extends Component<{}> {
                 title:`授权其他设备`,
                 icon:'crop-free',
                 onPress:this.showScanView
+            },
+            {
+                title:`当前版本:${versionLocal}`,
+                icon:'new-releases',
             },
         ]
 
@@ -132,7 +135,7 @@ export default class MineView extends Component<{}> {
                         rightIcon={
                             <Icon name='qrcode' type="font-awesome" iconStyle={{margin:10}}  color='gray'
                                   raised
-                                  onPress={()=>{
+                                  onPress={debounceFunc(()=>{
                                       this.props.navigation.navigate('QrcodeView',{
                                           qrcode:{
                                               uid:Store.getCurrentUid(),
@@ -142,7 +145,7 @@ export default class MineView extends Component<{}> {
                                           },
                                           avatarUrl:this.state.avatarSource.uri
                                       })
-                                  }}
+                                  })}
                             />}
                         avatar={<Avatar
                             large
