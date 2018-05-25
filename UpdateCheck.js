@@ -103,7 +103,6 @@ export default class UpdateCheck extends Component<{}> {
                     '提示',
                     `有最新版本${version},是否马上升级?`,
                     [
-                        {text: '取消', onPress: () => {}, style: 'cancel'},
                         {text: '确认', onPress: () => {
                                 NativeModules.ToastExample.install(filePath);
                             }},
