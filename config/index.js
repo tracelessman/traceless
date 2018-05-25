@@ -1,5 +1,8 @@
+const appName = "LK"
+const baseUrl = 'https://github.com/tracelessman/traceless/raw/publish/pkg/'
+
 module.exports = {
-    apkUrl:'https://github.com/tracelessman/traceless/raw/publish/pkg/traceless.apk',
-    updateJsonUrl:'https://github.com/tracelessman/traceless/raw/publish/pkg/update.json',
-    appName:"LK"
+    apkUrl:`${baseUrl+appName}.apk`,
+    updateJsonUrl:`${baseUrl}update.json`,
+    appName
 }
