@@ -620,9 +620,11 @@ var Store = {
         return this.keyData.pic;
     },
     updateFriendPic:function (uid,pic) {
-        var f = getFriend(uid);
+        var f = this.getFriend(uid);
         if(f){
             f.pic = pic;
+            this._save();
+            this._fire("updateFriendPic",f)
         }
     }
     // rejectMKFriends : function (index) {
