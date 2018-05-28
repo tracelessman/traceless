@@ -2,8 +2,8 @@
  * Created by renbaogang on 2017/10/23.
  */
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,Keyboard,TouchableWithoutFeedback,
-    TouchableOpacity,Image} from 'react-native';
+import { Image, Keyboard, StyleSheet,Text,TextInput,TouchableOpacity,
+    TouchableWithoutFeedback,View} from 'react-native';
 import WSChannel from '../channel/LocalWSChannel';
 import Store from "../store/LocalStore";
 import MainView from "./MainView";
@@ -13,9 +13,9 @@ export default class LoginView extends React.Component {
 
     constructor(props){
         super(props);
-        var data = this.props.data;
+        let data = this.props.data;
         // alert(JSON.stringify(data));
-        var keyData = data?data[0]:null;
+        let keyData = data?data[0]:null;
         if(keyData){
 
             this.state={
@@ -115,7 +115,7 @@ export default class LoginView extends React.Component {
         if(this.state.login){
             return <MainView></MainView>;
         }else
-        return (
+        {return (
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
             <View style={{flex:1,justifyContent: 'center',alignItems: 'center',flexDirection:"column"}}>
                 {AppUtil.isFreeRegister()?
@@ -151,7 +151,7 @@ export default class LoginView extends React.Component {
                 </View>
             </View>
             </TouchableWithoutFeedback>
-        );
+        );}
     }
 }
 

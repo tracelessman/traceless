@@ -2,21 +2,21 @@ import JPushModule from 'jpush-react-native'
 import {Platform, StyleSheet} from 'react-native'
 const _ = require('lodash')
 
-var AppUtil={
-    setApp:function (app) {
+let AppUtil={
+    setApp (app) {
         this.app = app;
     },
-    reset:function (target) {
+    reset (target) {
         this._target = target;
         this.app.reset();
     },
-    getResetTarget:function () {
+    getResetTarget () {
         return this._target;
     },
-    clearResetTarget:function () {
+    clearResetTarget () {
         delete this._target;
     },
-    isFreeRegister:function () {
+    isFreeRegister () {
         return true;
     },
     setJpush(option){

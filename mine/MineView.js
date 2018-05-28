@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 import {
     Alert,
     Image,
-    Text,
-    View,TextInput,TouchableOpacity,Modal,ScrollView
+    Modal,
+    ScrollView,Text,TextInput,TouchableOpacity,View,PushNotificationIOS
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import WSChannel from "../channel/WSChannel"
-import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
+import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -45,19 +45,53 @@ export default class MineView extends Component<{}> {
     }
 
     clear=()=>{
-        Alert.alert(
-            '提示',
-            '清除聊天记录后不可恢复,请确认是否继续本操作?',
-            [
-                {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                {text: '确认', onPress: () => {
-                        Store.clear(function () {
-                            AppUtil.reset();
-                        });
-                    }},
-            ],
-            { cancelable: false }
-        )
+        PushNotificationIOS.requestPermissions(['alert']).then(res=>{
+            console.log(res)
+            PushNotificationIOS.checkPermissions((permissions) => {
+                console.log(permissions);
+            });
+
+        })
+
+        PushNotificationIOS.addEventListener('register', (res) => {
+            console.log(res)
+            PushNotificationIOS.checkPermissions((permissions) => {
+                console.log(permissions);
+            });
+
+        });
+
+        PushNotificationIOS.addEventListener('notification', (res) => {
+            console.log(res)
+            PushNotificationIOS.checkPermissions((permissions) => {
+                console.log(permissions);
+            });
+
+        });
+        setTimeout(()=>{
+            console.log('notice')
+
+
+
+            PushNotificationIOS.presentLocalNotification({
+                alertBody:'test',
+                alertAction:'view'
+            })
+        },1000*4)
+
+        // Alert.alert(
+        //     '提示',
+        //     '清除聊天记录后不可恢复,请确认是否继续本操作?',
+        //     [
+        //         {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        //         {text: '确认', onPress: () => {
+        //                 Store.clear(function () {
+        //                     AppUtil.reset();
+        //                 });
+        //             }},
+        //     ],
+        //     { cancelable: false }
+        // )
     }
 
     showScanView=debounceFunc(()=>{
@@ -185,7 +219,7 @@ export default class MineView extends Component<{}> {
                 </View>
                 <View style={style.listStyle}>
                     {
-                        list2.map((item, i) => (
+                        list2.map((item, i) =>
                             <ListItem
                                 key={i}
                                 title={item.title}
@@ -195,7 +229,7 @@ export default class MineView extends Component<{}> {
                                 subtitle={item.subtitle}
                                 onPress={item.onPress}
                             />
-                        ))
+                        )
                     }
                 </View>
             </ScrollView>

@@ -1,6 +1,4 @@
-/**
- * Created by renbaogang on 2017/10/28.
- */
+/* eslint-disable */
 import Store from "../store/Store";
 import RSAKey from 'react-native-rsa';
 var WSChannel = require("./WSChannel");

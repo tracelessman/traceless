@@ -1,11 +1,11 @@
 
 import React, { Component } from 'react';
 import {
-    Platform,
-    StyleSheet,
-    Text,
-    View,AsyncStorage,
-    NativeModules,Alert,Linking
+    Alert,
+    AsyncStorage,
+    Linking,
+    NativeModules,Platform,
+    StyleSheet,Text,View
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -124,15 +124,15 @@ export default class UpdateCheck extends Component<{}> {
         if(this.state.mode === 'ready'){
             content = <App></App>
         }else if(this.state.mode === 'update'){
-            content = (
+            content = 
                 <View style={{display:'flex',justifyContent:"center",alignItems:"center",height:"100%"}}>
 
-                    <Progress.Circle  showsText formatText={(progress)=>{return this.state.percent}} progress={this.state.progress} size={100} />
+                    <Progress.Circle  showsText formatText={(progress)=>this.state.percent} progress={this.state.progress} size={100} />
                     <Text style={{margin:30}}>
                         更新中......
                     </Text>
                 </View>
-            )
+            
         }
 
         return (

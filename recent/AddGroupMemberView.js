@@ -2,16 +2,16 @@
 import React, { Component } from 'react';
 import {
     Alert,
-    Text,
-    View,
-    TextInput,TouchableOpacity,Image,
-    Platform
+    Image,
+    Platform,
+    Text,TextInput,TouchableOpacity,
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,
-    List,Thumbnail,Left,Right,Toast,Spinner
+    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
+    List,ListItem,Right,Spinner,Thumbnail,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 import AddMemberIcon from './AddMemberIcon'
@@ -26,9 +26,7 @@ export default class AddGroupMemberView extends Component<{}> {
         super(props);
         this.state={searchResult:null,numberOfLines:2,isScanMode:false,isWaiting:false};
         this.group = this.props.navigation.state.params.group;
-        this.alreadyMemberIdAry = this.group.members.map(ele=>{
-          return ele.uid
-        })
+        this.alreadyMemberIdAry = this.group.members.map(ele=>ele.uid)
     }
 
     doSearch=()=>{
@@ -36,22 +34,16 @@ export default class AddGroupMemberView extends Component<{}> {
             this.setState({isWaiting:true})
             WSChannel.searchFriends(this.searchText,(data)=>{
                 const friendAry = Store.getAllFriends()
-                const friendIdAry = friendAry.map(ele=>{
-                    return ele.id
-                })
-                const searchResult = data.result.filter((item)=>{
-                   return  item.uid !== Store.getCurrentUid() && friendIdAry.includes(item.uid)
-                    && !this.alreadyMemberIdAry.includes(item.uid)
-                })
+                const friendIdAry = friendAry.map(ele=>ele.id)
+                const searchResult = data.result.filter((item)=>item.uid !== Store.getCurrentUid() && friendIdAry.includes(item.uid)
+                    && !this.alreadyMemberIdAry.includes(item.uid))
 
                 this.setState({searchResult,isWaiting:false})
             });
         }else{
           const friendAry = _.cloneDeep(Store.getAllFriends())
 
-          const searchResult = friendAry.filter((item)=>{
-             return  !this.alreadyMemberIdAry.includes(item.id)
-          }).map(item=>{
+          const searchResult = friendAry.filter((item)=>!this.alreadyMemberIdAry.includes(item.id)).map(item=>{
             item.uid = item.id
             return item
           })
@@ -73,10 +65,10 @@ export default class AddGroupMemberView extends Component<{}> {
 
     render() {
 
-        var searchResult = [];
+        let searchResult = [];
         if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
-                searchResult = (
+                searchResult = 
                     <List
                         dataArray={this.state.searchResult}
                         renderRow={data =>
@@ -102,10 +94,10 @@ export default class AddGroupMemberView extends Component<{}> {
                                 </Right>
                             </ListItem>}
                     />
-                )
+                
 
             }else {
-                searchResult = (
+                searchResult = 
                     <ListItem thumbnail style={{height:80}}>
                         <Left>
                         </Left>
@@ -115,13 +107,13 @@ export default class AddGroupMemberView extends Component<{}> {
                         </Text>
                         </Body>
                     </ListItem>
-                )
+                
             }
         }
 
 
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
-        const view2 = (
+        const view2 = 
             <Container>
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
@@ -135,7 +127,7 @@ export default class AddGroupMemberView extends Component<{}> {
                 </Content>
             </Container>
 
-           )
+           
         return view2
     }
 

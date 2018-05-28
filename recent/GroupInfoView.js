@@ -1,15 +1,15 @@
 
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
     Alert,
-    TouchableOpacity
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import Store from '../store/LocalStore'
-import { Container, Header, Content, List, ListItem ,Icon ,
-    Item, Input ,Card,CardItem,Body,Badge,  Button,
-    Thumbnail,Left,Right,Toast,Spinner
+import { Badge, Body, Button, Card, CardItem ,Container ,
+    Content, Header ,Icon,Input,Item,Left,  List,
+    ListItem,Right,Spinner,Thumbnail,Toast
 } from 'native-base'
 const {alert} = Alert
 import WSChannel from "../channel/WSChannel"
@@ -17,16 +17,13 @@ import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 
 export default class GroupInfoView extends Component<{}> {
-  static navigationOptions =({ navigation, screenProps }) => {
-
-    return      {
+  static navigationOptions =({ navigation, screenProps }) => ({
             headerRight:  <TouchableOpacity style={{marginRight:15}} onPress={debounceFunc(()=>{
               navigation.navigate("AddGroupMemberView",{group:navigation.state.params.group})
             })}  >
                <Icon name='person-add' />
             </TouchableOpacity>,
-        }
-  }
+        })
     constructor(props){
         super(props);
         const {group} = this.props.navigation.state.params
@@ -57,10 +54,10 @@ export default class GroupInfoView extends Component<{}> {
     }
 
     render() {
-        var friends = [];
-        var all = this.state.group.members;
-        for(var i=0;i<all.length;i++){
-            var f = all[i];
+        let friends = [];
+        let all = this.state.group.members;
+        for(let i=0;i<all.length;i++){
+            let f = all[i];
             friends.push(<View key={i}  style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                 <View style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"center",width:"90%",height:40,marginTop:20}}>
                     <Text>    {f.name}  </Text>
@@ -70,11 +67,11 @@ export default class GroupInfoView extends Component<{}> {
             friends.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
 
         }
-        let buttonQuit =   (
+        let buttonQuit =   
           <TouchableOpacity onPress={()=>{this.leaveGroup()}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                 <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>退出该群</Text>
             </TouchableOpacity>
-        )
+        
 
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>

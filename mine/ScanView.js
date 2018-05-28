@@ -2,7 +2,7 @@
  * Created by renbaogang on 2018/2/8.
  */
 import React, { Component} from 'react';
-import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput,StyleSheet} from 'react-native';
+import { Button,Image,StyleSheet,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
 import Camera from 'react-native-camera';
 import Store from "../store/LocalStore"
 import { NetworkInfo } from 'react-native-network-info';
@@ -11,15 +11,15 @@ export default class ScanView extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.action = props["action"];
-        this.parent = props["parent"];
+        this.action = props.action;
+        this.parent = props.parent;
         this.state={data:null};
         this.data = null;
     }
 
     onBarCodeRead =(e) =>{
         try{
-            var d = JSON.parse(e.data);
+            let d = JSON.parse(e.data);
             if(d.code=="traceless"&&!this.data){
                 if(d.action=="authorize"){
                     this.setState({msg:"等待目标设备响应..."});
@@ -43,9 +43,9 @@ export default class ScanView extends Component<{}> {
     authorizeOther = ()=>{
         NetworkInfo.getIPAddress(ip => {
             try{
-                var ipSeg = ip.substring(0,ip.lastIndexOf("."));
-                var addresses = this.data.addresses;
-                var serverIP;
+                let ipSeg = ip.substring(0,ip.lastIndexOf("."));
+                let addresses = this.data.addresses;
+                let serverIP;
                 for(var i=0;i<addresses.length;i++){
                     if(addresses[i].indexOf(ipSeg)==0){
                         serverIP = addresses[i];
@@ -61,11 +61,11 @@ export default class ScanView extends Component<{}> {
                     }
                 }
                 if(serverIP){
-                    var uri = serverIP+":"+this.data.port;
-                    var ws = new WebSocket('ws://'+uri);
+                    let uri = serverIP+":"+this.data.port;
+                    let ws = new WebSocket('ws://'+uri);
                     var scanV = this;
                     ws.onmessage = function incoming(message) {
-                        var msg = JSON.parse(message.data);
+                        let msg = JSON.parse(message.data);
                         if(msg.state){//done
                             ws.close();
                             scanV.setState({msg:"授权成功"});
@@ -80,7 +80,7 @@ export default class ScanView extends Component<{}> {
 
                     };
                     ws.onopen = function () {
-                        var msg={};
+                        let msg={};
                         msg.name = Store.keyData.name;
                         msg.id = Store.keyData.id;
                         msg.publicKey = Store.keyData.publicKey;

@@ -3,13 +3,13 @@
  */
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
-    TextInput,
-    ScrollView,
+    Animated,
     Button,
+    Dimensions,
     Image,
-    TouchableOpacity,Modal,Keyboard,Animated,Platform,Dimensions,WebView
+    Keyboard,
+    Modal,
+    Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView
 } from 'react-native';
 import Store from "../store/LocalStore";
 import WSChannel from "../channel/LocalWSChannel";
@@ -25,12 +25,12 @@ export default class GroupMsgStateView extends Component<{}> {
     }
 
     componentDidMount=()=>{
-        var gid = this.props.navigation.state.params.gid;
-        var msgId = this.props.navigation.state.params.msgId;
+        let gid = this.props.navigation.state.params.gid;
+        let msgId = this.props.navigation.state.params.msgId;
         Store.getGroupChatRecord(gid,msgId,null, (rec)=> {
             if(rec){
                 Store.getRecordStateReports(gid,msgId,(states)=>{
-                    this.setState({rec:rec,states:states});
+                    this.setState({rec,states});
                 });
             }
         });
@@ -54,23 +54,23 @@ export default class GroupMsgStateView extends Component<{}> {
     }
 
     render(){
-        var rec = this.state.rec;
-        var friends = [];
+        let rec = this.state.rec;
+        let friends = [];
 
         if(rec){
-            var gid = this.props.navigation.state.params.gid;
-            var members = Store.getGroup(gid).members;
-            var states = this.state.states;
-            for(var i=0;i<members.length;i++){
-                var f = members[i];
+            let gid = this.props.navigation.state.params.gid;
+            let members = Store.getGroup(gid).members;
+            let states = this.state.states;
+            for(let i=0;i<members.length;i++){
+                let f = members[i];
                 if(f.uid!=Store.getCurrentUid()){
-                    var state = rec.state;
-                    for(var j=0;j<states.length;j++){
+                    let state = rec.state;
+                    for(let j=0;j<states.length;j++){
                         if(states[j].reporterUid == f.uid){
                             state = states[j].state;
                         }
                     }
-                    var iconName = this.getIconNameByState(state);
+                    let iconName = this.getIconNameByState(state);
                     friends.push(<TouchableOpacity key={i}  style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                         <View style={{flexDirection:"row",justifyContent:"space-around",alignItems:"center",width:"90%",height:40,marginTop:20}}>
                             <Text>    {f.name}  </Text>

@@ -1,4 +1,4 @@
-let  node_ssh, ssh, fs
+let  fs, node_ssh, ssh
 
 fs = require('fs')
 node_ssh = require('node-ssh')

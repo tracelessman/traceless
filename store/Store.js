@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 var Store = {
     MESSAGE_STATE_SENDING:0,
     MESSAGE_STATE_SERVER_NOT_RECEIVE:1,

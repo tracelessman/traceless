@@ -1,6 +1,4 @@
-/**
- * Created by renbaogang on 2017/10/28.
- */
+/* eslint-disable */
 var Store = require("../store/Store")
 
 

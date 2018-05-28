@@ -58,6 +58,7 @@
 		C8E650D82D3C45FF82958B4C /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D56F86E06FE342539490A931 /* libsqlite3.0.tbd */; };
 		EE67EBE615BA4DAFBBC4AA3A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A52D65283F734E1D9F04789D /* FontAwesome.ttf */; };
 		F1F27B96016C44ADA8BC0907 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACDC99D4E983493CAEA45D92 /* EvilIcons.ttf */; };
+		FD43F4D920BBA297003D1655 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD43F4D620BBA283003D1655 /* libRCTPushNotification.a */; };
 		FDB94DDE20B28CA900E7E23E /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDB94DDD20B28CA900E7E23E /* RSKImageCropper.framework */; };
 		FDB94DDF20B28CA900E7E23E /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FDB94DDD20B28CA900E7E23E /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FDB94DE120B28CA900E7E23E /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDB94DE020B28CA900E7E23E /* QBImagePicker.framework */; };
@@ -374,6 +375,20 @@
 			remoteGlobalIDString = 358F4ED71D1E81A9004DF814;
 			remoteInfo = RCTBlob;
 		};
+		FD43F4D520BBA283003D1655 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
+		};
+		FD43F4D720BBA283003D1655 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
+			remoteInfo = "RCTPushNotification-tvOS";
+		};
 		FDB94DB020B28C8300E7E23E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FDB94DAA20B28C8300E7E23E /* imageCropPicker.xcodeproj */;
@@ -482,6 +497,8 @@
 		E4ED5860ABA849E8B11BBF5F /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		ECF683629993447399457078 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		FA2BF484BC1244F4BFCC6EBA /* libRNNetworkInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNNetworkInfo.a; sourceTree = "<group>"; };
+		FD43F4CF20BBA25A003D1655 /* traceless.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = traceless.entitlements; path = traceless/traceless.entitlements; sourceTree = "<group>"; };
+		FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		FDB94DAA20B28C8300E7E23E /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		FDB94DDD20B28CA900E7E23E /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDB94DE020B28CA900E7E23E /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -500,6 +517,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD43F4D920BBA297003D1655 /* libRCTPushNotification.a in Frameworks */,
 				FDB94DE420B28FAE00E7E23E /* libimageCropPicker.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -636,6 +654,7 @@
 		13B07FAE1A68108700A75B9A /* traceless */ = {
 			isa = PBXGroup;
 			children = (
+				FD43F4CF20BBA25A003D1655 /* traceless.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -745,6 +764,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */,
 				FDB94DAA20B28C8300E7E23E /* imageCropPicker.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -842,6 +862,15 @@
 				D56F86E06FE342539490A931 /* libsqlite3.0.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FD43F4D120BBA283003D1655 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD43F4D620BBA283003D1655 /* libRCTPushNotification.a */,
+				FD43F4D820BBA283003D1655 /* libRCTPushNotification-tvOS.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		FD5CDE9820AD749900F581EB /* Recovered References */ = {
@@ -980,6 +1009,14 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 355R83R4YL;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1043,6 +1080,10 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
+				},
+				{
+					ProductGroup = FD43F4D120BBA283003D1655 /* Products */;
+					ProjectRef = FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -1398,6 +1439,20 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		FD43F4D620BBA283003D1655 /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = FD43F4D520BBA283003D1655 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FD43F4D820BBA283003D1655 /* libRCTPushNotification-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTPushNotification-tvOS.a";
+			remoteRef = FD43F4D720BBA283003D1655 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		FDB94DB120B28C8300E7E23E /* libimageCropPicker.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1669,8 +1724,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = traceless/traceless.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Liya Yao (355R83R4YL)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 355R83R4YL;
@@ -1695,7 +1753,8 @@
 				);
 				PRODUCT_NAME = traceless;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = /Users/spirit/Downloads/entry/certificate/traceless_profile.mobileprovision;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=*]" = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1704,7 +1763,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = traceless/traceless.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Liya Yao (355R83R4YL)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 355R83R4YL;
 				HEADER_SEARCH_PATHS = (
@@ -1728,7 +1790,7 @@
 				);
 				PRODUCT_NAME = traceless;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = /Users/spirit/Downloads/entry/certificate/traceless_profile.mobileprovision;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1941,7 +2003,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = traceless/traceless.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Liya Yao (355R83R4YL)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 355R83R4YL;
 				HEADER_SEARCH_PATHS = (
@@ -1965,7 +2030,7 @@
 				);
 				PRODUCT_NAME = traceless;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = /Users/spirit/Downloads/entry/certificate/traceless_profile.mobileprovision;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "ad hoc distribution";
