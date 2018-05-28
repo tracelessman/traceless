@@ -407,9 +407,6 @@ var Store = {
     },
     addGroupMembers:function (gid,newMembers,allMembers) {
         var group = this.getGroup(gid);
-        console.log(group)
-        console.log(newMembers)
-
         if(!group){
             this.addGroup(gid,group.name,allMembers);
         }

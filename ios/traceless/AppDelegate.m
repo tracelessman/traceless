@@ -61,4 +61,12 @@
   [RCTPushNotificationManager didReceiveLocalNotification:notification];
  }
 
+ - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification
+ withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+ {
+ NSLog( @"Handle push from foreground" );
+ // custom code to handle push while app is in the foreground
+ completionHandler(UNNotificationPresentationOptionAlert);
+ }
+
 @end
