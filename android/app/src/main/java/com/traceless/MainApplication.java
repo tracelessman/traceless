@@ -3,7 +3,6 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.wix.reactnativenotifications.RNNotificationsPackage;
 import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
 import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
@@ -42,7 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNNotificationsPackage(),
             new ReactNativeAPKPackage(),
             new RNFSPackage(),
             new SvgPackage(),

@@ -94,8 +94,6 @@ let AppUtil={
                 console.log(num)
 
             })
-            console.log(PushNotificationIOS.FetchResult)
-
             PushNotificationIOS.checkPermissions((permissions) => {
                 const {alert,sound,badge} = permissions
 
