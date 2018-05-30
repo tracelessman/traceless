@@ -5,7 +5,7 @@ import {
     AsyncStorage,
     Linking,
     NativeModules,Platform,
-    StyleSheet,Text,View
+    StyleSheet,Text,View,PushNotificationIOS
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -20,7 +20,6 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
 const axios = require('axios')
-// const url = "http://123.207.145.167:3000"
 const versionLocal = require('./package').version
 const semver = require('semver')
 const config = require('./config')
@@ -34,6 +33,8 @@ export default class UpdateCheck extends Component<{}> {
 
     constructor(props){
         super(props);
+
+        AppUtil.init()
         let mode = 'check'
         if(Platform.OS !== 'android'){
             mode = 'ready'
@@ -50,7 +51,10 @@ export default class UpdateCheck extends Component<{}> {
     componentWillMount =()=> {
         if(Platform.OS === 'android'){
             WSChannel.on("afterLogin", this.checkUpdate);
+        }else{
+
         }
+
     }
 
     componentWillUnmount =()=> {
@@ -59,7 +63,6 @@ export default class UpdateCheck extends Component<{}> {
         }
 
     }
-
 
 
     checkUpdate = ()=>{
@@ -124,7 +127,7 @@ export default class UpdateCheck extends Component<{}> {
         if(this.state.mode === 'ready'){
             content = <App></App>
         }else if(this.state.mode === 'update'){
-            content = 
+            content =
                 <View style={{display:'flex',justifyContent:"center",alignItems:"center",height:"100%"}}>
 
                     <Progress.Circle  showsText formatText={(progress)=>this.state.percent} progress={this.state.progress} size={100} />
@@ -132,7 +135,7 @@ export default class UpdateCheck extends Component<{}> {
                         更新中......
                     </Text>
                 </View>
-            
+
         }
 
         return (

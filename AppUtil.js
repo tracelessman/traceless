@@ -1,6 +1,7 @@
 import JPushModule from 'jpush-react-native'
-import {Platform, StyleSheet} from 'react-native'
+import {Platform, PushNotificationIOS, StyleSheet} from 'react-native'
 const _ = require('lodash')
+let deviceIdApn,deviceIdApnPromise
 
 let AppUtil={
     setApp (app) {
@@ -69,5 +70,63 @@ let AppUtil={
             trailing:false
         })
     },
+    getApnDeviceId(){
+        let result
+        if(Platform.OS === 'ios'){
+            if(deviceIdApn){
+                result = Promise.resolve(deviceIdApn)
+            }else{
+                result = deviceIdApnPromise
+            }
+
+        }else{
+            throw new Error('no APN deviceId on android app')
+        }
+        return result
+    },
+    iosPushInit(){
+        return new Promise(resolve=>{
+            PushNotificationIOS.getInitialNotification().then(res=>{
+                console.log(res)
+
+            })
+            PushNotificationIOS.getApplicationIconBadgeNumber(num=>{
+                console.log(num)
+
+            })
+            console.log(PushNotificationIOS.FetchResult)
+
+            PushNotificationIOS.checkPermissions((permissions) => {
+                const {alert,sound,badge} = permissions
+
+                if(alert === 0 && sound === 0 && badge === 0){
+                    PushNotificationIOS.requestPermissions().then(res=>{
+
+                    })
+                }else{
+                    PushNotificationIOS.addEventListener('register', (deviceId) => {
+                        console.log(deviceId)
+
+                        deviceIdApn = deviceId
+                        resolve(deviceId)
+                    });
+
+                    PushNotificationIOS.addEventListener('notification', (res) => {
+                        console.log(res)
+                    });
+                    PushNotificationIOS.requestPermissions().then(res=>{
+
+                    })
+                }
+            });
+
+
+        })
+    },
+    init(){
+        if(Platform.OS === 'ios'){
+            deviceIdApnPromise = this.iosPushInit()
+        }
+    }
 };
 export default AppUtil;

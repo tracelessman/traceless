@@ -4,7 +4,7 @@ import {
     Alert,
     Image,
     Modal,
-    ScrollView,Text,TextInput,TouchableOpacity,View,PushNotificationIOS
+    ScrollView,Text,TextInput,TouchableOpacity,View
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
@@ -45,53 +45,19 @@ export default class MineView extends Component<{}> {
     }
 
     clear=()=>{
-        PushNotificationIOS.requestPermissions(['alert']).then(res=>{
-            console.log(res)
-            PushNotificationIOS.checkPermissions((permissions) => {
-                console.log(permissions);
-            });
-
-        })
-
-        PushNotificationIOS.addEventListener('register', (res) => {
-            console.log(res)
-            PushNotificationIOS.checkPermissions((permissions) => {
-                console.log(permissions);
-            });
-
-        });
-
-        PushNotificationIOS.addEventListener('notification', (res) => {
-            console.log(res)
-            PushNotificationIOS.checkPermissions((permissions) => {
-                console.log(permissions);
-            });
-
-        });
-        setTimeout(()=>{
-            console.log('notice')
-
-
-
-            PushNotificationIOS.presentLocalNotification({
-                alertBody:'test',
-                alertAction:'view'
-            })
-        },1000*4)
-
-        // Alert.alert(
-        //     '提示',
-        //     '清除聊天记录后不可恢复,请确认是否继续本操作?',
-        //     [
-        //         {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        //         {text: '确认', onPress: () => {
-        //                 Store.clear(function () {
-        //                     AppUtil.reset();
-        //                 });
-        //             }},
-        //     ],
-        //     { cancelable: false }
-        // )
+        Alert.alert(
+            '提示',
+            '清除聊天记录后不可恢复,请确认是否继续本操作?',
+            [
+                {text: '取消', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                {text: '确认', onPress: () => {
+                        Store.clear(function () {
+                            AppUtil.reset();
+                        });
+                    }},
+            ],
+            { cancelable: false }
+        )
     }
 
     showScanView=debounceFunc(()=>{
@@ -190,7 +156,7 @@ export default class MineView extends Component<{}> {
                                     '设置头像',
                                     '请选择头像设置方式',
                                     [
-                                        {text: '取消', onPress: () => console.log('Ask me later pressed')},
+                                        {text: '取消', onPress: () => {}},
                                         {text: '拍照', onPress: () => {
                                                 ImagePicker.openCamera(pickerOption).then(image => {
                                                     this.setAvatar(image)
