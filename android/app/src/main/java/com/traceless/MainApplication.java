@@ -3,6 +3,7 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.reactnative.camera.RNCameraPackage;
 import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
 import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
@@ -16,7 +17,6 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import org.reactnative.camera.RNCameraPackage;
 import org.pgsqlite.SQLitePluginPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.traceless.nativeJava.AnExampleReactPackage;
@@ -41,6 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCameraPackage(),
             new ReactNativeAPKPackage(),
             new RNFSPackage(),
             new SvgPackage(),
@@ -50,7 +51,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ImageResizerPackage(),
             new ImagePickerPackage(),
             new RNFetchBlobPackage(),
-            new RNCameraPackage(),
               new SQLitePluginPackage(),
               new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG),
               new AnExampleReactPackage()
