@@ -71,7 +71,7 @@ let AppUtil={
         })
     },
     getAPNDeviceId(){
-        let result
+        let result=null;
         if(Platform.OS === 'ios'){
             if(deviceIdApn){
                 result = Promise.resolve(deviceIdApn)
@@ -79,8 +79,6 @@ let AppUtil={
                 result = deviceIdApnPromise
             }
 
-        }else{
-            throw new Error('no APN deviceId on android app')
         }
         return result
     },

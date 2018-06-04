@@ -99,7 +99,7 @@ export default class ScanRegisterView extends React.Component {
 
         let uid=this.uid||UUID();
         let cid=UUID();
-        WSChannel.register(this.ip,uid,cid,this.name,this.publicKey,this.checkCode,(data)=>{
+        WSChannel.register(this.ip,uid,cid,AppUtil.getAPNDeviceId(),this.name,this.publicKey,this.checkCode,(data)=>{
             this.setState({registering:false});
             if(data.err){
                 alert(data.err);
