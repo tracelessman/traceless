@@ -70,7 +70,7 @@ let AppUtil={
             trailing:false
         })
     },
-    getApnDeviceId(){
+    getAPNDeviceId(){
         let result
         if(Platform.OS === 'ios'){
             if(deviceIdApn){
