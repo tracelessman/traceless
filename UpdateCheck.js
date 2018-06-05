@@ -49,15 +49,10 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        WSChannel.on("afterLogin", this.checkUpdate);
-
-
+        this.checkUpdate()
     }
 
     componentWillUnmount =()=> {
-        if(Platform.OS === 'android'){
-            WSChannel.un("afterLogin", this.checkUpdate);
-        }
 
     }
 
