@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>traceless.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+				<key>dateExpires</key>
+				<string>2019/5/31</string>
+				<key>type</key>
+				<string>iOS Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+						<key>dateExpires</key>
+						<string>2019/5/31</string>
+						<key>type</key>
+						<string>iOS Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>QBImagePicker.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>355R83R4YL</string>
+						<key>name</key>
+						<string>Liya Yao</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+						<key>dateExpires</key>
+						<string>2019/5/31</string>
+						<key>type</key>
+						<string>iOS Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>RSKImageCropper.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>355R83R4YL</string>
+						<key>name</key>
+						<string>Liya Yao</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>355R83R4YL.com.hfs.traceless</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>355R83R4YL</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>traceless.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>195ba2cc-e92d-4584-905d-4142c87dac85</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.hfs.traceless</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>355R83R4YL</string>
+				<key>name</key>
+				<string>Liya Yao</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
