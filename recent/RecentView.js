@@ -222,7 +222,9 @@ export default class RecentView extends Component<{}> {
                         renderRow={data =>
                                 <ListItem thumbnail style={{}} >
                                     <Left style={{marginLeft:10,}}>
+                                        <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
                                         <Thumbnail square size={40} style={{width:50,height:50}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                                        </TouchableOpacity>
                                     </Left>
                                     <Body >
                                     <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
