@@ -4,7 +4,8 @@ import {
     Image,
     Text,
     TouchableOpacity,
-    View
+    View,
+    ScrollView
 } from 'react-native';
 import Store from '../store/LocalStore'
 
@@ -91,7 +92,10 @@ export default class ContactView extends Component<{}> {
                     </View>
                 </TouchableOpacity>
                 <View style={{width:"96%",height:0,borderTopWidth:0.5,borderColor:"#d0d0d0",marginTop:5,marginBottom:5}}></View>
-                {friends}
+                <ScrollView>
+                    {friends}
+                </ScrollView>
+
             </View>
         );
     }

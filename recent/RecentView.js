@@ -184,7 +184,7 @@ export default class RecentView extends Component<{}> {
         let groupAry=[];
         if(groups){
             for(let i=0;i<groups.length;i++){
-                var group = groups[i];
+                let group = groups[i];
                 let redTip=null;
                 if(group.newReceive){
                     redTip =  <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
