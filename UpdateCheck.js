@@ -24,7 +24,7 @@ const versionLocal = require('./package').version
 const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
-const {updateJsonUrl,apkUrl,appName} = config
+const {updateJsonUrl,apkUrl,appName,ipaUrl} = config
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -49,11 +49,8 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        if(Platform.OS === 'android'){
-            WSChannel.on("afterLogin", this.checkUpdate);
-        }else{
+        WSChannel.on("afterLogin", this.checkUpdate);
 
-        }
 
     }
 
@@ -72,46 +69,59 @@ export default class UpdateCheck extends Component<{}> {
                 const {hash,version} = data
                 if(semver.gt(version,versionLocal)){
 
-                    let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
+                    if(Platform.OS === 'android'){
+                        let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
 
 
-                    RNFetchBlob.config({
-                        useDownloadManager : true,
-                        fileCache : true,
-                        path:filePath
-                    }).fetch('GET',apkUrl)
-                        .progress({ count : 10 }, (received, total) => {
-                            // console.log(received)
-                            // console.log(total)
-                            // console.log('progress', received / total)
+                        RNFetchBlob.config({
+                            useDownloadManager : true,
+                            fileCache : true,
+                            path:filePath
+                        }).fetch('GET',apkUrl)
+                            .progress({ count : 10 }, (received, total) => {
+                                // console.log(received)
+                                // console.log(total)
+                                // console.log('progress', received / total)
+                            })
+                            .then((res)=>{
+                                this.installApp(filePath,hash,version)
+                            })
+                            .catch((err) => {
+                                console.log(err)
+
+                            })
+                    }else{
+                        this.informUpdate(version, () => {
+                            Linking.openURL(`itms-services://?action=download-manifest&url=${ipaUrl}`)
                         })
-                        .then((res)=>{
-                            this.installApp(filePath,hash,version)
-                        })
-                        .catch((err) => {
-                            console.log(err)
 
-                        })
-
+                    }
                 }
             }).catch(function (error) {
                 console.log(error);
             });
     }
 
+    informUpdate(version,onPress){
+        Alert.alert(
+            '提示',
+            `有最新版本${version},是否马上升级?`,
+            [
+                {
+                    text: '确认',
+                    onPress
+                },
+            ],
+            { cancelable: false }
+        )
+    }
+
     installApp = (filePath,hash,version)=>{
         RNFS.hash(filePath,'md5').then(localHash=>{
             if(localHash === hash){
-                Alert.alert(
-                    '提示',
-                    `有最新版本${version},是否马上升级?`,
-                    [
-                        {text: '确认', onPress: () => {
-                                NativeModules.ToastExample.install(filePath);
-                            }},
-                    ],
-                    { cancelable: false }
-                )
+                this.informUpdate(version,()=>{
+                    NativeModules.ToastExample.install(filePath);
+                })
             }else{
                 setTimeout(()=>{
                     this.checkUpdate()
