@@ -99,15 +99,18 @@ export default class ScanRegisterView extends React.Component {
 
         let uid=this.uid||UUID();
         let cid=UUID();
-        WSChannel.register(this.ip,uid,cid,AppUtil.getAPNDeviceId(),this.name,this.publicKey,this.checkCode,(data)=>{
-            this.setState({registering:false});
-            if(data.err){
-                alert(data.err);
-            }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
-                AppUtil.reset();
-            }
-        });
+        AppUtil.getAPNDeviceId().then(deviceId=>{
+            WSChannel.register(this.ip,uid,cid,deviceId,this.name,this.publicKey,this.checkCode,(data)=>{
+                this.setState({registering:false});
+                if(data.err){
+                    alert(data.err);
+                }else{
+                    Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
+                    AppUtil.reset();
+                }
+            });
+        })
+
     }
 
     register=()=>{
