@@ -1,16 +1,18 @@
+/* eslint-enable */
+
 
 import React, { Component } from 'react';
 import {
     Alert,
-    Text,
-    View,
-    TextInput,TouchableOpacity,Image,
-    Platform
+    Image,
+    Platform,
+    Text,TextInput,TouchableOpacity,
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,List,Thumbnail,Left,Right,Toast
+    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,List,ListItem,Right,Thumbnail,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 const {alert} = Alert

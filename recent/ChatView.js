@@ -1,13 +1,13 @@
 
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
-    TextInput,
-    ScrollView,
+    Animated,
     Button,
+    Dimensions,
     Image,
-    TouchableOpacity,Modal,Keyboard,Animated,Platform,Dimensions,WebView
+    Keyboard,
+    Modal,
+    Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView
 } from 'react-native';
 import Store from "../store/LocalStore";
 import WSChannel from "../channel/LocalWSChannel";
@@ -136,12 +136,12 @@ export default class ChatView extends Component<{}> {
     componentDidMount=()=>{
         this.refreshRecordList();
        setTimeout(()=>{
-           this.refs["scrollView"].scrollToEnd();
+           this.refs.scrollView.scrollToEnd();
        },50)
     }
 
     componentDidUpdate=()=>{
-        this.refs["scrollView"].scrollToEnd();
+        this.refs.scrollView.scrollToEnd();
     }
 
     send=()=>{
@@ -149,14 +149,14 @@ export default class ChatView extends Component<{}> {
             if(this.isGroupChat){
                 WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,()=>{
                     this.text="";
-                    this.refs["text"].clear();
-                    this.refs["scrollView"].scrollToEnd();
+                    this.refs.text.clear();
+                    this.refs.scrollView.scrollToEnd();
                 });
             }else{
                 WSChannel.sendMessage(this.otherSide.id,this.text,()=>{
                     this.text="";
-                    this.refs["text"].clear();
-                    this.refs["scrollView"].scrollToEnd();
+                    this.refs.text.clear();
+                    this.refs.scrollView.scrollToEnd();
                 });
 
 
@@ -169,18 +169,18 @@ export default class ChatView extends Component<{}> {
     sendImage=(data)=>{
         if(this.isGroupChat){
             WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,()=>{
-                this.refs["scrollView"].scrollToEnd();
+                this.refs.scrollView.scrollToEnd();
             });
         }else{
             WSChannel.sendImage(this.otherSide.id,data,()=>{
-                this.refs["scrollView"].scrollToEnd();
+                this.refs.scrollView.scrollToEnd();
             });
         }
 
     }
 
     showImagePicker=()=>{
-        var options = {
+        let options = {
             title: '选择图片',
             cancelButtonTitle: '取消',
             takePhotoButtonTitle: '拍照',
@@ -202,8 +202,8 @@ export default class ChatView extends Component<{}> {
             else if (response.customButton) {
             }
             else {
-                var imageUri = response.uri;
-                var img = {data:response.data,width:response.width,height:response.height}
+                let imageUri = response.uri;
+                let img = {data:response.data,width:response.width,height:response.height}
                 this.sendImage(img);
 
                  // if(response.fileSize>1*1024*1024){
@@ -278,9 +278,9 @@ export default class ChatView extends Component<{}> {
             Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
                 if(rec&&rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
                     if(rec.type==Store.MESSAGE_TYEP_TEXT)
-                        WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);
+                        {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
                     else if(rec.type==Store.MESSAGE_TYPE_IMAGE)
-                        WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))
+                        {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
                 }
             });
 
@@ -293,10 +293,10 @@ export default class ChatView extends Component<{}> {
             return <Text>{rec.content}</Text>;
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
-            var img = JSON.parse(rec.content);
-            var imgUri = img;
-            var imgW = 180;
-            var imgH = 180;
+            let img = JSON.parse(rec.content);
+            let imgUri = img;
+            let imgW = 180;
+            let imgH = 180;
             if(img&&img.data){
                 imgUri = "file://"+img.data;
                 //imgW = img.width;
@@ -304,29 +304,29 @@ export default class ChatView extends Component<{}> {
             }
            return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
         }else if(rec.type==Store.MESSAGE_TYPE_FILE){
-            var file = JSON.parse(rec.content);
+            let file = JSON.parse(rec.content);
             return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
         }
     }
 
     render() {
-       var records = this.records;
-       var recordEls = [];
+       let records = this.records;
+       let recordEls = [];
        if(records){
-           var lastSpTime;
-           var picSource = AppUtil.getAvatarSource(Store.getPersonalPic());
-           var now = new Date();
-           for(var i=0;i<records.length;i++){
+           let lastSpTime;
+           let picSource = AppUtil.getAvatarSource(Store.getPersonalPic());
+           let now = new Date();
+           for(let i=0;i<records.length;i++){
                if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
                    lastSpTime = records[i].time;
                    if(lastSpTime){
-                       var timeStr="";
-                       var date = new Date();
+                       let timeStr="";
+                       let date = new Date();
                        date.setTime(lastSpTime);
                        if(now.getFullYear()==date.getFullYear()&&now.getMonth()==date.getMonth()&&now.getDate()==date.getDate()){
                            timeStr+="今天 ";
                        }else if(now.getFullYear()==date.getFullYear()){
-                           timeStr+=(date.getMonth()+1)+"月"+date.getDate()+"日 ";
+                           timeStr+=date.getMonth()+1+"月"+date.getDate()+"日 ";
                        }
                        timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
                        recordEls.push(<Text  style={{marginTop:10,color:"#a0a0a0",fontSize:11}} key={timeStr}>{timeStr}</Text>);
@@ -335,7 +335,7 @@ export default class ChatView extends Component<{}> {
                }
                this._keySeed++;
                if(records[i].senderUid){
-                   var otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
+                   let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
                    recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
@@ -345,8 +345,8 @@ export default class ChatView extends Component<{}> {
                        </View>
                    </View>);
                }else{
-                   var iconName = this.getIconNameByState(records[i].state);
-                   var msgId = records[i].msgId;
+                   let iconName = this.getIconNameByState(records[i].state);
+                   let msgId = records[i].msgId;
                    recordEls.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
@@ -369,7 +369,7 @@ export default class ChatView extends Component<{}> {
 
         return (
             <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
-                <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:(Platform.OS=="ios"?this.state.heightAnim:0)}}>
+                <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS=="ios"?this.state.heightAnim:0}}>
                     <ScrollView ref="scrollView" style={{width:"100%",flex:1}}>
                         <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {recordEls}

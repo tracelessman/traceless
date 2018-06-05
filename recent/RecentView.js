@@ -1,17 +1,17 @@
 
 import React, { Component } from 'react';
 import {
-    View,Image,ScrollView,
+    Alert,Image,ListView,
+    ScrollView,
     TouchableOpacity,
-    ListView,
-    Alert
+    View
 } from 'react-native';
 import Store from "../store/LocalStore"
 import WSChannel from "../channel/WSChannel"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIcon ,
-    Item, Input ,Card,CardItem,Body,Badge,
-    Thumbnail,Left,Right,Toast,Spinner
+import { Badge, Body, Button, Card, CardItem, Container, Content ,Header ,
+    Input, Item ,Left,List,ListItem,Icon as NBIcon,
+    Right,Spinner,Text,Thumbnail,Toast
 } from 'native-base';
 import AppUtil from "../AppUtil";
 import GroupAvatar from "./GroupAvatar";
@@ -61,7 +61,7 @@ export default class RecentView extends Component<{}> {
     }
     componentDidMount=()=>{
         this.updateRecent()
-        var target = AppUtil.getResetTarget();
+        let target = AppUtil.getResetTarget();
         if(target){
             this.props.navigation.navigate(target.view,target.param);
             AppUtil.clearResetTarget();
@@ -180,12 +180,12 @@ export default class RecentView extends Component<{}> {
     }
 
     render() {
-        var groups = Store.getGroups();
-        var groupAry=[];
+        let groups = Store.getGroups();
+        let groupAry=[];
         if(groups){
-            for(var i=0;i<groups.length;i++){
+            for(let i=0;i<groups.length;i++){
                 var group = groups[i];
-                var redTip=null;
+                let redTip=null;
                 if(group.newReceive){
                     redTip =  <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
                         <Text style={{}}>{group.newMsgNum}</Text>
@@ -211,7 +211,7 @@ export default class RecentView extends Component<{}> {
 
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
-            {(!this.state.listViewData.length && !groupAry.length)?
+            {!this.state.listViewData.length && !groupAry.length?
               <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>

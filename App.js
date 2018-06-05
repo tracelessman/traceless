@@ -1,16 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
 
 import React, { Component } from 'react';
 import {
+    AsyncStorage,
+    NativeModules,
     Platform,
-    StyleSheet,
-    Text,
-    View,AsyncStorage,
-    NativeModules
+    StyleSheet,Text,
+    View
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -41,14 +36,14 @@ export default class App extends Component<{}> {
     _onSystemNotify=(uid)=>{
         if(uid){
             if(Platform.OS === 'android'){
-                var tag = uid.replace(/\-/gi, '');
+                let tag = uid.replace(/\-/gi, '');
                 AppUtil.setJpush({
                     clickHandler(msg){
                         if(msg.targetUid==Store.getCurrentUid()){
                             AppUtil.reset({view:"ChatView",param:{friend:Store.getFriend(msg.fromUid)}});
                         }
                     },
-                    tag:tag
+                    tag
                 }).then((result)=>{
                     const {registrationId} = result
 
@@ -66,30 +61,30 @@ export default class App extends Component<{}> {
     reset=(t)=>{
         this.seed++;
         if(Store.getLoginState())
-            this.setState({reset:true});
+            {this.setState({reset:true});}
         else
-            this.try2Login();
+            {this.try2Login();}
     }
 
     try2Login=()=>{
         Store.fetchAllKeys((data)=>{
             if(data&&data.length>0){
-                var cur = data[0];
+                let cur = data[0];
                 //登录
-                this.setState({data:data,logining:true});
+                this.setState({data,logining:true});
                 WSChannel.login(cur.name,cur.id,cur.clientId,cur.server,(msg)=>{
                     this.seed++;
                     if(!msg.err){
                         // Store.setCurrentUid(cur.id) ;
-                        this.setState({data:data,logining:false});
+                        this.setState({data,logining:false});
                     }else{
-                        this.setState({data:data,logining:false});
+                        this.setState({data,logining:false});
                     }
 
                 },()=> {
                     this.seed++;
                     alert("无法访问服务器");
-                    this.setState({data:data,logining:false});
+                    this.setState({data,logining:false});
                 });
             }else{
                 //null 需注册
@@ -100,7 +95,7 @@ export default class App extends Component<{}> {
 
     render() {
         //console.info(this.state.key);
-        var content=null;
+        let content=null;
         if(Store.getLoginState()){
             content = <MainView key={this.seed} />
         }else if(this.state.data){

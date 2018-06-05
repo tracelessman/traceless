@@ -1,8 +1,8 @@
 import React, { Component} from 'react';
 import {
-    Text,View,Image,TouchableOpacity,Switch,TextInput,StyleSheet,Alert,Clipboard,ToastAndroid,Platform,AlertIOS,Dimensions
+    Alert,AlertIOS,Clipboard,Dimensions,Image,Platform,StyleSheet,Switch,Text,TextInput,ToastAndroid,TouchableOpacity,View
 } from 'react-native';
-import { List, ListItem,Avatar,Card ,Icon,Button,} from 'react-native-elements'
+import { Avatar, Button,Card,Icon ,List,ListItem,} from 'react-native-elements'
 
 export default class QrcodeView extends Component<{}> {
 

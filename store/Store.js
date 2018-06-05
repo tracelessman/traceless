@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 var Store = {
     MESSAGE_STATE_SENDING:0,
     MESSAGE_STATE_SERVER_NOT_RECEIVE:1,
@@ -407,9 +407,6 @@ var Store = {
     },
     addGroupMembers:function (gid,newMembers,allMembers) {
         var group = this.getGroup(gid);
-        console.log(group)
-        console.log(newMembers)
-
         if(!group){
             this.addGroup(gid,group.name,allMembers);
         }

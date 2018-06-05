@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,Keyboard,TouchableWithoutFeedback,
-    TouchableOpacity,Image,Modal} from 'react-native';
+import { Image, Keyboard, Modal,StyleSheet,Text,TextInput,
+    TouchableOpacity,TouchableWithoutFeedback,View} from 'react-native';
 import WSChannel from '../channel/LocalWSChannel';
 import Store from "../store/LocalStore";
 import MainView from "./MainView";
@@ -86,7 +86,7 @@ export default class ScanRegisterView extends React.Component {
         if(!this.publicKey&&!this.privateKey){
             const bits = 1024;
             const exponent = '10001';
-            var rsa = new RSAKey();
+            let rsa = new RSAKey();
             rsa.generate(bits, exponent);
             this.publicKey = rsa.getPublicString(); // return json encoded string
             this.privateKey = rsa.getPrivateString(); // return js
@@ -97,17 +97,20 @@ export default class ScanRegisterView extends React.Component {
         this.createKey();
         this.setState({registerStep:"注册中......"});
 
-        var uid=this.uid||UUID();
-        var cid=UUID();
-        WSChannel.register(this.ip,uid,cid,this.name,this.publicKey,this.checkCode,(data)=>{
-            this.setState({registering:false});
-            if(data.err){
-                alert(data.err);
-            }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
-                AppUtil.reset();
-            }
-        });
+        let uid=this.uid||UUID();
+        let cid=UUID();
+        AppUtil.getAPNDeviceId().then(deviceId=>{
+            WSChannel.register(this.ip,uid,cid,deviceId,this.name,this.publicKey,this.checkCode,(data)=>{
+                this.setState({registering:false});
+                if(data.err){
+                    alert(data.err);
+                }else{
+                    Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
+                    AppUtil.reset();
+                }
+            });
+        })
+
     }
 
     register=()=>{

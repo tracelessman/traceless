@@ -4,17 +4,17 @@
 
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
-    TextInput,
     Button,
+    Image,
+    Text,
+    TextInput,
     TouchableOpacity,
-    Image
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import AppUtil from "../AppUtil";
 const {getAvatarSource} = AppUtil
-import { List, ListItem,Avatar,Card ,Icon} from 'react-native-elements'
+import { Avatar, Card,Icon,List ,ListItem} from 'react-native-elements'
 
 
 export default class FriendInfoView extends Component<{}> {
@@ -32,7 +32,7 @@ export default class FriendInfoView extends Component<{}> {
     }
 
     render() {
-        var friend = this.friend;
+        let friend = this.friend;
         return (
 
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>

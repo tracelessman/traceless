@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 import {
     Alert,
     Image,
-    Text,
-    View,TextInput,TouchableOpacity,Modal,ScrollView
+    Modal,
+    ScrollView,Text,TextInput,TouchableOpacity,View
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import WSChannel from "../channel/WSChannel"
-import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
+import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -156,7 +156,7 @@ export default class MineView extends Component<{}> {
                                     '设置头像',
                                     '请选择头像设置方式',
                                     [
-                                        {text: '取消', onPress: () => console.log('Ask me later pressed')},
+                                        {text: '取消', onPress: () => {}},
                                         {text: '拍照', onPress: () => {
                                                 ImagePicker.openCamera(pickerOption).then(image => {
                                                     this.setAvatar(image)
@@ -185,7 +185,7 @@ export default class MineView extends Component<{}> {
                 </View>
                 <View style={style.listStyle}>
                     {
-                        list2.map((item, i) => (
+                        list2.map((item, i) =>
                             <ListItem
                                 key={i}
                                 title={item.title}
@@ -195,7 +195,7 @@ export default class MineView extends Component<{}> {
                                 subtitle={item.subtitle}
                                 onPress={item.onPress}
                             />
-                        ))
+                        )
                     }
                 </View>
             </ScrollView>

@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import SQLite from 'react-native-sqlite-storage';
 import RNFetchBlob from 'react-native-fetch-blob';
 const dirs = RNFetchBlob.fs.dirs;

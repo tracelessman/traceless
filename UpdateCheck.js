@@ -1,11 +1,11 @@
 
 import React, { Component } from 'react';
 import {
-    Platform,
-    StyleSheet,
-    Text,
-    View,AsyncStorage,
-    NativeModules,Alert,Linking
+    Alert,
+    AsyncStorage,
+    Linking,
+    NativeModules,Platform,
+    StyleSheet,Text,View,PushNotificationIOS
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -20,12 +20,11 @@ import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
 const axios = require('axios')
-// const url = "http://123.207.145.167:3000"
 const versionLocal = require('./package').version
 const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
-const {updateJsonUrl,apkUrl,appName} = config
+const {updateJsonUrl,apkUrl,appName,ipaUrl} = config
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -34,6 +33,8 @@ export default class UpdateCheck extends Component<{}> {
 
     constructor(props){
         super(props);
+
+        AppUtil.init()
         let mode = 'check'
         if(Platform.OS !== 'android'){
             mode = 'ready'
@@ -48,9 +49,9 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        if(Platform.OS === 'android'){
-            WSChannel.on("afterLogin", this.checkUpdate);
-        }
+        WSChannel.on("afterLogin", this.checkUpdate);
+
+
     }
 
     componentWillUnmount =()=> {
@@ -61,7 +62,6 @@ export default class UpdateCheck extends Component<{}> {
     }
 
 
-
     checkUpdate = ()=>{
         axios.get(updateJsonUrl)
             .then( (response)=> {
@@ -69,46 +69,59 @@ export default class UpdateCheck extends Component<{}> {
                 const {hash,version} = data
                 if(semver.gt(version,versionLocal)){
 
-                    let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
+                    if(Platform.OS === 'android'){
+                        let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
 
 
-                    RNFetchBlob.config({
-                        useDownloadManager : true,
-                        fileCache : true,
-                        path:filePath
-                    }).fetch('GET',apkUrl)
-                        .progress({ count : 10 }, (received, total) => {
-                            // console.log(received)
-                            // console.log(total)
-                            // console.log('progress', received / total)
+                        RNFetchBlob.config({
+                            useDownloadManager : true,
+                            fileCache : true,
+                            path:filePath
+                        }).fetch('GET',apkUrl)
+                            .progress({ count : 10 }, (received, total) => {
+                                // console.log(received)
+                                // console.log(total)
+                                // console.log('progress', received / total)
+                            })
+                            .then((res)=>{
+                                this.installApp(filePath,hash,version)
+                            })
+                            .catch((err) => {
+                                console.log(err)
+
+                            })
+                    }else{
+                        this.informUpdate(version, () => {
+                            Linking.openURL(`itms-services://?action=download-manifest&url=${ipaUrl}`)
                         })
-                        .then((res)=>{
-                            this.installApp(filePath,hash,version)
-                        })
-                        .catch((err) => {
-                            console.log(err)
 
-                        })
-
+                    }
                 }
             }).catch(function (error) {
                 console.log(error);
             });
     }
 
+    informUpdate(version,onPress){
+        Alert.alert(
+            '提示',
+            `有最新版本${version},是否马上升级?`,
+            [
+                {
+                    text: '确认',
+                    onPress
+                },
+            ],
+            { cancelable: false }
+        )
+    }
+
     installApp = (filePath,hash,version)=>{
         RNFS.hash(filePath,'md5').then(localHash=>{
             if(localHash === hash){
-                Alert.alert(
-                    '提示',
-                    `有最新版本${version},是否马上升级?`,
-                    [
-                        {text: '确认', onPress: () => {
-                                NativeModules.ToastExample.install(filePath);
-                            }},
-                    ],
-                    { cancelable: false }
-                )
+                this.informUpdate(version,()=>{
+                    NativeModules.ToastExample.install(filePath);
+                })
             }else{
                 setTimeout(()=>{
                     this.checkUpdate()
@@ -124,15 +137,15 @@ export default class UpdateCheck extends Component<{}> {
         if(this.state.mode === 'ready'){
             content = <App></App>
         }else if(this.state.mode === 'update'){
-            content = (
+            content =
                 <View style={{display:'flex',justifyContent:"center",alignItems:"center",height:"100%"}}>
 
-                    <Progress.Circle  showsText formatText={(progress)=>{return this.state.percent}} progress={this.state.progress} size={100} />
+                    <Progress.Circle  showsText formatText={(progress)=>this.state.percent} progress={this.state.progress} size={100} />
                     <Text style={{margin:30}}>
                         更新中......
                     </Text>
                 </View>
-            )
+
         }
 
         return (

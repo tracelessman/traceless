@@ -30,10 +30,10 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '最近',
                 title:'最近',
 
-                tabBarIcon: ({ tintColor, focused }) => (
+                tabBarIcon: ({ tintColor, focused }) => 
                     <Tab type="recent" focused={focused}></Tab>
 
-                )
+                
             }
         },
         ContactTab: {
@@ -42,11 +42,11 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '通讯录',
                 title:'通讯录',
 
-                tabBarIcon: ({ tintColor, focused }) => (
+                tabBarIcon: ({ tintColor, focused }) => 
                     focused?<Icon name="table-of-contents" size={iconSize}  color="#f9e160"/>
                         :
                         <Icon name="table-of-contents" size={iconSize}  color="#d0d0d0"/>
-                )
+                
             }
         },
         AccountTab: {
@@ -54,11 +54,11 @@ const MainTabs = TabNavigator({
             navigationOptions: {
                 tabBarLabel: '我的',
                 title:'我的',
-                tabBarIcon: ({ tintColor, focused }) => (
+                tabBarIcon: ({ tintColor, focused }) => 
                     focused?<Icon name="account-outline" size={iconSize}  color="#f9e160"/>
                         :
                         <Icon name="account-outline" size={iconSize}  color="#d0d0d0"/>
-                )
+                
             },
 
         }
@@ -88,7 +88,7 @@ const MainTabs = TabNavigator({
             }
     }
 );
-var MainStack = StackNavigator({
+let MainStack = StackNavigator({
     MainTabView: {
         screen: MainTabs,
         navigationOptions:{

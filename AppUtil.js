@@ -1,22 +1,23 @@
 import JPushModule from 'jpush-react-native'
-import {Platform, StyleSheet} from 'react-native'
+import {Platform, PushNotificationIOS, StyleSheet} from 'react-native'
 const _ = require('lodash')
+let deviceIdApn,deviceIdApnPromise
 
-var AppUtil={
-    setApp:function (app) {
+let AppUtil={
+    setApp (app) {
         this.app = app;
     },
-    reset:function (target) {
+    reset (target) {
         this._target = target;
         this.app.reset();
     },
-    getResetTarget:function () {
+    getResetTarget () {
         return this._target;
     },
-    clearResetTarget:function () {
+    clearResetTarget () {
         delete this._target;
     },
-    isFreeRegister:function () {
+    isFreeRegister () {
         return true;
     },
     setJpush(option){
@@ -69,5 +70,59 @@ var AppUtil={
             trailing:false
         })
     },
+    getAPNDeviceId(){
+        let result=null;
+        if(Platform.OS === 'ios'){
+            if(deviceIdApn){
+                result = Promise.resolve(deviceIdApn)
+            }else{
+                result = deviceIdApnPromise
+            }
+
+        }
+        return result
+    },
+    iosPushInit(){
+        return new Promise(resolve=>{
+            PushNotificationIOS.getInitialNotification().then(res=>{
+                console.log(res)
+
+            })
+            PushNotificationIOS.getApplicationIconBadgeNumber(num=>{
+                console.log(num)
+
+            })
+            PushNotificationIOS.checkPermissions((permissions) => {
+                const {alert,sound,badge} = permissions
+
+                if(alert === 0 && sound === 0 && badge === 0){
+                    PushNotificationIOS.requestPermissions().then(res=>{
+
+                    })
+                }else{
+                    PushNotificationIOS.addEventListener('register', (deviceId) => {
+                        console.log(deviceId)
+
+                        deviceIdApn = deviceId
+                        resolve(deviceId)
+                    });
+
+                    PushNotificationIOS.addEventListener('notification', (res) => {
+                        console.log(res)
+                    });
+                    PushNotificationIOS.requestPermissions().then(res=>{
+
+                    })
+                }
+            });
+
+
+        })
+    },
+    init(){
+        if(Platform.OS === 'ios'){
+            deviceIdApnPromise = this.iosPushInit()
+        }
+    }
 };
 export default AppUtil;

@@ -2,8 +2,8 @@
  * Created by renbaogang on 2018/2/7.
  */
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,Keyboard,TouchableWithoutFeedback,
-    TouchableOpacity,Image} from 'react-native';
+import { Image, Keyboard, StyleSheet,Text,TextInput,TouchableOpacity,
+    TouchableWithoutFeedback,View} from 'react-native';
 import WSChannel from '../channel/LocalWSChannel';
 import Store from "../store/LocalStore";
 import MainView from "./MainView";
@@ -22,7 +22,7 @@ export default class RegisterView extends React.Component {
         this.uid = this.state.uid;
         const bits = 2048;
         const exponent = '10001';
-        var rsa = new RSAKey();
+        let rsa = new RSAKey();
         rsa.generate(bits, exponent);
         this.publicKey = rsa.getPublicString(); // return json encoded string
         this.privateKey = rsa.getPrivateString(); // return js
@@ -74,7 +74,7 @@ export default class RegisterView extends React.Component {
             if(data.err){
                 alert(data.err);
             }else{
-                var name = AppUtil.isFreeRegister()?this.name:data.name;
+                let name = AppUtil.isFreeRegister()?this.name:data.name;
                 Store.saveKey(name,this.ip,this.uid,this.publicKey,this.privateKey);
                 AppUtil.reset();
             }

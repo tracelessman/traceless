@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
     Button,
     Image,
-    TouchableOpacity
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import Store from '../store/LocalStore'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import AppUtil from "../AppUtil";
 const {getAvatarSource,debounceFunc} = AppUtil
-import { List, ListItem,Avatar,Card } from 'react-native-elements'
+import { Avatar, Card,List,ListItem } from 'react-native-elements'
 
 export default class ContactView extends Component<{}> {
 
@@ -62,9 +62,9 @@ export default class ContactView extends Component<{}> {
 
 
     render() {
-        var friends = [];
-        var all = Store.getAllFriends();
-        for(var i=0;i<all.length;i++){
+        let friends = [];
+        let all = Store.getAllFriends();
+        for(let i=0;i<all.length;i++){
             let f = all[i];
 
             friends.push(<TouchableOpacity key={i} onPress={()=>{this.go2FriendInfoView(f)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
