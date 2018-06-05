@@ -58,3 +58,4 @@ build
 
 !traceless.apk
 !traceless.ipa
+*.log
