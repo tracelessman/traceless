@@ -71,7 +71,7 @@ let AppUtil={
         })
     },
     getAPNDeviceId(){
-        let result=null;
+        let result;
         if(Platform.OS === 'ios'){
             if(deviceIdApn){
                 result = Promise.resolve(deviceIdApn)
@@ -79,7 +79,10 @@ let AppUtil={
                 result = deviceIdApnPromise
             }
 
+        }else{
+            result = Promise.resolve(null)
         }
+
         return result
     },
     iosPushInit(){
