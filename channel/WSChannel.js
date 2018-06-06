@@ -480,9 +480,7 @@ var WSChannel={
         Store.updateFriendPic(msg.uid,msg.data.pic);
     },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
-        console.log(uids)
         var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{
-            console.log(data)
             if(data.err){
                 if(errCallback)
                     errCallback(data.err);
@@ -493,7 +491,7 @@ var WSChannel={
         this._sendRequest(req,timeoutCallback);
     },
     addGroupMembersHandler:function (msg,callback) {
-        Store.addGroupMembers(msg.groupId,msg.newMembers,msg.allMembers);
+        Store.addGroupMembers(msg.data.groupId,msg.data.newMembers,msg.data.allMembers);
     },
     leaveGroup:function (gid) {
 
