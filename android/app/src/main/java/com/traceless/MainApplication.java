@@ -3,6 +3,7 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cn.reactnative.modules.update.UpdatePackage;
 import org.reactnative.camera.RNCameraPackage;
 import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
 import com.rnfs.RNFSPackage;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new UpdatePackage(),
             new RNCameraPackage(),
             new ReactNativeAPKPackage(),
             new RNFSPackage(),
