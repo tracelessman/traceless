@@ -405,10 +405,10 @@ var Store = {
     getGroup:function (id) {
         return this._getGroup(id,false);
     },
-    addGroupMembers:function (gid,newMembers,allMembers) {
+    addGroupMembers:function (gid,groupName,newMembers,allMembers) {
         var group = this.getGroup(gid);
         if(!group){
-            this.addGroup(gid,group.name,allMembers);
+            this.addGroup(gid,groupName,allMembers);
         }
         if(group){
 
