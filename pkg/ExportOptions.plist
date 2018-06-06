@@ -9,9 +9,9 @@
 		<key>appURL</key>
 		<string>https://raw.githubusercontent.com/tracelessman/traceless/publish/pkg/traceless.ipa</string>
 		<key>displayImageURL</key>
-		<string>https://raw.githubusercontent.com/tracelessman/traceless/publish/pkg/traceless.png</string>
+		<string>https://raw.githubusercontent.com/tracelessman/traceless/publish/pkg/57*57.png</string>
 		<key>fullSizeImageURL</key>
-		<string>https://raw.githubusercontent.com/tracelessman/traceless/publish/pkg/traceless.png</string>
+		<string>https://raw.githubusercontent.com/tracelessman/traceless/publish/pkg/512*512.png</string>
 	</dict>
 	<key>method</key>
 	<string>ad-hoc</string>
