@@ -37,7 +37,7 @@ export default class App extends Component<{}> {
                 text: '无法连接服务器,请检查网络连接',
                 position: "top",
                 type:"warning",
-                duration: 3000
+                duration: 5000
             })
         })
     }
@@ -92,7 +92,7 @@ export default class App extends Component<{}> {
 
                 },()=> {
                     this.seed++;
-                    alert("无法访问服务器");
+                    WSChannel._fire("badN")
                     this.setState({data,logining:false});
                 });
             }else{
