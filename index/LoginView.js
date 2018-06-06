@@ -67,7 +67,6 @@ export default class LoginView extends React.Component {
             }
         },()=>{
             this.setState({logining:false});
-            alert("无法访问服务器");
         });
 
     }

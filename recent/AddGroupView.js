@@ -3,6 +3,8 @@ import { Button,Image,Switch,Text,TextInput,TouchableOpacity,View} from 'react-n
 import Store from '../store/LocalStore'
 import  WSChannel from '../channel/LocalWSChannel'
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
+
 export default class AddGroupView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => (
@@ -10,7 +12,9 @@ export default class AddGroupView extends Component<{}> {
             headerRight:
                 <TouchableOpacity style={{marginRight:20}}>
                     <Button color="#2d8cf0" title="确定"
-                                onPress={()=>navigation.state.params.navigateAddGroupPress()}
+                                onPress={debounceFunc(()=>{
+                                    navigation.state.params.navigateAddGroupPress()
+                                })}
                                 style={{marginRight:20}}/>
                 </TouchableOpacity>
         }
