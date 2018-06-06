@@ -485,7 +485,7 @@ var WSChannel={
                 if(errCallback)
                     errCallback(data.err);
             }else{
-                Store.addGroupMembers(gid,uids);
+                Store.addGroupMembers(gid,null,uids);
             }
         },null,null,null);
         this._sendRequest(req,timeoutCallback);
