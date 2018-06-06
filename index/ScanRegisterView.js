@@ -135,7 +135,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
     render() {
-        const logoView = <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
+        const logoView = <Image source={require('../images/1024x1024.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
         return (
 
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
