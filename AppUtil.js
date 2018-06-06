@@ -83,10 +83,17 @@ let AppUtil={
             result = Promise.resolve(null)
         }
 
+
         return result
     },
     iosPushInit(){
         return new Promise(resolve=>{
+            PushNotificationIOS.addEventListener('register', (deviceId) => {
+
+                deviceIdApn = deviceId
+                resolve(deviceId)
+            });
+
             PushNotificationIOS.getInitialNotification().then(res=>{
                 // console.log(res)
 
@@ -103,12 +110,7 @@ let AppUtil={
 
                     })
                 }else{
-                    PushNotificationIOS.addEventListener('register', (deviceId) => {
-                        // console.log(deviceId)
 
-                        deviceIdApn = deviceId
-                        resolve(deviceId)
-                    });
 
                     PushNotificationIOS.addEventListener('notification', (res) => {
                         // console.log(res)
@@ -124,6 +126,8 @@ let AppUtil={
     },
     init(){
         if(Platform.OS === 'ios'){
+            console.log('init')
+
             deviceIdApnPromise = this.iosPushInit()
         }
     }
