@@ -95,19 +95,24 @@ export default class ScanRegisterView extends React.Component {
 
     _doRegister = ()=>{
         this.createKey();
-        this.setState({registerStep:"注册中......"});
+        this.setState({registerStep:"获取设备标识......"});
 
         let uid=this.uid||UUID();
         let cid=UUID();
+        let curView = this;
         AppUtil.getAPNDeviceId().then(deviceId=>{
+            curView.setState({registerStep:"注册中......"});
             WSChannel.register(this.ip,uid,cid,deviceId,this.name,this.publicKey,this.checkCode,(data)=>{
                 this.setState({registering:false});
                 if(data.err){
+                    curView.setState({registerStep:"注册出错......"});
                     alert(data.err);
                 }else{
                     Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
                     AppUtil.reset();
                 }
+            },()=>{
+                curView.setState({registerStep:"网络访问超时......"});
             });
         })
 
