@@ -480,7 +480,7 @@ var WSChannel={
         Store.updateFriendPic(msg.uid,msg.data.pic);
     },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
-        var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{
+        var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,groupName:Store.getGroup(gid).name,newMembers:uids},(data)=>{
             if(data.err){
                 if(errCallback)
                     errCallback(data.err);
@@ -491,7 +491,7 @@ var WSChannel={
         this._sendRequest(req,timeoutCallback);
     },
     addGroupMembersHandler:function (msg,callback) {
-        Store.addGroupMembers(msg.data.groupId,msg.data.newMembers,msg.data.allMembers);
+        Store.addGroupMembers(msg.data.groupId,msg.data.groupName,msg.data.newMembers,msg.data.allMembers);
     },
     leaveGroup:function (gid) {
 
