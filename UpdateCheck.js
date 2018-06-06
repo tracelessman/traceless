@@ -10,6 +10,7 @@ import {
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
 import AppUtil from "./AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
@@ -49,7 +50,7 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        // WSChannel.on("afterLogin", this.checkUpdate);
+        WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
     }
 
@@ -58,17 +59,14 @@ export default class UpdateCheck extends Component<{}> {
     }
 
 
-    checkUpdate = ()=>{
+    checkUpdate = debounceFunc(()=>{
         axios.get(updateJsonUrl)
             .then( (response)=> {
                 const {data} = response
                 const {hash,version} = data
                 if(semver.gt(version,versionLocal)){
-
                     if(Platform.OS === 'android'){
                         let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
-
-
                         RNFetchBlob.config({
                             useDownloadManager : true,
                             fileCache : true,
@@ -96,7 +94,7 @@ export default class UpdateCheck extends Component<{}> {
             }).catch(function (error) {
                 console.log(error);
             });
-    }
+    },1000*60*1)
 
     informUpdate(version,onPress){
         Alert.alert(

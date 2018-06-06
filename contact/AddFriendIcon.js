@@ -39,19 +39,19 @@ export default class AddFriendIcon extends Component<{}> {
 
 
     render() {
+        let styleView = {paddingRight:10,marginBottom:10}
 
-
-        const view1 = 
-            <View>
+        const view1 =
+            <View style={styleView}>
                 <Button transparent onPress={()=>{
                 }}>
                     <Icon name='md-checkmark' />
                 </Button>
             </View>
 
-        
-        const view2 = 
-            <View>
+
+        const view2 =
+            <View style={styleView}>
                 <Button transparent onPress={()=>{
                     this.addFriend(this.props.uid)
                 }}>
@@ -59,7 +59,7 @@ export default class AddFriendIcon extends Component<{}> {
                 </Button>
             </View>
 
-        
+
         return this.state.isSending?view1:view2
     }
 

@@ -108,11 +108,11 @@ export default class AddContactView extends Component<{}> {
         let searchResult = [];
         if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
-                searchResult = 
+                searchResult =
                     <List
                         dataArray={this.state.searchResult}
                         renderRow={data =>
-                            <ListItem thumbnail>
+                            <ListItem thumbnail style={{height:80}}>
                                 <Left>
                                     <Thumbnail square size={35} source={getAvatarSource(data.pic)} />
                                 </Left>
@@ -121,15 +121,13 @@ export default class AddContactView extends Component<{}> {
                                     {data.name}
                                 </Text>
                                 </Body>
-                                <Right>
-                                    <AddFriendIcon uid={data.uid}></AddFriendIcon>
-                                </Right>
+                                <AddFriendIcon uid={data.uid}></AddFriendIcon>
                             </ListItem>}
                     />
-                
+
 
             }else {
-                searchResult = 
+                searchResult =
                     <ListItem thumbnail style={{height:80}}>
                         <Left>
                         </Left>
@@ -138,21 +136,20 @@ export default class AddContactView extends Component<{}> {
                             没有结果,试试扫码添加吧
                         </Text>
                         </Body>
-                        <Right>
-                            <Button bordered onPress={()=>{
-                                this.setState({isScanMode:true})
-                            }}>
-                                <Icon active name='md-camera' />
-                            </Button>
-                        </Right>
+                        <Button bordered style={{margin:20}}
+                                onPress={()=>{
+                            this.setState({isScanMode:true})
+                        }}>
+                            <Icon active name='md-camera' />
+                        </Button>
                     </ListItem>
-                
+
             }
         }
 
         const view1 = <ScanView action="addFriend" parent={this}></ScanView>
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
-        const view2 = 
+        const view2 =
             <Container>
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
@@ -170,7 +167,7 @@ export default class AddContactView extends Component<{}> {
                 </Content>
             </Container>
 
-           
+
         return this.state.isScanMode?view1:view2
     }
 

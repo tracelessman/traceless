@@ -4,7 +4,7 @@ import {
     Alert,Image,ListView,
     ScrollView,
     TouchableOpacity,
-    View
+    View,Platform
 } from 'react-native';
 import Store from "../store/LocalStore"
 import WSChannel from "../channel/WSChannel"
@@ -42,7 +42,7 @@ export default class RecentView extends Component<{}> {
             listViewData : recent,
             dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => true }).cloneWithRows(recent)
         }
-        this.eventAry = ["receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
+        this.eventAry = ["readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
     }
 
     update=(fromId)=>{
@@ -53,6 +53,15 @@ export default class RecentView extends Component<{}> {
         for(let event of this.eventAry){
             Store.on(event,this.update);
         }
+        Store.on("receiveMessage",()=>{
+            if(Platform.OS === 'ios'){
+                if(this.state.listViewData.length === 0){
+                    this.props.navigation.navigate('RecentTab')
+                }
+
+            }
+            this.update()
+        })
     }
 
     componentWillUnmount =()=> {
