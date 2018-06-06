@@ -49,7 +49,7 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        WSChannel.on("afterLogin", this.checkUpdate);
+        // WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
     }
 
