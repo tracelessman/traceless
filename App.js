@@ -13,6 +13,7 @@ import AppUtil from "./AppUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
+import {Toast} from "native-base";
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -31,6 +32,14 @@ export default class App extends Component<{}> {
     componentDidMount=()=>{
         this.try2Login();
         Store.on("uidChanged",this._onSystemNotify);
+        WSChannel.on("badnetwork",()=>{
+            Toast.show({
+                text: '无法连接服务器,请检查网络连接',
+                position: "top",
+                type:"warning",
+                duration: 3000
+            })
+        })
     }
 
     _onSystemNotify=(uid)=>{

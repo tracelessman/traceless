@@ -39,7 +39,8 @@ export default class RecentView extends Component<{}> {
         super(props);
         const recent = Store.getAllRecent();
         this.state = {
-            listViewData : recent
+            listViewData : recent,
+            dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => true }).cloneWithRows(recent)
         }
         this.eventAry = ["receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
     }
@@ -88,7 +89,10 @@ export default class RecentView extends Component<{}> {
                   newData[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
               }
           }
-          this.setState({listViewData:newData})
+          this.setState({
+              listViewData:recent,
+              dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => true }).cloneWithRows(newData),
+          })
       })
     }
 
@@ -209,6 +213,7 @@ export default class RecentView extends Component<{}> {
 
         }
 
+
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
             {!this.state.listViewData.length && !groupAry.length?
@@ -218,7 +223,7 @@ export default class RecentView extends Component<{}> {
                :null}
                 <ScrollView ref="scrollView" style={{width:"100%"}}>
                     <List
-                        dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
+                        dataSource={this.state.dataSource}
                         renderRow={data =>
                                 <ListItem thumbnail style={{}} >
                                     <Left style={{marginLeft:10,}}>
