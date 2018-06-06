@@ -88,11 +88,11 @@ let AppUtil={
     iosPushInit(){
         return new Promise(resolve=>{
             PushNotificationIOS.getInitialNotification().then(res=>{
-                console.log(res)
+                // console.log(res)
 
             })
             PushNotificationIOS.getApplicationIconBadgeNumber(num=>{
-                console.log(num)
+                // console.log(num)
 
             })
             PushNotificationIOS.checkPermissions((permissions) => {
@@ -104,14 +104,14 @@ let AppUtil={
                     })
                 }else{
                     PushNotificationIOS.addEventListener('register', (deviceId) => {
-                        console.log(deviceId)
+                        // console.log(deviceId)
 
                         deviceIdApn = deviceId
                         resolve(deviceId)
                     });
 
                     PushNotificationIOS.addEventListener('notification', (res) => {
-                        console.log(res)
+                        // console.log(res)
                     });
                     PushNotificationIOS.requestPermissions().then(res=>{
 

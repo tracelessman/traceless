@@ -78,7 +78,7 @@ export default class ContactView extends Component<{}> {
                     <Text>    {f.name}  </Text>
                 </View>
             </TouchableOpacity>);
-            friends.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+            friends.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
 
         }
         return (
