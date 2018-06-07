@@ -35,7 +35,8 @@ let hashValue = algorithm.update(fs.readFileSync(localApkPath)).digest('hex')
 const version = require('../package.json').version
 let updateInfo = {
     hash:hashValue,
-    version
+    version,
+    nativeUpdate:true
 }
 const localUpdatePath = path.resolve(publishFolderPath,'update.json')
 fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
