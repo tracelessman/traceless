@@ -17,6 +17,7 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
+import ImageZoom from 'react-native-image-pan-zoom';
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -392,9 +393,14 @@ export default class ChatView extends Component<{}> {
                     onRequestClose={() => {}}
                 >
                     <View style={{flex:1,backgroundColor:"#000",flexDirection:"row",alignItems:"center"}}>
-                    <TouchableOpacity style={{flex:1}} onPress={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}>
-                        <Image source={{uri:this.state.biggerImageUri}} style={{flex:1}} resizeMode="contain"></Image>
-                    </TouchableOpacity>
+                        <ImageZoom cropWidth={Dimensions.get('window').width}
+                                   cropHeight={Dimensions.get('window').height}
+                                   imageWidth={Dimensions.get('window').width} onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
+                                   imageHeight={Dimensions.get('window').height}>
+                            <Image source={{uri:this.state.biggerImageUri}} style={{flex:1}} resizeMode="contain"></Image>
+
+                        </ImageZoom>
+
                     </View>
                 </Modal>
             </View>

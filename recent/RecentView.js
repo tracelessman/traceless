@@ -11,7 +11,7 @@ import WSChannel from "../channel/WSChannel"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Badge, Body, Button, Card, CardItem, Container, Content ,Header ,
     Input, Item ,Left,List,ListItem,Icon as NBIcon,
-    Right,Spinner,Text,Thumbnail,Toast
+    Right,Spinner,Text,Thumbnail,Toast,SwipeRow
 } from 'native-base';
 import AppUtil from "../AppUtil";
 import GroupAvatar from "./GroupAvatar";
@@ -39,11 +39,11 @@ export default class RecentView extends Component<{}> {
     constructor(props){
         super(props);
         const recent = Store.getAllRecent();
+
         this.state = {
             listViewData : recent,
-            dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => true }).cloneWithRows(recent)
         }
-        this.eventAry = ["readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
+        this.eventAry = ["receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
     }
 
     update=(fromId)=>{
@@ -54,15 +54,6 @@ export default class RecentView extends Component<{}> {
         for(let event of this.eventAry){
             Store.on(event,this.update);
         }
-        Store.on("receiveMessage",()=>{
-            if(Platform.OS === 'ios'){
-                if(this.state.listViewData.length === 0){
-                    this.props.navigation.navigate('RecentTab')
-                }
-
-            }
-            this.update()
-        })
     }
 
     componentWillUnmount =()=> {
@@ -101,7 +92,6 @@ export default class RecentView extends Component<{}> {
           }
           this.setState({
               listViewData:recent,
-              dataSource:new ListView.DataSource({ rowHasChanged: (r1, r2) => true }).cloneWithRows(newData),
           })
       })
     }
@@ -206,7 +196,7 @@ export default class RecentView extends Component<{}> {
                 }
                 groupAry.push(<TouchableOpacity key={i}    onPress={()=>{this.groupChat(group)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                     <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:40,marginTop:20}}>
-                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",marginLeft:10}}>
+                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",margin:5,borderRadius:5}}>
                             <GroupAvatar group={group} ></GroupAvatar>
                             <Text>    {group.name}  </Text>
                         </View>
@@ -216,7 +206,7 @@ export default class RecentView extends Component<{}> {
 
                     </View>
                 </TouchableOpacity>);
-                groupAry.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#d0d0d0",marginLeft:75}}>
+                groupAry.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
 
                 </View>);
 
@@ -225,23 +215,28 @@ export default class RecentView extends Component<{}> {
         }
 
         let contentAry = []
+        const avatarLength = 50
         for(let data of this.state.listViewData){
             let content = (
                 <TouchableOpacity onPress={()=>{
 
                      this.chat(data.id)
                 }}
-                                  style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:70,
-                                      alignItems:"center",paddingHorizontal:5}}>
-                        <Image resizeMode="contain" style={{width:60,padding:2,margin:3,borderRadius:5}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
-                        <View style={{flexDirection:"row",width:"70%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
-                            <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"center",height:"100%"}}>
-                                <Text style={{fontSize:18,fontWeight:"500"}}>
-                                    {Store.getFriend(data.id).name}
-                                </Text>
-                                <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
-                                    {data.lastMsg}
-                                </Text>
+                                  style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                                      alignItems:"center"}}>
+                        <Image resizeMode="cover" style={{width:avatarLength,height:avatarLength,margin:5,borderRadius:5}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"flex-start",height:"100%"}}>
+                                <View >
+                                    <Text style={{fontSize:18,fontWeight:"500"}}>
+                                        {Store.getFriend(data.id).name}
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
+                                        {data.lastMsg}
+                                    </Text>
+                                </View>
                             </View>
                             <View style={{display:"flex",flexDirection:"column",justifyContent:"space-around",alignItems:"center",height:"100%"}}>
                                 <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
@@ -258,9 +253,25 @@ export default class RecentView extends Component<{}> {
                         </View>
                 </TouchableOpacity>
             )
-            contentAry.push(  <SwipeableList slot={content} key={data.id} rightPress={()=>{
-                this.deleteRow(data)}
-            } />)
+
+            let ele = (
+                <SwipeRow
+                    rightOpenValue={-75}
+
+                    body={
+                        content
+                    }
+                    right={
+                        <Button danger onPress={() => {
+                        this.deleteRow(data)
+                        }}>
+                            <NBIcon active name="trash" />
+                        </Button>
+                    }
+                    key = {data.id}
+                />
+            )
+            contentAry.push( ele)
         }
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
