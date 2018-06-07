@@ -32,7 +32,7 @@ export default class SwipeableList extends Component<{}> {
     componentWillMount() {
     this._panResponder = PanResponder.create({
         onStartShouldSetPanResponder: (evt, gestureState) => true,
-        onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+        onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
         onMoveShouldSetPanResponder: (evt, gestureState) => true,
         onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
 
@@ -40,7 +40,7 @@ export default class SwipeableList extends Component<{}> {
         },
         onPanResponderMove: (evt, gestureState) => {
             let left = gestureState.dx
-            console.log(left)
+            // console.log(left)
 
 
             let intervalWidth = 0-this.width
@@ -93,7 +93,7 @@ export default class SwipeableList extends Component<{}> {
         return   (
             <View style={{width:"100%",}} >
                 <View style={{position:"absolute",right:0,top:0,display:"flex",backgroundColor:"#d9534f",
-                    height:"100%",width:this.width,justifyContent:"center",alignItems:"center"}}>
+                    height:"100%",width:this.width,justifyContent:"center",alignItems:"center"}} onPress={this.props.rightPress}>
                     <Icon name='ios-trash-outline' style={{color:"white"}} />
                 </View>
 

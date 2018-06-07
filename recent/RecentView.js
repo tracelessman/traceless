@@ -155,7 +155,6 @@ export default class RecentView extends Component<{}> {
         this.props.navigation.navigate("ChatView",{friend:f});
     })
 
-
     groupChat = debounceFunc( (group)=>{
         this.props.navigation.navigate("ChatView",{group});
     })
@@ -229,9 +228,8 @@ export default class RecentView extends Component<{}> {
         for(let data of this.state.listViewData){
             let content = (
                 <TouchableOpacity onPress={()=>{
-                    console.log('touch')
 
-                    this.chat(data.id)
+                     this.chat(data.id)
                 }}
                                   style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:70,
                                       alignItems:"center",paddingHorizontal:5}}>
@@ -260,7 +258,9 @@ export default class RecentView extends Component<{}> {
                         </View>
                 </TouchableOpacity>
             )
-            contentAry.push(  <SwipeableList slot={content} key={data.id} />)
+            contentAry.push(  <SwipeableList slot={content} key={data.id} rightPress={()=>{
+                this.deleteRow(data)}
+            } />)
         }
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
@@ -270,7 +270,7 @@ export default class RecentView extends Component<{}> {
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
                :null}
-                <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}}>
+                <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}} keyboardShouldPersistTaps="always">
                     {contentAry}
                 {groupAry}
                 </ScrollView>
