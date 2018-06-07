@@ -195,7 +195,7 @@ export default class RecentView extends Component<{}> {
                     </Badge>
                 }
                 groupAry.push(<TouchableOpacity key={i}    onPress={()=>{this.groupChat(group)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:40,marginTop:20}}>
+                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:50,marginTop:20}}>
                         <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",margin:5,borderRadius:5}}>
                             <GroupAvatar group={group} ></GroupAvatar>
                             <Text>    {group.name}  </Text>
@@ -277,12 +277,21 @@ export default class RecentView extends Component<{}> {
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
 
             {!this.state.listViewData.length && !groupAry.length?
-              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
                :null}
                 <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}} keyboardShouldPersistTaps="always">
                     {contentAry}
+                    <View style={{padding:10}}>
+                        <Text style={{color:"#a0a0a0"}}>
+                            群消息
+                        </Text>
+
+                    </View>
+                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+
+                    </View>
                 {groupAry}
                 </ScrollView>
             </View>

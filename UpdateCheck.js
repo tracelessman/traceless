@@ -20,7 +20,7 @@ import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
-import update from 'react-native-update'
+// import update from 'react-native-update'
 // console.log(update)
 
 
@@ -71,43 +71,44 @@ export default class UpdateCheck extends Component<{}> {
                 const {data} = response
                 const {hash,version,nativeUpdate} = data
                 if(semver.gt(version,versionLocal)){
-                    if(nativeUpdate){
-                        this.nativeUpdate(hash,version)
-                    }else{
-                        let options = {
-                            updateUrl: ppkUrl,
-                            hash: "_" + version + "_",  //hash必须是字符串
-                            update : true
-                        }
-                        // downloadUpdate(options).then(hash => {
-                        //     this.setState({
-                        //         mode:"update"
-                        //     })
-                        //     switchVersion(hash)
-                        // }).catch(error => {
-                        //     Toast.show({
-                        //         text: '下载更新出现错误,请联系技术人员',
-                        //         position: "top",
-                        //         type:"warning",
-                        //         duration: 5000
-                        //     })
-                        //     Alert.alert(
-                        //         '提示',
-                        //         `下载更新出现错误,请联系技术人员`,
-                        //         [
-                        //             {
-                        //                 text: '确认',
-                        //                 onPress:()=>{
-                        //                     this.setState({mode:'ready'});
-                        //                 }
-                        //
-                        //             },
-                        //         ],
-                        //         { cancelable: false }
-                        //     )
-                        //
-                        // });
-                    }
+                    this.nativeUpdate(hash,version)
+                    // if(nativeUpdate){
+                    //
+                    // }else{
+                    //     let options = {
+                    //         updateUrl: ppkUrl,
+                    //         hash: "_" + version + "_",  //hash必须是字符串
+                    //         update : true
+                    //     }
+                    //     downloadUpdate(options).then(hash => {
+                    //         this.setState({
+                    //             mode:"update"
+                    //         })
+                    //         switchVersion(hash)
+                    //     }).catch(error => {
+                    //         Toast.show({
+                    //             text: '下载更新出现错误,请联系技术人员',
+                    //             position: "top",
+                    //             type:"warning",
+                    //             duration: 5000
+                    //         })
+                    //         Alert.alert(
+                    //             '提示',
+                    //             `下载更新出现错误,请联系技术人员`,
+                    //             [
+                    //                 {
+                    //                     text: '确认',
+                    //                     onPress:()=>{
+                    //                         this.setState({mode:'ready'});
+                    //                     }
+                    //
+                    //                 },
+                    //             ],
+                    //             { cancelable: false }
+                    //         )
+                    //
+                    //     });
+                    // }
                 }
             }).catch(function (error) {
                 console.log(error);

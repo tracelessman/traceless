@@ -59,7 +59,7 @@ export default class AddGroupMemberView extends Component<{}> {
         this.setState({numberOfLines:2})
     }
     componentDidMount(){
-      this.doSearch()
+      // this.doSearch()
     }
 
 
@@ -68,7 +68,7 @@ export default class AddGroupMemberView extends Component<{}> {
         let searchResult = [];
         if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
-                searchResult = 
+                searchResult =
                     <List
                         dataArray={this.state.searchResult}
                         renderRow={data =>
@@ -81,39 +81,37 @@ export default class AddGroupMemberView extends Component<{}> {
                                     {data.name}
                                 </Text>
                                 </Body>
-                                <Right>
-                                    <AddMemberIcon checked={()=>{
-                                      WSChannel.addGroupMembers(this.group.id,[data])
-                                          Toast.show({
-                                               text: `成功添加群成员${data.name}`,
-                                               position: "bottom",
-                                               type:"success",
-                                               duration: 3000
-                                           })
-                                    }}></AddMemberIcon>
-                                </Right>
+                                <AddMemberIcon checked={()=>{
+                                    WSChannel.addGroupMembers(this.group.id,[data])
+                                    Toast.show({
+                                        text: `成功添加群成员${data.name}`,
+                                        position: "bottom",
+                                        type:"success",
+                                        duration: 3000
+                                    })
+                                }}></AddMemberIcon>
                             </ListItem>}
                     />
-                
+
 
             }else {
-                searchResult = 
+                searchResult =
                     <ListItem thumbnail style={{height:80}}>
                         <Left>
                         </Left>
                         <Body>
                         <Text>
-
+                            没有搜索结果
                         </Text>
                         </Body>
                     </ListItem>
-                
+
             }
         }
 
 
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
-        const view2 = 
+        const view2 =
             <Container>
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
@@ -127,7 +125,7 @@ export default class AddGroupMemberView extends Component<{}> {
                 </Content>
             </Container>
 
-           
+
         return view2
     }
 
