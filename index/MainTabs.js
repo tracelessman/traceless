@@ -2,7 +2,7 @@
  * Created by renbaogang on 2017/10/31.
  */
 import React, { Component} from 'react';
-import { Button,Image,TouchableOpacity} from 'react-native';
+import { Button,Image,TouchableOpacity,View,Text} from 'react-native';
 import {TabNavigator } from 'react-navigation';
 import {StackNavigator}from "react-navigation";
 import RecentView from '../recent/RecentView';
@@ -23,6 +23,19 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tab from './Tab'
 const iconSize = 26
 
+
+function getTabLogo(title,focused,iconName){
+    let color = focused?"#f9e160":"#d0d0d0"
+      return(
+          <View>
+              <Icon name={iconName} size={iconSize}  color={color}/>
+              <Text style={{fontSize:10, color}}>{title}</Text>
+          </View>
+      )
+}
+
+
+
 const MainTabs = TabNavigator({
         RecentTab: {
             screen: RecentView,
@@ -30,10 +43,19 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '最近',
                 title:'最近',
 
-                tabBarIcon: ({ tintColor, focused }) => 
-                    <Tab type="recent" focused={focused}></Tab>
+                tabBarIcon: ({ tintColor, focused }) =>
+                {
+                    let color = focused?"#f9e160":"#d0d0d0"
+                    return (
+                        <View>
+                            <Tab type="recent" focused={focused}></Tab>
+                            <Text style={{fontSize:10,color}}>消息</Text>
+                        </View>
+                    )
+                }
 
-                
+
+
             }
         },
         ContactTab: {
@@ -42,11 +64,10 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '通讯录',
                 title:'通讯录',
 
-                tabBarIcon: ({ tintColor, focused }) => 
-                    focused?<Icon name="table-of-contents" size={iconSize}  color="#f9e160"/>
-                        :
-                        <Icon name="table-of-contents" size={iconSize}  color="#d0d0d0"/>
-                
+                tabBarIcon: ({ tintColor, focused }) =>{
+                    return getTabLogo('通讯录',focused,"table-of-contents" )
+                }
+
             }
         },
         AccountTab: {
@@ -54,11 +75,10 @@ const MainTabs = TabNavigator({
             navigationOptions: {
                 tabBarLabel: '我的',
                 title:'我的',
-                tabBarIcon: ({ tintColor, focused }) => 
-                    focused?<Icon name="account-outline" size={iconSize}  color="#f9e160"/>
-                        :
-                        <Icon name="account-outline" size={iconSize}  color="#d0d0d0"/>
-                
+                tabBarIcon: ({ tintColor, focused }) =>{
+                    return getTabLogo('我的',focused,"account-outline" )
+                }
+
             },
 
         }

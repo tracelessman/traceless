@@ -7,5 +7,6 @@ module.exports = {
     updateJsonUrl:`${baseUrl}update.json`,
     appName,
     publishFolderName,
-    ipaUrl:`${baseUrl}manifest.plist`
+    ipaUrl:`${baseUrl}manifest.plist`,
+    ppkUrl:`${baseUrl+appName}.ppk`
 }

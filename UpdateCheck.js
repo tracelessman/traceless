@@ -14,18 +14,24 @@ const {getAvatarSource,debounceFunc} = AppUtil
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
-import { Root ,Spinner} from "native-base"
+import {Root, Spinner, Toast} from "native-base"
 const  RNFS = require('react-native-fs');
 import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
+
+// import update from 'react-native-update'
+// console.log(update)
+
+
+
 
 const axios = require('axios')
 const versionLocal = require('./package').version
 const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
-const {updateJsonUrl,apkUrl,appName,ipaUrl} = config
+const {updateJsonUrl,apkUrl,appName,ipaUrl,ppkUrl} = config
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -63,38 +69,79 @@ export default class UpdateCheck extends Component<{}> {
         axios.get(updateJsonUrl)
             .then( (response)=> {
                 const {data} = response
-                const {hash,version} = data
+                const {hash,version,nativeUpdate} = data
                 if(semver.gt(version,versionLocal)){
-                    if(Platform.OS === 'android'){
-                        let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
-                        RNFetchBlob.config({
-                            useDownloadManager : true,
-                            fileCache : true,
-                            path:filePath
-                        }).fetch('GET',apkUrl)
-                            .progress({ count : 10 }, (received, total) => {
-                                // console.log(received)
-                                // console.log(total)
-                                // console.log('progress', received / total)
-                            })
-                            .then((res)=>{
-                                this.installApp(filePath,hash,version)
-                            })
-                            .catch((err) => {
-                                console.log(err)
-
-                            })
-                    }else{
-                        this.informUpdate(version, () => {
-                            Linking.openURL(`itms-services://?action=download-manifest&url=${ipaUrl}`)
-                        })
-
-                    }
+                    this.nativeUpdate(hash,version)
+                    // if(nativeUpdate){
+                    //
+                    // }else{
+                    //     let options = {
+                    //         updateUrl: ppkUrl,
+                    //         hash: "_" + version + "_",  //hash必须是字符串
+                    //         update : true
+                    //     }
+                    //     downloadUpdate(options).then(hash => {
+                    //         this.setState({
+                    //             mode:"update"
+                    //         })
+                    //         switchVersion(hash)
+                    //     }).catch(error => {
+                    //         Toast.show({
+                    //             text: '下载更新出现错误,请联系技术人员',
+                    //             position: "top",
+                    //             type:"warning",
+                    //             duration: 5000
+                    //         })
+                    //         Alert.alert(
+                    //             '提示',
+                    //             `下载更新出现错误,请联系技术人员`,
+                    //             [
+                    //                 {
+                    //                     text: '确认',
+                    //                     onPress:()=>{
+                    //                         this.setState({mode:'ready'});
+                    //                     }
+                    //
+                    //                 },
+                    //             ],
+                    //             { cancelable: false }
+                    //         )
+                    //
+                    //     });
+                    // }
                 }
             }).catch(function (error) {
                 console.log(error);
             });
     },1000*60*1)
+
+    nativeUpdate = (hash,version)=>{
+        if(Platform.OS === 'android'){
+            let filePath = RNFS.ExternalDirectoryPath + `/${appName}.apk`
+            RNFetchBlob.config({
+                useDownloadManager : true,
+                fileCache : true,
+                path:filePath
+            }).fetch('GET',apkUrl)
+                .progress({ count : 10 }, (received, total) => {
+                    // console.log(received)
+                    // console.log(total)
+                    // console.log('progress', received / total)
+                })
+                .then((res)=>{
+                    this.installApp(filePath,hash,version)
+                })
+                .catch((err) => {
+                    console.log(err)
+
+                })
+        }else{
+            this.informUpdate(version, () => {
+                Linking.openURL(`itms-services://?action=download-manifest&url=${ipaUrl}`)
+            })
+
+        }
+    }
 
     informUpdate(version,onPress){
         Alert.alert(
@@ -134,7 +181,7 @@ export default class UpdateCheck extends Component<{}> {
             content =
                 <View style={{display:'flex',justifyContent:"center",alignItems:"center",height:"100%"}}>
 
-                    <Progress.Circle  showsText formatText={(progress)=>this.state.percent} progress={this.state.progress} size={100} />
+                    {/*<Progress.Circle  showsText formatText={(progress)=>this.state.percent} progress={this.state.progress} size={100} />*/}
                     <Text style={{margin:30}}>
                         更新中......
                     </Text>

@@ -34,7 +34,7 @@ export default class App extends Component<{}> {
         Store.on("uidChanged",this._onSystemNotify);
         WSChannel.on("badnetwork",()=>{
             Toast.show({
-                text: '无法连接服务器,请检查网络连接',
+                text: '网络不给力',
                 position: "top",
                 type:"warning",
                 duration: 5000
@@ -92,7 +92,7 @@ export default class App extends Component<{}> {
 
                 },()=> {
                     this.seed++;
-                    WSChannel._fire("badN")
+                    WSChannel._fire("badnetwork")
                     this.setState({data,logining:false});
                 });
             }else{
