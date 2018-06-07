@@ -18,6 +18,7 @@ import GroupAvatar from "./GroupAvatar";
 const {getAvatarSource,debounceFunc} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
+import SwipeableList from './SwipeableList'
 
 
 export default class RecentView extends Component<{}> {
@@ -224,66 +225,53 @@ export default class RecentView extends Component<{}> {
 
         }
 
+        let contentAry = []
+        for(let data of this.state.listViewData){
+            let content = (
+                <TouchableOpacity onPress={()=>{
+                    console.log('touch')
 
+                    this.chat(data.id)
+                }}
+                                  style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:70,
+                                      alignItems:"center",paddingHorizontal:5}}>
+                        <Image resizeMode="contain" style={{width:60,padding:2,margin:3,borderRadius:5}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                        <View style={{flexDirection:"row",width:"70%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"center",height:"100%"}}>
+                                <Text style={{fontSize:18,fontWeight:"500"}}>
+                                    {Store.getFriend(data.id).name}
+                                </Text>
+                                <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
+                                    {data.lastMsg}
+                                </Text>
+                            </View>
+                            <View style={{display:"flex",flexDirection:"column",justifyContent:"space-around",alignItems:"center",height:"100%"}}>
+                                <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
+                                    {data.time}
+                                </Text>
+                                <View>
+                                    {data.newReceive?
+                                        <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
+                                            <Text style={{}}>{data.newMsgNum}</Text>
+                                        </Badge>
+                                        :null}
+                                </View>
+                            </View>
+                        </View>
+                </TouchableOpacity>
+            )
+            contentAry.push(  <SwipeableList slot={content} key={data.id} />)
+        }
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+
             {!this.state.listViewData.length && !groupAry.length?
               <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
                :null}
-                <ScrollView ref="scrollView" style={{width:"100%"}}>
-                    <List
-                        dataSource={this.state.dataSource}
-                        renderRow={data =>
-                                <ListItem thumbnail style={{}} >
-                                    <Left style={{marginLeft:10,}}>
-                                        <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
-                                        <Thumbnail square size={40} style={{width:50,height:50}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
-                                        </TouchableOpacity>
-                                    </Left>
-                                    <Body >
-                                    <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
-                                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:45}}>
-                                        <View>
-                                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                                {Store.getFriend(data.id).name}
-                                            </Text>
-                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
-                                                {data.lastMsg}
-                                            </Text>
-                                        </View>
-                                        <View style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
-                                                {data.time}
-                                            </Text>
-                                            <View>
-                                            {data.newReceive?
-                                                <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
-                                                    <Text style={{}}>{data.newMsgNum}</Text>
-                                                </Badge>
-                                                :null}
-                                            </View>
-                                        </View>
-                                    </View>
-                                    </TouchableOpacity>
-                                    </Body>
-                                </ListItem>
-
-                           }
-
-                        // renderLeftHiddenRow={data =>
-                        //     <Button full onPress={() => alert(data)}>
-                        //         <NBIcon active name="information-circle" />
-                        //     </Button>}
-                        renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            <Button full danger onPress={_ => this.deleteRow(data)}>
-                                <NBIcon active name="trash" />
-                            </Button>}
-                        // leftOpenValue={75}
-                        rightOpenValue={-75}
-                    />
-
+                <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}}>
+                    {contentAry}
                 {groupAry}
                 </ScrollView>
             </View>
