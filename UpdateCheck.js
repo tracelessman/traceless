@@ -23,7 +23,9 @@ import * as Progress from 'react-native-progress';
 // import update from 'react-native-update'
 // console.log(update)
 
-
+require('ErrorUtils').setGlobalHandler(function (err) {
+    console.log(err);
+});
 
 
 const axios = require('axios')
@@ -56,8 +58,10 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
+
         WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
+
     }
 
     componentWillUnmount =()=> {
