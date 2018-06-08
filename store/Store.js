@@ -547,11 +547,12 @@ var Store = {
         this._clearLocalRecords()
     },
     clear:function (callback) {
-        var recent = this.getAllRecent();
-        recent.forEach(function (r) {
-            r.newReceive=false;
-            r.newMsgNum=0;
-        });
+        // var recent = this.getAllRecent();
+        // recent.forEach(function (r) {
+        //     r.newReceive=false;
+        //     r.newMsgNum=0;
+        // });
+        this.keyData.recent=[];
         var groups = this.getGroups();
         groups.forEach(function (r) {
             r.newReceive=false;
