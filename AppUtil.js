@@ -95,7 +95,7 @@ let AppUtil={
             });
 
             PushNotificationIOS.getInitialNotification().then(res=>{
-                console.log(res)
+                // console.log(res)
 
             })
             PushNotificationIOS.getApplicationIconBadgeNumber(num=>{
