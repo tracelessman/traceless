@@ -550,10 +550,12 @@ var Store = {
         var recent = this.getAllRecent();
         recent.forEach(function (r) {
             r.newReceive=false;
+            r.newMsgNum=0;
         });
         var groups = this.getGroups();
         groups.forEach(function (r) {
             r.newReceive=false;
+            r.newMsgNum=0;
         });
         this.keyData.mkfriends={};
         this.loginState = false;
