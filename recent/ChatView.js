@@ -312,8 +312,6 @@ export default class ChatView extends Component<{}> {
     }
 
     render() {
-        console.log('render')
-
        let records = this.records;
        let recordEls = [];
        if(records){

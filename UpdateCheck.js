@@ -24,10 +24,8 @@ import * as Progress from 'react-native-progress';
 // console.log(update)
 
 require('ErrorUtils').setGlobalHandler(function (err) {
-    WSChannel.errReport(err)
-    console.log(err);
+    WSChannel.errReport(err.toString())
 });
-
 
 const axios = require('axios')
 const versionLocal = require('./package').version
