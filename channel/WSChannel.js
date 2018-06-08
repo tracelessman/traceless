@@ -498,7 +498,15 @@ var WSChannel={
     },
     deleteContact:function (uid) {
 
-    }
+    },
+    errReport:function (err) {
+        var req = WSChannel.newRequestMsg("errReport",{err:err,time:Date.now()},function (data,msgId) {
+            Store.removeFromMQ(msgId);
+        });
+        Store.push2MQ(req,function () {
+            WSChannel._sendRequest(req);
+        });
+    },
 };
 Store.on("readChatRecords",function (data) {
     var uid = data.uid;
