@@ -24,6 +24,7 @@ import * as Progress from 'react-native-progress';
 // console.log(update)
 
 require('ErrorUtils').setGlobalHandler(function (err) {
+    WSChannel.errReport(err)
     console.log(err);
 });
 
