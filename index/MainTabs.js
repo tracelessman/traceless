@@ -23,11 +23,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tab from './Tab'
 const iconSize = 26
 
-
+let style = {display:"flex",justifyContent:"center",alignItems:"center"}
 function getTabLogo(title,focused,iconName){
     let color = focused?"#f9e160":"#d0d0d0"
       return(
-          <View>
+          <View style={style}>
               <Icon name={iconName} size={iconSize}  color={color}/>
               <Text style={{fontSize:10, color}}>{title}</Text>
           </View>
@@ -40,22 +40,19 @@ const MainTabs = TabNavigator({
         RecentTab: {
             screen: RecentView,
             navigationOptions: {
-                tabBarLabel: '最近',
-                title:'最近',
+                tabBarLabel: '消息',
+                title:'消息',
 
                 tabBarIcon: ({ tintColor, focused }) =>
                 {
                     let color = focused?"#f9e160":"#d0d0d0"
                     return (
-                        <View>
+                        <View style={style}>
                             <Tab type="recent" focused={focused}></Tab>
                             <Text style={{fontSize:10,color}}>消息</Text>
                         </View>
                     )
                 }
-
-
-
             }
         },
         ContactTab: {

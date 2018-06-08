@@ -146,7 +146,7 @@ Store._deleteLocalRecords=function (chatId,callback) {
 };
 Store._getLocalRecords = function (chatId,callback) {
     db.transaction((tx)=>{
-        tx.executeSql("select * from record where chatId=? order by time",[chatId],function (tx,results) {
+        tx.executeSql("select * from record where chatId=? order by time limit 100",[chatId],function (tx,results) {
             var rs = [];
             var len = results.rows.length;
             for(var i=0;i<len;i++){
