@@ -152,6 +152,7 @@ Store._getLocalRecords = function (chatId,callback) {
             for(var i=0;i<len;i++){
                 rs.push(results.rows.item(i));
             }
+            rs = rs.reverse()
             callback(rs);
         },function (err) {
             console.info(err);
