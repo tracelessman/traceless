@@ -44,7 +44,7 @@ var Store = {
     _deleteLocalRecords:function (chatId,callback) {
 
     },
-    _getLocalRecords: function (id,callback) {
+    _getLocalRecords: function (id,callback,limit) {
 
     },
     _insertRecord2Local:function (charId,record,callback) {
@@ -279,7 +279,7 @@ var Store = {
             return recent;
         }
     },
-    readAllChatRecords : function (id,ignoreState,callback) {
+    readAllChatRecords : function (id,ignoreState,callback,limit) {
         this._getLocalRecords(id,(records)=>{
             var recent = this.getRecent(id,true);
             if(recent.newReceive==true&&ignoreState!=true){
@@ -298,7 +298,7 @@ var Store = {
             }
             callback(records);
 
-        });
+        },limit);
     },
 
     _markNewReceive:function (id) {
@@ -428,7 +428,7 @@ var Store = {
             this._fire("groupMembersChanged",gid);
         }
     },
-    readGroupChatRecords:function (id,ignoreState,callback) {
+    readGroupChatRecords:function (id,ignoreState,callback,limit) {
         this._getLocalRecords(id, (records) =>{
             var g = this._getGroup(id,true);
             if(g.newReceive==true&&ignoreState!=true){
@@ -449,7 +449,7 @@ var Store = {
                 this._save();
             }
             callback(records);
-        });
+        },limit);
     },
     getMembersBaseInfo:function (gid) {
         var g = this._getGroup(gid,true);
@@ -550,10 +550,12 @@ var Store = {
         var recent = this.getAllRecent();
         recent.forEach(function (r) {
             r.newReceive=false;
+            r.newMsgNum=0;
         });
         var groups = this.getGroups();
         groups.forEach(function (r) {
             r.newReceive=false;
+            r.newMsgNum=0;
         });
         this.keyData.mkfriends={};
         this.loginState = false;
