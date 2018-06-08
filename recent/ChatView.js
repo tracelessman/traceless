@@ -53,6 +53,9 @@ export default class ChatView extends Component<{}> {
     _getRecords=(rec)=>{
         this.records = rec;
         this.setState({messageChange:true});
+        this.refs.scrollView.scrollToEnd({animated: false});
+
+
     }
 
     _keyboardDidShow=(e)=>{
@@ -136,13 +139,13 @@ export default class ChatView extends Component<{}> {
 
     componentDidMount=()=>{
         this.refreshRecordList();
-       setTimeout(()=>{
-           this.refs.scrollView.scrollToEnd();
-       },50)
     }
 
     componentDidUpdate=()=>{
-        this.refs.scrollView.scrollToEnd();
+        setTimeout(()=>{
+            this.refs.scrollView.scrollToEnd({animated: false});
+        },50)
+
     }
 
     send=()=>{
@@ -159,8 +162,6 @@ export default class ChatView extends Component<{}> {
                     this.refs.text.clear();
                     this.refs.scrollView.scrollToEnd();
                 });
-
-
             }
         }
 
@@ -311,6 +312,8 @@ export default class ChatView extends Component<{}> {
     }
 
     render() {
+        console.log('render')
+
        let records = this.records;
        let recordEls = [];
        if(records){
@@ -371,11 +374,10 @@ export default class ChatView extends Component<{}> {
         return (
             <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
                 <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS=="ios"?this.state.heightAnim:0}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}}>
+                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}} keyboardDismissMode="on-drag">
                         <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {recordEls}
                         </View>
-
                     </ScrollView>
 
                     <View style={{width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden"}}>

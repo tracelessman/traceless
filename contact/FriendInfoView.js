@@ -23,7 +23,6 @@ export default class FriendInfoView extends Component<{}> {
         super(props);
         this.state = {};
         this.friend = this.props.navigation.state.params.friend;
-        console.log(this.friend)
     }
 
     sendMessage=()=>{

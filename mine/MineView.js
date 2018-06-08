@@ -96,7 +96,7 @@ export default class MineView extends Component<{}> {
                 }),
             },
             {
-                title:`清除本地聊天缓存`,
+                title:`清除聊天记录`,
                 icon:'refresh',
                 onPress:this.clear,
             },
