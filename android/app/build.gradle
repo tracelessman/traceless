@@ -139,7 +139,8 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-              signingConfig signingConfigs.release
+               applicationIdSuffix ".debug"
+
             }
     }
     // applicationVariants are e.g. debug, release
@@ -158,9 +159,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-device-info')
     compile project(':react-native-update')
     compile project(':react-native-camera')
-    compile project(':react-native-apk')
     compile project(':react-native-fs')
     compile project(':react-native-svg')
 compile 'com.facebook.fresco:fresco:1.5.0'

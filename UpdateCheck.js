@@ -19,7 +19,7 @@ const  RNFS = require('react-native-fs');
 import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
-
+import DeviceInfo from 'react-native-device-info'
 
 
 // import update from 'react-native-update'
@@ -59,6 +59,7 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
+        console.log('mount update check')
 
         WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
