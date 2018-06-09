@@ -94,7 +94,7 @@ let AppUtil={
                 resolve(deviceId)
             });
 
-            PushNotificationIOS.getInitialNotification(i).then(res=>{
+            PushNotificationIOS.getInitialNotification().then(res=>{
                 // console.log(res)
 
             })
