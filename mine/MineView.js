@@ -111,7 +111,7 @@ export default class MineView extends Component<{}> {
                 onPress:this.showScanView
             },
             {
-                title:`当前版本:${versionLocal}`,
+                title:`当前版本:${versionLocal}-test`,
                 icon:'new-releases',
             },
         ]

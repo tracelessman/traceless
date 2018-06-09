@@ -15,7 +15,7 @@ const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
 
 
 childProcess.execSync(`
-    git checkout publish
+    git checkout ${config.publishBranch}
 `)
 const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
 if(argv.p || !fs.existsSync(localApkPath)){
@@ -58,23 +58,23 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
 
 function validate(stdout,stderr){
     axios.get(apkUrl).then( (res)=> {
-      // 'status', 'statusText', 'headers',
-          if(res.status !== 200){
+        // 'status', 'statusText', 'headers',
+        if(res.status !== 200){
             console.error('error!!!!!!!!!')
             console.log(res.status)
             console.log(res.statusText)
             console.log(res.headers)
-          }else{
+        }else{
             console.log(`stdout: ${stdout}`);
             console.log(`${stderr}`);
 
 
             console.log(`time elapsed ${(Date.now()-start)/1000} s`)
-              console.log(`new version is ${version}`)
-          }
+            console.log(`new version is ${version}`)
+        }
 
-        }).catch(err=>{
-          console.error('error!!!!!!!!!')
-          throw err
-        })
+    }).catch(err=>{
+        console.error('error!!!!!!!!!')
+        throw err
+    })
 }
