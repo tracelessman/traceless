@@ -38,12 +38,11 @@ export default class RecentView extends Component<{}> {
 
     constructor(props){
         super(props);
-        const recent = Store.getAllRecent();
 
         this.state = {
-            listViewData : recent,
+            listViewData : null,
         }
-        this.eventAry = ["receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
+        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
     }
 
     update=(fromId)=>{
@@ -75,19 +74,20 @@ export default class RecentView extends Component<{}> {
     }
 
     updateRecent(){
-      const recent = Store.getAllRecent();
+      let recent = Store.getAllRecent();
 
-      this.state.listViewData = recent
+      recent = _.cloneDeep(recent)
+
       let promiseAry = []
-      for(let ele of this.state.listViewData){
+      for(let ele of recent){
           promiseAry.push(this.getLastMsg(ele.id))
       }
       Promise.all(promiseAry).then(resultMsgAry=>{
-          let newData = this.state.listViewData
-          for(let i =0;i<newData.length;i++){
+
+          for(let i =0;i<recent.length;i++){
               if(resultMsgAry[i]){
-                  newData[i].lastMsg = resultMsgAry[i].content
-                  newData[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
+                  recent[i].lastMsg = resultMsgAry[i].content
+                  recent[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
               }
           }
           this.setState({
@@ -160,22 +160,31 @@ export default class RecentView extends Component<{}> {
 
     getLastMsg(chatId){
         return new Promise(resolve=>{
+            // Store.readAllChatRecords(chatId,false,(res)=>{
+            //     console.log(res)
+            //
+            // })
             Store._getLocalRecords(chatId,(res)=>{
-                let result = res[res.length-1]
+                // console.log(res)
 
-                const {type} = result
-                const {length} = result.content
-                const maxDisplay = 15
-                if(type === Store.MESSAGE_TYEP_TEXT){
-                    if(length > maxDisplay){
-                      result.content = result.content.substring(0,maxDisplay)+"......"
+                let result = null
+                const {length} = res
+                if(length > 0){
+                    result = res[res.length-1]
+
+                    const {type} = result
+                    const {length} = result.content
+                    const maxDisplay = 15
+                    if(type === Store.MESSAGE_TYEP_TEXT){
+                        if(length > maxDisplay){
+                            result.content = result.content.substring(0,maxDisplay)+"......"
+                        }
+                    }else if(type === Store.MESSAGE_TYPE_IMAGE){
+                        result.content = '[图片]'
+                    }else if(type === Store.MESSAGE_TYEP_FILE){
+                        result.content = '[文件]'
                     }
-                }else if(type === Store.MESSAGE_TYPE_IMAGE){
-                  result.content = '[图片]'
-                }else if(type === Store.MESSAGE_TYEP_FILE){
-                  result.content = '[文件]'
                 }
-
                 resolve(result)
             })
         })
@@ -183,6 +192,9 @@ export default class RecentView extends Component<{}> {
     }
 
     render() {
+        // console.log( this.state.listViewData)
+
+
         let groups = Store.getGroups();
         let groupAry=[];
         if(groups){
@@ -211,19 +223,19 @@ export default class RecentView extends Component<{}> {
                 </View>);
 
             }
-
         }
 
         let contentAry = []
         const avatarLength = 50
-        for(let data of this.state.listViewData){
-            let content = (
-                <TouchableOpacity onPress={()=>{
+        if(this.state.listViewData){
+            for(let data of this.state.listViewData){
+                let content = (
+                    <TouchableOpacity onPress={()=>{
 
-                     this.chat(data.id)
-                }}
-                                  style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
-                                      alignItems:"center"}}>
+                        this.chat(data.id)
+                    }}
+                                      style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                                          alignItems:"center"}}>
                         <Image resizeMode="cover" style={{width:avatarLength,height:avatarLength,margin:5,borderRadius:5}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
                         <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
                             <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"flex-start",height:"100%"}}>
@@ -251,49 +263,59 @@ export default class RecentView extends Component<{}> {
                                 </View>
                             </View>
                         </View>
-                </TouchableOpacity>
-            )
+                    </TouchableOpacity>
+                )
 
-            let ele = (
-                <SwipeRow
-                    rightOpenValue={-75}
+                let ele = (
+                    <SwipeRow
+                        rightOpenValue={-75}
 
-                    body={
-                        content
-                    }
-                    right={
-                        <Button danger onPress={() => {
-                        this.deleteRow(data)
-                        }}>
-                            <NBIcon active name="trash" />
-                        </Button>
-                    }
-                    key = {data.id}
-                />
-            )
-            contentAry.push( ele)
+                        body={
+                            content
+                        }
+                        right={
+                            <Button danger onPress={() => {
+                                this.deleteRow(data)
+                            }}>
+                                <NBIcon active name="trash" />
+                            </Button>
+                        }
+                        key = {data.id}
+                    />
+                )
+                contentAry.push( ele)
+            }
         }
+
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
 
-            {!this.state.listViewData.length && !groupAry.length?
+            {this.state.listViewData?
+                (!this.state.listViewData.length && !groupAry.length?
               <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
-               :null}
-                <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}} keyboardShouldPersistTaps="always">
+               : <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}} keyboardShouldPersistTaps="always">
                     {contentAry}
-                    <View style={{padding:10}}>
-                        <Text style={{color:"#a0a0a0"}}>
-                            群消息
-                        </Text>
+                    {groupAry.length === 0?null:
+                        <View>
+                            <View style={{padding:10}}>
+                                <Text style={{color:"#a0a0a0"}}>
+                                    群消息
+                                </Text>
 
-                    </View>
-                    <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+                            </View>
+                            <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
 
-                    </View>
-                {groupAry}
-                </ScrollView>
+                            </View>
+                        </View>
+                    }
+
+                    {groupAry}
+                </ScrollView>)
+                :null
+            }
+
             </View>
         );
     }

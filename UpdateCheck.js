@@ -5,7 +5,7 @@ import {
     AsyncStorage,
     Linking,
     NativeModules,Platform,
-    StyleSheet,Text,View,PushNotificationIOS
+    StyleSheet,Text,View,PushNotificationIOS,AppState
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -20,13 +20,14 @@ import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
+
+
 // import update from 'react-native-update'
 // console.log(update)
 
 require('ErrorUtils').setGlobalHandler(function (err) {
-    console.log(err);
+    WSChannel.errReport(err.toString())
 });
-
 
 const axios = require('axios')
 const versionLocal = require('./package').version

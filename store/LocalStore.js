@@ -144,13 +144,21 @@ Store._deleteLocalRecords=function (chatId,callback) {
         });
     });
 };
-Store._getLocalRecords = function (chatId,callback) {
+Store._getLocalRecords = function (chatId,callback,limit) {
+    var sql = "select * from record where chatId=? order by time";
+    if(limit&&limit>0){
+        sql += " desc limit ";
+        sql += limit;
+    }
     db.transaction((tx)=>{
-        tx.executeSql("select * from record where chatId=? order by time",[chatId],function (tx,results) {
+        tx.executeSql(sql,[chatId],function (tx,results) {
             var rs = [];
             var len = results.rows.length;
             for(var i=0;i<len;i++){
                 rs.push(results.rows.item(i));
+            }
+            if(limit&&limit>0) {
+                rs = rs.reverse()
             }
             callback(rs);
         },function (err) {

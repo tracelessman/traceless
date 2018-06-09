@@ -29,7 +29,7 @@ export default class AddContactView extends Component<{}> {
     doSearch=()=>{
         if(this.searchText){
             this.setState({isWaiting:true})
-            WSChannel.searchFriends(this.searchText,(data)=>{
+            WSChannel.searchFriends(this.searchText.trim(),(data)=>{
                 const friendAry = Store.getAllFriends()
                 const friendIdAry = friendAry.map(ele=>ele.id)
                 const searchResult = data.result.filter((item)=>item.uid !== Store.getCurrentUid() && !friendIdAry.includes(item.uid))

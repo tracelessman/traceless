@@ -22,6 +22,9 @@ export default class RequireListView extends Component<{}> {
         WSChannel.acceptMakeFriends(id, ()=> {
             Store.acceptMKFriends(id,()=>{
                 this.setState({update:true});
+                WSChannel.sendMessage(id,"我们已经是好友了,一起LK吧!",()=>{
+
+                });
             });
         });
     }

@@ -4,7 +4,7 @@ import {
     Alert,
     Text,
     TouchableOpacity,
-    View
+    View,ScrollView
 } from 'react-native';
 import Store from '../store/LocalStore'
 import { Badge, Body, Button, Card, CardItem ,Container ,
@@ -67,17 +67,17 @@ export default class GroupInfoView extends Component<{}> {
             friends.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
 
         }
-        let buttonQuit =   
+        let buttonQuit =
           <TouchableOpacity onPress={()=>{this.leaveGroup()}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                 <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>退出该群</Text>
             </TouchableOpacity>
-        
+
 
         return (
-            <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+            <ScrollView style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
                 {friends}
 
-            </View>
+            </ScrollView>
         );
     }
 

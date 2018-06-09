@@ -94,8 +94,8 @@ let AppUtil={
                 resolve(deviceId)
             });
 
-            PushNotificationIOS.getInitialNotification().then(res=>{
-                console.log(res)
+            PushNotificationIOS.getInitialNotification(i).then(res=>{
+                // console.log(res)
 
             })
             PushNotificationIOS.getApplicationIconBadgeNumber(num=>{
@@ -110,24 +110,18 @@ let AppUtil={
 
                     })
                 }else{
-
-
                     PushNotificationIOS.addEventListener('notification', (res) => {
-                        PushNotificationIOS.removeAllDeliveredNotifications();
+
                     });
                     PushNotificationIOS.requestPermissions().then(res=>{
 
                     })
                 }
             });
-
-
         })
     },
     init(){
         if(Platform.OS === 'ios'){
-            console.log('init')
-
             deviceIdApnPromise = this.iosPushInit()
         }
     }
