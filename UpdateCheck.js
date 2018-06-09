@@ -5,7 +5,7 @@ import {
     AsyncStorage,
     Linking,
     NativeModules,Platform,
-    StyleSheet,Text,View,PushNotificationIOS
+    StyleSheet,Text,View,PushNotificationIOS,AppState
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -19,6 +19,8 @@ const  RNFS = require('react-native-fs');
 import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
+
+
 
 // import update from 'react-native-update'
 // console.log(update)

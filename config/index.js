@@ -1,6 +1,7 @@
 const appName = "traceless"
 const publishFolderName = "pkg"
-const baseUrl = `https://raw.githubusercontent.com/tracelessman/traceless/publish/${publishFolderName}/`
+const publishBranch = 'publish'
+const baseUrl = `https://raw.githubusercontent.com/tracelessman/traceless/${publishBranch}/${publishFolderName}/`
 
 module.exports = {
     apkUrl:`${baseUrl+appName}.apk`,
@@ -8,5 +9,6 @@ module.exports = {
     appName,
     publishFolderName,
     ipaUrl:`${baseUrl}manifest.plist`,
-    ppkUrl:`${baseUrl+appName}.ppk`
+    ppkUrl:`${baseUrl+appName}.ppk`,
+    publishBranch
 }

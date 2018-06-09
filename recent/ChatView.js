@@ -372,7 +372,7 @@ export default class ChatView extends Component<{}> {
         return (
             <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
                 <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS=="ios"?this.state.heightAnim:0}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}} keyboardDismissMode="on-drag">
+                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}} >
                         <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {recordEls}
                         </View>
