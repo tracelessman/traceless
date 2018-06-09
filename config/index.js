@@ -9,5 +9,6 @@ module.exports = {
     appName,
     publishFolderName,
     ipaUrl:`${baseUrl}manifest.plist`,
-    ppkUrl:`${baseUrl+appName}.ppk`
+    ppkUrl:`${baseUrl+appName}.ppk`,
+    publishBranch
 }
