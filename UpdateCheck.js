@@ -20,11 +20,7 @@ import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
 
-AppState.addEventListener('change', (state)=>{
-    if(state === 'active'){
-        PushNotificationIOS.removeAllDeliveredNotifications();
-    }
-});
+
 
 // import update from 'react-native-update'
 // console.log(update)

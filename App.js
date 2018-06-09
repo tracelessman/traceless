@@ -4,9 +4,9 @@ import {
     AsyncStorage,
     NativeModules,
     Platform,
-    StyleSheet,Text,
+    StyleSheet, Text,
     View,
-    AppState
+    AppState, PushNotificationIOS
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -40,6 +40,10 @@ export default class App extends Component<{}> {
             }
        }
        this.curAppState = appState;
+
+        if(appState === 'active'){
+            PushNotificationIOS.removeAllDeliveredNotifications();
+        }
     }
 
     componentDidMount=()=>{
