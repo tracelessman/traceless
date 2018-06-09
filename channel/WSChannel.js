@@ -25,7 +25,7 @@ var WSChannel={
         }
     },
     timeout:60000,
-    _reloginDelay:5000,
+    _reloginDelay:0,
     _lastPongTime:null,
     seed:Date.now(),
     callbacks:{},
@@ -106,31 +106,27 @@ var WSChannel={
                 callback(this.ws);
         }
     },
-    reLogin:function () {
-        if(this.ws&&Store.getLoginState()){
-            this._reloginDelay = 0;
-            this.ws.close();
-        }
-    },
     _reLogin:function () {
         var delay = this._reloginDelay>=5000?5000:this._reloginDelay;
         var login = function () {
+            WSChannel._reloginDelay+=1000;
             delete WSChannel.ws;
             WSChannel.applyChannel(WSChannel.ip,function () {
+                WSChannel._reloginDelay=0;
                 if(Store.getLoginState()){
                     WSChannel.login(Store.getCurrentName(),Store.getCurrentUid(),Store.getClientId(),WSChannel.ip,(data, error)=>{
                         if(error){
                             //TODO 统一处理网络异常
                             //alert(error);
                         }
+                        console.info("relogin end:"+Date.now());
                     });
                 }
             });
         }
         if(delay){
-            this._reloginDelay = delay;
             setTimeout(()=>{
-                this._reloginDelay+=1000;
+
                 login();
 
             },delay);
@@ -158,16 +154,17 @@ var WSChannel={
         var req = WSChannel.newRequestMsg("unauthorize");
         this._sendRequest(req);
     },
-    _timeoutHandler : function (reqId,callback) {
-        setTimeout(function(){
-            if(WSChannel.callbacks[reqId]){//如果还没有得到返回处理
-                WSChannel._fire("badnetwork");
-                if(callback)
-                    callback();
-            }
+    _timeoutHandler : function (reqId,callback,preventDefault) {
+        if(!preventDefault){
+            setTimeout(function(){
+                if(WSChannel.callbacks[reqId]){//如果还没有得到返回处理
+                    WSChannel._fire("badnetwork");
+                    if(callback)
+                        callback();
+                }
 
-        },this.timeout);
-
+            },this.timeout);
+        }
     },
     login:function (name,uid,cid,ip,callback,timeoutCallback) {
         Store.setCurrentUid(uid) ;
@@ -225,6 +222,16 @@ var WSChannel={
 
             });
         this._sendRequest(req,timeoutCallback,ip);
+
+    },
+    fetchAllMessages:function () {
+        if(Store.getLoginState()){
+            var req = WSChannel.newRequestMsg("fetchAllMessages",null,
+                function (msg) {
+
+                });
+            this._sendRequest(req,null,ip,true);
+        }
 
     },
     searchFriends:function (searchText,callback,timeoutCallback) {
@@ -377,7 +384,7 @@ var WSChannel={
         Store.receiveGroupImage(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
     },
 
-    _sendRequest:function (req,timeoutCallback,ip) {
+    _sendRequest:function (req,timeoutCallback,ip,preventDefaultTimeout) {
         if(ip){
             this.applyChannel(ip,function (ws) {
                 try{
@@ -396,7 +403,7 @@ var WSChannel={
             });
         }
 
-        this._timeoutHandler(req.id,timeoutCallback);
+        this._timeoutHandler(req.id,timeoutCallback,preventDefaultTimeout);
     },
     msgReadStateReport:function (readMsgs,targetUid,targetCid) {
         var req = WSChannel.newRequestMsg("msgReadStateReport",{readMsgs:readMsgs,state:Store.MESSAGE_STATE_TARGET_READ},function (data,msgId) {

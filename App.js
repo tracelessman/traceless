@@ -32,16 +32,18 @@ export default class App extends Component<{}> {
     }
 
     _handleAppStateChange=(appState)=>{
-        if(appState!="active"&&this.curAppState=="active"){
-            this.deActiveTime = Date.now();
-        }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
-            if(Date.now()-this.deActiveTime>25*1000){
-                WSChannel.reLogin();
-            }
-       }
-       this.curAppState = appState;
+       //  if(appState!="active"&&this.curAppState=="active"&&this.deActiveTime==null){
+       //      this.deActiveTime = Date.now();
+       //  }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
+       //      if(Date.now()-this.deActiveTime>25*1000){
+       //          WSChannel.reLogin();
+       //      }
+       //      this.deActiveTime = null
+       // }
+       // this.curAppState = appState;
 
         if(appState === 'active'){
+            WSChannel.fetchAllMessages();
             PushNotificationIOS.removeAllDeliveredNotifications();
         }
     }
