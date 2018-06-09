@@ -5,7 +5,8 @@ import {
     NativeModules,
     Platform,
     StyleSheet,Text,
-    View
+    View,
+    AppState
 } from 'react-native';
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
@@ -27,9 +28,22 @@ export default class App extends Component<{}> {
         this.state={};
         AppUtil.setApp(this);
         this.seed=0;
+        this.curAppState=null;
+    }
+
+    _handleAppStateChange=(appState)=>{
+        if(appState!="active"&&this.curAppState=="active"){
+            this.deActiveTime = Date.now();
+        }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
+            if(Date.now()-this.deActiveTime>25*1000){
+                WSChannel.reLogin();
+            }
+       }
+       this.curAppState = appState;
     }
 
     componentDidMount=()=>{
+        AppState.addEventListener('change', this._handleAppStateChange);
         this.try2Login();
         Store.on("uidChanged",this._onSystemNotify);
         WSChannel.on("badnetwork",()=>{
@@ -41,6 +55,11 @@ export default class App extends Component<{}> {
             })
         })
     }
+
+    componentWillUnmount=()=>{
+        AppState.removeEventListener('change', this._handleAppStateChange);
+    }
+
 
     _onSystemNotify=(uid)=>{
         if(uid){

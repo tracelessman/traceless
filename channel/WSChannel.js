@@ -25,6 +25,7 @@ var WSChannel={
         }
     },
     timeout:60000,
+    _reloginDelay:5000,
     _lastPongTime:null,
     seed:Date.now(),
     callbacks:{},
@@ -73,7 +74,10 @@ var WSChannel={
                     else{
                         // WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true,action:action,id:msg.id,targetUid:msg.uid,targetCid:msg.cid}));
                         WSChannel[action+"Handler"](msg,()=>{
-                            WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true}));
+                            try{
+                                WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true}));
+
+                            }catch(e){}
                         });
                     }
 
@@ -85,20 +89,7 @@ var WSChannel={
                 };
                 this.ws.onclose = (event)=>{
                     if(event.target.ip==WSChannel.ip){
-                        delete WSChannel.ws;
-                        setTimeout(()=>{
-                            WSChannel.applyChannel(event.target.ip,function () {
-                                if(Store.getLoginState()){
-                                    WSChannel.login(Store.getCurrentName(),Store.getCurrentUid(),Store.getClientId(),event.target.ip,(data, error)=>{
-                                        if(error){
-                                            //TODO 统一处理网络异常
-                                            alert(error);
-                                        }
-                                    });
-                                }
-                            });
-                        },5000);
-
+                        WSChannel._reLogin();
                     }
 
                 }
@@ -114,6 +105,39 @@ var WSChannel={
             if(callback)
                 callback(this.ws);
         }
+    },
+    reLogin:function () {
+        if(this.ws&&Store.getLoginState()){
+            this._reloginDelay = 0;
+            this.ws.close();
+        }
+    },
+    _reLogin:function () {
+        var delay = this._reloginDelay>=5000?5000:this._reloginDelay;
+        var login = function () {
+            delete WSChannel.ws;
+            WSChannel.applyChannel(WSChannel.ip,function () {
+                if(Store.getLoginState()){
+                    WSChannel.login(Store.getCurrentName(),Store.getCurrentUid(),Store.getClientId(),WSChannel.ip,(data, error)=>{
+                        if(error){
+                            //TODO 统一处理网络异常
+                            //alert(error);
+                        }
+                    });
+                }
+            });
+        }
+        if(delay){
+            this._reloginDelay = delay;
+            setTimeout(()=>{
+                this._reloginDelay+=1000;
+                login();
+
+            },delay);
+        }else{
+            login();
+        }
+
     },
     reset :function () {
         delete this.ip;
