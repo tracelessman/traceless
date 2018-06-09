@@ -1,6 +1,6 @@
 const appName = "traceless"
 const publishFolderName = "pkg"
-const publishBranch = 'publish'
+const publishBranch = 'publishTest'
 const baseUrl = `https://raw.githubusercontent.com/tracelessman/traceless/${publishBranch}/${publishFolderName}/`
 
 module.exports = {
