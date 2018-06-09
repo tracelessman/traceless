@@ -24,7 +24,6 @@ export default class RequireListView extends Component<{}> {
                 this.setState({update:true});
                 WSChannel.sendMessage(id,"我们已经是好友了,一起LK吧!",()=>{
 
-
                 });
             });
         });
