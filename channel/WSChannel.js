@@ -176,9 +176,9 @@ var WSChannel={
                 }
                 Store.suspendAutoSave();
                 WSChannel._lastPongTime = Date.now();
-                if(msg.serverPublicKey){
-                    Store.truncateServerPublicKey(msg.serverPublicKey);
-                }
+                // if(msg.serverPublicKey){
+                //     Store.truncateServerPublicKey(msg.serverPublicKey);
+                // }
                 if(msg.contacts){
                     // msg.contacts.forEach(function (c) {
                     //     var f = Store.getFriend(c.id);
