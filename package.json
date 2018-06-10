@@ -1,11 +1,12 @@
 {
   "name": "traceless",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "pack:android": "cd android && ./gradlew assembleRelease && cd ../",
+    "pack:androidTest": "cd android && ./gradlew assembleGood && cd ../",
     "start:android": "react-native run-android",
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
