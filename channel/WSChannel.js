@@ -73,12 +73,23 @@ var WSChannel={
                     }
                     else{
                         // WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true,action:action,id:msg.id,targetUid:msg.uid,targetCid:msg.cid}));
-                        WSChannel[action+"Handler"](msg,()=>{
-                            try{
-                                WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true}));
+                        var handle = function(m){
+                            WSChannel[action+"Handler"](m,()=>{
+                                try{
+                                    WSChannel.ws.send(JSON.stringify({key:m.key,isResponse:true}));
 
-                            }catch(e){}
-                        });
+                                }catch(e){}
+                            });
+                        }
+                        if(isNaN(msg.length)){
+                            handle(msg);
+                        }else{
+                            msg.forEach(function (m) {
+                                handle(m);
+                            })
+                        }
+
+
                     }
 
                 };
@@ -226,10 +237,7 @@ var WSChannel={
     },
     fetchAllMessages:function () {
         if(Store.getLoginState()){
-            var req = WSChannel.newRequestMsg("fetchAllMessages",null,
-                function (msg) {
-
-                });
+            var req = WSChannel.newRequestMsg("fetchAllMessages",null);
             this._sendRequest(req,null,ip,true);
         }
 
