@@ -44,6 +44,7 @@ export default class App extends Component<{}> {
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
             PushNotificationIOS.removeAllDeliveredNotifications();
+            PushNotificationIOS.setApplicationIconBadgeNumber(0)
         }
     }
 

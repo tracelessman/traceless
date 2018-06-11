@@ -26,6 +26,8 @@ import DeviceInfo from 'react-native-device-info'
 // console.log(update)
 
 require('ErrorUtils').setGlobalHandler(function (err) {
+    console.log(err)
+
     WSChannel.errReport(err.toString())
 });
 
@@ -59,7 +61,6 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        console.log('mount update check')
 
         WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()

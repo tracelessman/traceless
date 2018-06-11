@@ -140,8 +140,15 @@ android {
         }
         debug {
                applicationIdSuffix ".debug"
-
+                debuggable true
             }
+
+        good {
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+            applicationIdSuffix ".good"
+        }
     }
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
