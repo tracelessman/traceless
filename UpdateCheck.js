@@ -24,7 +24,7 @@ import DeviceInfo from 'react-native-device-info'
 
 // import update from 'react-native-update'
 // console.log(update)
-
+AppUtil.removeNotify()
 require('ErrorUtils').setGlobalHandler(function (err) {
     console.log(err)
 
@@ -118,8 +118,8 @@ export default class UpdateCheck extends Component<{}> {
                     // }
                 }
             }).catch(function (error) {
-                console.log(error);
-            });
+            console.log(error);
+        });
     },1000*60*1)
 
     nativeUpdate = (hash,version)=>{
