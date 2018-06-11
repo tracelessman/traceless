@@ -238,7 +238,7 @@ var WSChannel={
     fetchAllMessages:function () {
         if(Store.getLoginState()){
             var req = WSChannel.newRequestMsg("fetchAllMessages",null);
-            this._sendRequest(req,null,ip,true);
+            this._sendRequest(req,null,null,true);
         }
 
     },
