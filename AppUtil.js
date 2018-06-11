@@ -126,8 +126,10 @@ let AppUtil={
         }
     },
     removeNotify(){
-        PushNotificationIOS.removeAllDeliveredNotifications();
-        PushNotificationIOS.setApplicationIconBadgeNumber(0)
+        if(Platform.OS === 'ios'){
+            PushNotificationIOS.removeAllDeliveredNotifications();
+            PushNotificationIOS.setApplicationIconBadgeNumber(0)
+        }
     }
 };
 export default AppUtil;
