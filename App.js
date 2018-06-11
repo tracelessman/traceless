@@ -31,20 +31,19 @@ export default class App extends Component<{}> {
     }
 
     _handleAppStateChange=(appState)=>{
-       //  if(appState!="active"&&this.curAppState=="active"&&this.deActiveTime==null){
-       //      this.deActiveTime = Date.now();
-       //  }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
-       //      if(Date.now()-this.deActiveTime>25*1000){
-       //          WSChannel.reLogin();
-       //      }
-       //      this.deActiveTime = null
-       // }
-       // this.curAppState = appState;
+        //  if(appState!="active"&&this.curAppState=="active"&&this.deActiveTime==null){
+        //      this.deActiveTime = Date.now();
+        //  }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
+        //      if(Date.now()-this.deActiveTime>25*1000){
+        //          WSChannel.reLogin();
+        //      }
+        //      this.deActiveTime = null
+        // }
+        // this.curAppState = appState;
 
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
-            PushNotificationIOS.removeAllDeliveredNotifications();
-            PushNotificationIOS.setApplicationIconBadgeNumber(0)
+            AppUtil.removeNotify()
         }
     }
 
@@ -95,9 +94,9 @@ export default class App extends Component<{}> {
     reset=(t)=>{
         this.seed++;
         if(Store.getLoginState())
-            {this.setState({reset:true});}
+        {this.setState({reset:true});}
         else
-            {this.try2Login();}
+        {this.try2Login();}
     }
 
     try2Login=()=>{
