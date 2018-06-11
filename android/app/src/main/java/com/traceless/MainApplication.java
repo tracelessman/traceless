@@ -3,9 +3,9 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import cn.reactnative.modules.update.UpdatePackage;
 import org.reactnative.camera.RNCameraPackage;
-import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
 import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -42,9 +42,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
             new UpdatePackage(),
             new RNCameraPackage(),
-            new ReactNativeAPKPackage(),
             new RNFSPackage(),
             new SvgPackage(),
             new PickerPackage(),

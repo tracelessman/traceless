@@ -18,7 +18,6 @@ import {Toast} from "native-base";
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
-
 export default class App extends Component<{}> {
 
 
@@ -45,6 +44,7 @@ export default class App extends Component<{}> {
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
             PushNotificationIOS.removeAllDeliveredNotifications();
+            PushNotificationIOS.setApplicationIconBadgeNumber(0)
         }
     }
 
