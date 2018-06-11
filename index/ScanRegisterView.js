@@ -108,7 +108,7 @@ export default class ScanRegisterView extends React.Component {
                     curView.setState({registerStep:"注册出错......"});
                     alert(data.err);
                 }else{
-                    Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
+                    Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.publicKey,cid);
                     AppUtil.reset();
                 }
             },()=>{

@@ -74,7 +74,7 @@ var WSChannel={
                     else{
                         // WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true,action:action,id:msg.id,targetUid:msg.uid,targetCid:msg.cid}));
                         var handle = function(m){
-                            WSChannel[action+"Handler"](m,()=>{
+                            WSChannel[m.action+"Handler"](m,()=>{
                                 try{
                                     WSChannel.ws.send(JSON.stringify({key:m.key,isResponse:true}));
 

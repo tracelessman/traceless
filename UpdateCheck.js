@@ -19,13 +19,15 @@ const  RNFS = require('react-native-fs');
 import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
-
+import DeviceInfo from 'react-native-device-info'
 
 
 // import update from 'react-native-update'
 // console.log(update)
 
 require('ErrorUtils').setGlobalHandler(function (err) {
+    console.log(err)
+
     WSChannel.errReport(err.toString())
 });
 
