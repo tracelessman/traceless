@@ -24,53 +24,62 @@ export default class AddGroupMemberView extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={searchResult:null,numberOfLines:2,isScanMode:false,isWaiting:false};
+
         this.group = this.props.navigation.state.params.group;
         this.alreadyMemberIdAry = this.group.members.map(ele=>ele.uid)
+        const friendAry = _.cloneDeep(Store.getAllFriends())
+        const friendListAry = friendAry.filter((item)=>!this.alreadyMemberIdAry.includes(item.id)).map(item =>{
+            item.uid = item.id
+            return item
+        })
+        this.state={friendListAry,isWaiting:false};
+
     }
 
     doSearch=()=>{
-        if(this.searchText){
+        const searchText = this.refs.input.wrappedInstance._lastNativeText
+        if(searchText && searchText.trim()){
             this.setState({isWaiting:true})
-            WSChannel.searchFriends(this.searchText,(data)=>{
-                const friendAry = Store.getAllFriends()
-                const friendIdAry = friendAry.map(ele=>ele.id)
-                const searchResult = data.result.filter((item)=>item.uid !== Store.getCurrentUid() && friendIdAry.includes(item.uid)
-                    && !this.alreadyMemberIdAry.includes(item.uid))
-
-                this.setState({searchResult,isWaiting:false})
-            });
+            const friendAry = _.cloneDeep(Store.getAllFriends())
+            const searchResult = friendAry.filter((item)=> {
+                let result = item.name.includes(searchText) || item.id.includes(searchText)
+                result = result && !this.alreadyMemberIdAry.includes(item.id)
+                return result
+            }).map(item =>{
+                item.uid = item.id
+                return item
+            })
+            this.setState({friendListAry:searchResult,isWaiting:false})
         }else{
-          const friendAry = _.cloneDeep(Store.getAllFriends())
-
-          const searchResult = friendAry.filter((item)=>!this.alreadyMemberIdAry.includes(item.id)).map(item=>{
-            item.uid = item.id
-            return item
-          })
-
-          this.setState({searchResult,isWaiting:false})
+            Toast.show({
+                text: '请输入需要搜索的字符',
+                position: "bottom",
+            })
         }
     }
 
-    textChange=(v)=>{
-        this.searchText = v;
-    }
-    toggelLine=()=>{
-        this.setState({numberOfLines:2})
-    }
     componentDidMount(){
-      // this.doSearch()
+    }
+
+    showAll = ()=>{
+        const friendAry = _.cloneDeep(Store.getAllFriends())
+
+        const searchResult = friendAry.filter((item)=>!this.alreadyMemberIdAry.includes(item.id)).map(item =>{
+            item.uid = item.id
+            return item
+        }).map(item =>{
+            item.uid = item.id
+            return item
+        })
+
+        this.setState({friendListAry:searchResult,isWaiting:false})
     }
 
 
     render() {
-
-        let searchResult = [];
-        if(this.state.searchResult && !this.state.isWaiting){
-            if(this.state.searchResult.length > 0){
-                searchResult =
+        let friendListAryRendered =
                     <List
-                        dataArray={this.state.searchResult}
+                        dataArray={this.state.friendListAry}
                         renderRow={data =>
                             <ListItem thumbnail>
                                 <Left>
@@ -94,20 +103,16 @@ export default class AddGroupMemberView extends Component<{}> {
                     />
 
 
-            }else {
-                searchResult =
-                    <ListItem thumbnail style={{height:80}}>
-                        <Left>
-                        </Left>
-                        <Body>
-                        <Text>
-                            没有搜索结果
-                        </Text>
-                        </Body>
-                    </ListItem>
-
-            }
-        }
+        let noResult =
+            <ListItem thumbnail style={{height:80}}>
+                <Left>
+                </Left>
+                <Body>
+                <Text>
+                    没有搜索结果
+                </Text>
+                </Body>
+            </ListItem>
 
 
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
@@ -116,12 +121,15 @@ export default class AddGroupMemberView extends Component<{}> {
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
                         <Icon name="ios-search"  onPress={this.doSearch} />
-                        <Input placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
+                        <Input  ref="input" placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} />
+                        <Icon name="ios-close-circle-outline" onPress={()=>{
+                            this.refs.input.wrappedInstance.clear()
+                            this.showAll()
+                        }} />
                     </Item>
                 </Header>
                 <Content style={{marginTop:10}}>
-                    {this.state.isWaiting?<Spinner />:null}
-                     {searchResult}
+                    {this.state.isWaiting?<Spinner />:(this.state.friendListAry.length === 0?noResult:friendListAryRendered)}
                 </Content>
             </Container>
 

@@ -5,7 +5,6 @@ import WSChannel from "./channel/LocalWSChannel";
 const _ = require('lodash')
 let deviceIdApn,deviceIdApnPromise
 import DeviceInfo from 'react-native-device-info'
-console.log(DeviceInfo)
 
 import Store from "./store/LocalStore"
 

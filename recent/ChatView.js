@@ -37,9 +37,19 @@ export default class ChatView extends Component<{}> {
         this.isGroupChat = this.props.navigation.state.params.group?true:false;
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
+        this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
         this.text="";
 
         this._keySeed = 0;
+    }
+
+    getGroupMemberInfo(group){
+        let result = {}
+        if(group){
+            for(let member of group.members)
+            result[member.uid] = member
+        }
+        return result
     }
 
     refreshRecordList=()=>{
@@ -336,15 +346,26 @@ export default class ChatView extends Component<{}> {
                    }
                }
                this._keySeed++;
+
                if(records[i].senderUid){
+
                    let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
-                   recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
+                   recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-end",width:"100%",marginTop:10}}>
+
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
-                       <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                       <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
-                           {this._getMessage(records[i])}
+                       <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
+                           <View style={{marginBottom:8,}}>
+                               {this.isGroupChat?<Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>:null}
+                           </View>
+                           <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",}}>
+                               <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                               <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
+                                   {this._getMessage(records[i])}
+                               </View>
+                           </View>
                        </View>
+
+
                    </View>);
                }else{
                    let iconName = this.getIconNameByState(records[i].state);
