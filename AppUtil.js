@@ -1,7 +1,14 @@
 import JPushModule from 'jpush-react-native'
 import {Platform, PushNotificationIOS, StyleSheet} from 'react-native'
+import {Toast} from "native-base";
+import WSChannel from "./channel/LocalWSChannel";
 const _ = require('lodash')
 let deviceIdApn,deviceIdApnPromise
+import DeviceInfo from 'react-native-device-info'
+console.log(DeviceInfo)
+
+import Store from "./store/LocalStore"
+
 
 let AppUtil={
     setApp (app) {
@@ -123,7 +130,37 @@ let AppUtil={
     init(){
         if(Platform.OS === 'ios'){
             deviceIdApnPromise = this.iosPushInit()
+            this.removeNotify()
         }
+
+        WSChannel.on("badnetwork",()=>{
+            Toast.show({
+                text: '网络不给力',
+                position: "top",
+                type:"warning",
+                duration: 5000
+            })
+        })
+
+        console.ignoredYellowBox = ['Setting a timer','Remote debugger']
+
+        require('ErrorUtils').setGlobalHandler(function (err) {
+
+            console.log(err)
+
+            let obj = {
+                stack:err.stack,
+                time:`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+                bundleId:DeviceInfo.getBundleId(),
+                brand:DeviceInfo.getBrand(),
+                uid:Store.getCurrentUid(),
+                systemVersion:DeviceInfo.getSystemVersion(),
+                systemName:DeviceInfo.getSystemName(),
+                versionLocal:require('./package').version,
+            }
+            let jsonStr = JSON.stringify(obj,null,5)
+            WSChannel.errReport(jsonStr)
+        });
     },
     removeNotify(){
         if(Platform.OS === 'ios'){
