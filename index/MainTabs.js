@@ -1,6 +1,4 @@
-/**
- * Created by renbaogang on 2017/10/31.
- */
+
 import React, { Component} from 'react';
 import { Button,Image,TouchableOpacity,View,Text} from 'react-native';
 import {TabNavigator } from 'react-navigation';
@@ -17,6 +15,7 @@ import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
+import VersionView from '../mine/VersionView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -162,6 +161,12 @@ let MainStack = StackNavigator({
         screen:UidView,
         navigationOptions:{
             headerTitle: '标识'
+        }
+    },
+    VersionView:{
+        screen:VersionView,
+        navigationOptions:{
+            headerTitle: '版本信息'
         }
     },
     GroupMsgStateView:{

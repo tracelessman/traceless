@@ -113,6 +113,10 @@ export default class MineView extends Component<{}> {
             {
                 title:`当前版本:${versionLocal}`,
                 icon:'new-releases',
+                onPress:debounceFunc(()=>{
+                    // this.props.navigation.navigate('VersionView',{
+                    // })
+                }),
             },
         ]
 
