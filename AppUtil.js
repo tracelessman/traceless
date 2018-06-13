@@ -97,6 +97,7 @@ let AppUtil={
             PushNotificationIOS.addEventListener('register', (deviceId) => {
 
                 deviceIdApn = deviceId
+                this.deviceIdApn = deviceIdApn
                 resolve(deviceId)
             });
 
@@ -166,6 +167,7 @@ let AppUtil={
             PushNotificationIOS.removeAllDeliveredNotifications();
             PushNotificationIOS.setApplicationIconBadgeNumber(0)
         }
-    }
+    },
+    deviceIdApn:null
 };
 export default AppUtil;

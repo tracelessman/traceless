@@ -61,16 +61,8 @@ export default class ChatView extends Component<{}> {
     }
 
     _getRecords=(rec)=>{
-        let rightRecordAry = []
-        let msgIdAry = []
-        for(let record of rec){
-            const {msgId} = record
-            if(!msgIdAry.includes(msgId)){
-                msgIdAry.push(msgId)
-                rightRecordAry.push(record)
-            }
-        }
-        this.records = rightRecordAry;
+
+        this.records = rec;
         this.setState({messageChange:true});
         this.refs.scrollView.scrollToEnd({animated: false});
 
@@ -225,26 +217,22 @@ export default class ChatView extends Component<{}> {
             else {
                 let imageUri = response.uri;
                 let img = {data:response.data,width:response.width,height:response.height}
-                this.sendImage(img);
 
-                 // if(response.fileSize>1*1024*1024){
+                 if(response.fileSize>1*1024*1024){
+                    const maxWidth = 800
+                     const maxHeight = 800
+                    ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, "JPEG", 60, 0, null).then((res) => {
 
+                        RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
+                            this.sendImage({data,width:maxWidth,height:maxHeight});
+                        });
+                    }).catch((err) => {
+                        console.log(err)
 
-                    // ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
-                    //     RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
-                    //         // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
-                    //         // console.info("send img:"+'data:image/jpeg;base64,' + data);
-                    //         // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
-                    //         this.sendImage('data:image/jpeg;base64,' + data);
-                    //         // this.setState({
-                    //         //     avatarSource: source
-                    //         // });
-                    //     });
-                    // }).catch((err) => {
-                    // });
-                // }else{
-                //      this.sendImage(imageUri,'data:image/jpeg;base64,' + response.data);
-                // }
+                    });
+                }else{
+                     this.sendImage(img);
+                }
 
                 // // let source = { uri: response.uri,data:"data:image/jpg;base64,"+response.data };
                 // let source = { uri: 'data:image/png;base64,' + response.data ,width:response.width,height:response.height,type:response.fileName.substring(response.fileName.lastIndexOf("."))};
@@ -315,6 +303,7 @@ export default class ChatView extends Component<{}> {
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
+
             let imgUri = img;
             let imgW = 180;
             let imgH = 180;
@@ -357,15 +346,16 @@ export default class ChatView extends Component<{}> {
                    }
                }
                this._keySeed++;
-
+               const  style = {
+                   recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type==Store.MESSAGE_TYPE_IMAGE?"center":"flex-end"),width:"100%",marginTop:15}
+               }
                if(records[i].senderUid){
 
                    let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
-                   recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-end",width:"100%",marginTop:10}}>
-
+                   recordEls.push(  <View key={this._keySeed} style={style.recordEleStyle}>
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
                        <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
-                           <View style={{marginBottom:8,}}>
+                           <View style={{marginBottom:5,marginLeft:5}}>
                                {this.isGroupChat?<Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>:null}
                            </View>
                            <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",}}>

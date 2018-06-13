@@ -29,11 +29,11 @@ var WSChannel={
     _lastPongTime:null,
     seed:Date.now(),
     callbacks:{},
-    generataMsgId : function () {
+    generateMsgId : function () {
         return this.seed++;
     },
     newRequestMsg:function (action,data,callback,targetUid,targetCid,msgId) {
-        var id = msgId||this.generataMsgId();
+        var id = msgId||this.generateMsgId();
         if(callback)
             this.callbacks[id] = callback;
         return  {id:id,action:action,data:data,uid:Store.getCurrentUid(),targetUid:targetUid,cid:Store.getClientId(),targetCid:targetCid};//id消息id uid 身份id
