@@ -51,14 +51,7 @@ export default class App extends Component<{}> {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.try2Login();
         Store.on("uidChanged",this._onSystemNotify);
-        WSChannel.on("badnetwork",()=>{
-            Toast.show({
-                text: '网络不给力',
-                position: "top",
-                type:"warning",
-                duration: 5000
-            })
-        })
+
     }
 
     componentWillUnmount=()=>{
@@ -116,7 +109,6 @@ export default class App extends Component<{}> {
 
                 },()=> {
                     this.seed++;
-                    WSChannel._fire("badnetwork")
                     this.setState({data,logining:false});
                 });
             }else{

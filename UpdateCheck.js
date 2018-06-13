@@ -24,12 +24,7 @@ import DeviceInfo from 'react-native-device-info'
 
 // import update from 'react-native-update'
 // console.log(update)
-AppUtil.removeNotify()
-require('ErrorUtils').setGlobalHandler(function (err) {
-    console.log(err)
 
-    WSChannel.errReport(err.toString())
-});
 
 const axios = require('axios')
 const versionLocal = require('./package').version
@@ -37,8 +32,6 @@ const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
 const {updateJsonUrl,apkUrl,appName,ipaUrl,ppkUrl} = config
-
-console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
 
 export default class UpdateCheck extends Component<{}> {

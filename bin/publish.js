@@ -43,7 +43,7 @@ fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
 
 let cmd = `
-     git add ${folderName} && git commit -am "${version} @${new Date()}" && git push
+     git add ${folderName} && git commit -am "${version} / ${new Date()}" && git push
 `
 
 childProcess.exec(cmd,(error,stdout,stderr)=>{
