@@ -32,7 +32,13 @@ export default class AddGroupMemberView extends Component<{}> {
             item.uid = item.id
             return item
         })
-        this.state={friendListAry,isWaiting:false};
+
+        this.state={
+            friendListAry,
+            isWaiting:false,
+            hasNoResult:false,
+            allAdded:friendListAry.length === 0
+        };
 
     }
 
@@ -49,7 +55,8 @@ export default class AddGroupMemberView extends Component<{}> {
                 item.uid = item.id
                 return item
             })
-            this.setState({friendListAry:searchResult,isWaiting:false})
+
+            this.setState({friendListAry:searchResult,isWaiting:false,hasNoResult:searchResult.length===0})
         }else{
             Toast.show({
                 text: '请输入需要搜索的字符',
@@ -72,9 +79,8 @@ export default class AddGroupMemberView extends Component<{}> {
             return item
         })
 
-        this.setState({friendListAry:searchResult,isWaiting:false})
+        this.setState({friendListAry:searchResult,isWaiting:false,hasNoResult:false})
     }
-
 
     render() {
         let friendListAryRendered =
@@ -113,9 +119,19 @@ export default class AddGroupMemberView extends Component<{}> {
                 </Text>
                 </Body>
             </ListItem>
-
+        let allAdded =
+            <ListItem thumbnail style={{height:80}}>
+                <Left>
+                </Left>
+                <Body>
+                <Text>
+                    所有的好友都已经加入该群!
+                </Text>
+                </Body>
+            </ListItem>
 
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
+
         const view2 =
             <Container>
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
@@ -129,7 +145,9 @@ export default class AddGroupMemberView extends Component<{}> {
                     </Item>
                 </Header>
                 <Content style={{marginTop:10}}>
-                    {this.state.isWaiting?<Spinner />:(this.state.friendListAry.length === 0?noResult:friendListAryRendered)}
+                    {this.state.isWaiting? <Spinner />:(this.state.allAdded?allAdded:
+                        (this.state.friendListAry.length===0?noResult:friendListAryRendered)
+                    )}
                 </Content>
             </Container>
 

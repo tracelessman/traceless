@@ -54,14 +54,23 @@ export default class ChatView extends Component<{}> {
 
     refreshRecordList=()=>{
         if(this.isGroupChat){
-            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords);
+            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords,150);
         }else{
-            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords);
+            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords,150);
         }
     }
 
     _getRecords=(rec)=>{
-        this.records = rec;
+        let rightRecordAry = []
+        let msgIdAry = []
+        for(let record of rec){
+            const {msgId} = record
+            if(!msgIdAry.includes(msgId)){
+                msgIdAry.push(msgId)
+                rightRecordAry.push(record)
+            }
+        }
+        this.records = rightRecordAry;
         this.setState({messageChange:true});
         this.refs.scrollView.scrollToEnd({animated: false});
 
@@ -323,6 +332,8 @@ export default class ChatView extends Component<{}> {
 
     render() {
        let records = this.records;
+
+
        let recordEls = [];
        if(records){
            let lastSpTime;
