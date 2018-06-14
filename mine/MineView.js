@@ -100,11 +100,11 @@ export default class MineView extends Component<{}> {
                 icon:'refresh',
                 onPress:this.clear,
             },
-            {
-                title:`重置`,
-                icon:'delete-forever',
-                onPress:this.reset
-            },
+            // {
+            //     title:`注销设备`,
+            //     icon:'delete-forever',
+            //     onPress:this.reset
+            // },
             {
                 title:`授权其他设备`,
                 icon:'crop-free',
