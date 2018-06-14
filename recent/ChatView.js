@@ -41,6 +41,10 @@ export default class ChatView extends Component<{}> {
         this.text="";
 
         this._keySeed = 0;
+
+        this.folderId  = this.getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+
+
     }
 
     getGroupMemberInfo(group){
@@ -267,6 +271,11 @@ export default class ChatView extends Component<{}> {
         return "ios-help"
     }
 
+    getFolderId(filePath){
+        return filePath.split('/')[6]
+
+    }
+
     doTouchMsgState=function () {
         if(this.ChatView.isGroupChat){
             Store.getGroupChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
@@ -303,8 +312,8 @@ export default class ChatView extends Component<{}> {
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
-            // console.log(img)
-            
+
+            img.data = img.data.replace(this.getFolderId(img.data),this.folderId)
 
             let imgUri = img;
             let imgW = 180;
@@ -352,8 +361,10 @@ export default class ChatView extends Component<{}> {
                    recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type==Store.MESSAGE_TYPE_IMAGE?"center":"flex-end"),width:"100%",marginTop:15}
                }
                if(records[i].senderUid){
-
-                   let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
+                    if(records[i].senderUid === "9711afa5-a07b-4a37-bbd4-5b3eaca81984"){
+                        continue
+                    }
+                   let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
                    recordEls.push(  <View key={this._keySeed} style={style.recordEleStyle}>
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
                        <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
@@ -367,8 +378,6 @@ export default class ChatView extends Component<{}> {
                                </View>
                            </View>
                        </View>
-
-
                    </View>);
                }else{
                    let iconName = this.getIconNameByState(records[i].state);

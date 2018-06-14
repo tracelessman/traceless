@@ -58,10 +58,7 @@ export default class UpdateCheck extends Component<{}> {
         WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
 
-    }
-
-    componentWillUnmount =()=> {
-        // const url = "http://127.0.0.1:3000/update"
+        // const url = `http://172.18.1.181:3000/update`
         // fetch(url, {
         //     method: 'POST',
         //     headers: {
@@ -69,10 +66,23 @@ export default class UpdateCheck extends Component<{}> {
         //         'Content-Type': 'application/json',
         //     },
         //     body: JSON.stringify({
-        //         firstParam: 'yourValue',
-        //         secondParam: 'yourOtherValue',
+        //         os:Platform.OS,
+        //         bundleId:DeviceInfo.getBundleId(),
+        //             uniqueId:DeviceInfo.getUniqueID(),
+        //         uid:Store.getCurrentUid(),
+        //         versionLocal:require('./package').version
         //     }),
         // });
+        // setTimeout(()=>{
+        //     console.log(Store.getCurrentUid())
+        //
+        // },1000*3)
+
+
+    }
+
+    componentWillUnmount =()=> {
+
     }
 
 
