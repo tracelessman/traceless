@@ -303,7 +303,7 @@ export default class ChatView extends Component<{}> {
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
-            console.log(img)
+            // console.log(img)
             
 
             let imgUri = img;
