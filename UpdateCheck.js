@@ -61,18 +61,18 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillUnmount =()=> {
-        const url = "http://127.0.0.1:3000/update"
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                firstParam: 'yourValue',
-                secondParam: 'yourOtherValue',
-            }),
-        });
+        // const url = "http://127.0.0.1:3000/update"
+        // fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         firstParam: 'yourValue',
+        //         secondParam: 'yourOtherValue',
+        //     }),
+        // });
     }
 
 
