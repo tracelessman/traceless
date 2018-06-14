@@ -25,7 +25,7 @@ WSChannel.decrypt = function (encrypted) {
     }
     return de;
 }
-WSChannel.generateMsgId = function () {
-    return UUID();
-}
+// WSChannel.generateMsgId = function () {
+//     return UUID();
+// }
 export default WSChannel;
