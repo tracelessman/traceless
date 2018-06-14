@@ -2458,7 +2458,7 @@
 				);
 				PRODUCT_NAME = traceless;
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "/Users/spirit/Downloads/entry/certificate/traceless (1).mobileprovision";
+				PROVISIONING_PROFILE_SPECIFIER = "/Users/spirit/Downloads/entry/certificate/traceless-6-14.mobileprovision";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = "ad hoc distribution";
