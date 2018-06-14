@@ -159,7 +159,7 @@ export default class ChatView extends Component<{}> {
     componentDidUpdate=()=>{
         setTimeout(()=>{
             this.refs.scrollView.scrollToEnd({animated: false});
-        },50)
+        },100)
 
     }
 
@@ -220,32 +220,19 @@ export default class ChatView extends Component<{}> {
             }
             else {
                 let imageUri = response.uri;
-                let img = {data:response.data,width:response.width,height:response.height}
 
-                 if(response.fileSize>1*1024*1024){
-                    const maxWidth = 800
-                     const maxHeight = 800
-                    ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, "JPEG", 60, 0, null).then((res) => {
+                const maxWidth = 1000
+                const maxHeight = 1000
+                ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, "JPEG", 70, 0, null).then((res) => {
 
-                        RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
-                            this.sendImage({data,width:maxWidth,height:maxHeight});
-                        });
-                    }).catch((err) => {
-                        console.log(err)
-
+                    RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
+                        this.sendImage({data,width:maxWidth,height:maxHeight});
                     });
-                }else{
-                     this.sendImage(img);
-                }
+                }).catch((err) => {
+                    console.log(err)
 
-                // // let source = { uri: response.uri,data:"data:image/jpg;base64,"+response.data };
-                // let source = { uri: 'data:image/png;base64,' + response.data ,width:response.width,height:response.height,type:response.fileName.substring(response.fileName.lastIndexOf("."))};
-                //
-                // console.info(JSON.stringify(source));
-                // this.setState({
-                //     avatarSource: source
-                // });
-                // // this.readFile(source.uri);
+                });
+
             }
         });
     }
@@ -308,7 +295,8 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec)=>{
         if(rec.type==Store.MESSAGE_TYEP_TEXT){
-            return <Text>{rec.content}</Text>;
+
+            return <Text style={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}>{rec.content}</Text>;
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
@@ -412,7 +400,7 @@ export default class ChatView extends Component<{}> {
                     </ScrollView>
 
                     <View style={{width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden"}}>
-                        <TextInput ref="text" style={{flex:1,color:"gray",borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#f0f0f0",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
+                        <TextInput ref="text" style={{flex:1,color:"black",fontSize:15,paddingHorizontal:4,borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#f0f0f0",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
                         <TouchableOpacity onPress={this.showImagePicker}>
                             <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5,}}/>
                         </TouchableOpacity>
