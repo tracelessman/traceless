@@ -28,6 +28,7 @@ console.log('ipa generated successfully')
 timeLog()
 
 function timeLog(){
-    console.log(`time elapsed ${(Date.now()-start)/1000} s`)
+    let timeInS = Math.floor((Date.now()-start)/1000)
+    console.log(`time elapsed ${Math.floor(timeInS / 60)}m${timeInS % 60}s`)
 
 }
