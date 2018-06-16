@@ -14,7 +14,7 @@
     "packUploadApk": "npm run pack:android && npm run uploadApk",
     "publish": "node bin/publish",
     "lint": "eslint * --fix",
-    "pack:ios":"node bin/packIOS"
+    "pack:ios": "node bin/packIOS"
   },
   "dependencies": {
     "axios": "^0.18.0",

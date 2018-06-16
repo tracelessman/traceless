@@ -13,9 +13,9 @@
 			<key>certificate</key>
 			<dict>
 				<key>SHA1</key>
-				<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+				<string>6D62E2B4900742374EDD2AE05A76BB444AA9FD9C</string>
 				<key>dateExpires</key>
-				<string>2019/5/31</string>
+				<string>2019/6/6</string>
 				<key>type</key>
 				<string>iOS Distribution</string>
 			</dict>
@@ -30,9 +30,9 @@
 					<key>certificate</key>
 					<dict>
 						<key>SHA1</key>
-						<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+						<string>6D62E2B4900742374EDD2AE05A76BB444AA9FD9C</string>
 						<key>dateExpires</key>
-						<string>2019/5/31</string>
+						<string>2019/6/6</string>
 						<key>type</key>
 						<string>iOS Distribution</string>
 					</dict>
@@ -43,7 +43,7 @@
 						<key>id</key>
 						<string>355R83R4YL</string>
 						<key>name</key>
-						<string>Liya Yao</string>
+						<string></string>
 					</dict>
 				</dict>
 				<dict>
@@ -55,9 +55,9 @@
 					<key>certificate</key>
 					<dict>
 						<key>SHA1</key>
-						<string>A3031C6B96DAE348A1BF3C5C72A25A6FC60DA679</string>
+						<string>6D62E2B4900742374EDD2AE05A76BB444AA9FD9C</string>
 						<key>dateExpires</key>
-						<string>2019/5/31</string>
+						<string>2019/6/6</string>
 						<key>type</key>
 						<string>iOS Distribution</string>
 					</dict>
@@ -68,7 +68,7 @@
 						<key>id</key>
 						<string>355R83R4YL</string>
 						<key>name</key>
-						<string>Liya Yao</string>
+						<string></string>
 					</dict>
 				</dict>
 			</array>
@@ -88,7 +88,7 @@
 			<key>profile</key>
 			<dict>
 				<key>UUID</key>
-				<string>566b25c5-33e2-482a-b4c1-d88b65b0f1e0</string>
+				<string>d5bb80da-9ff9-4329-a2e6-81d43ed86ab0</string>
 				<key>name</key>
 				<string>iOS Team Ad Hoc Provisioning Profile: com.hfs.traceless</string>
 			</dict>
@@ -97,7 +97,7 @@
 				<key>id</key>
 				<string>355R83R4YL</string>
 				<key>name</key>
-				<string>Liya Yao</string>
+				<string></string>
 			</dict>
 		</dict>
 	</array>

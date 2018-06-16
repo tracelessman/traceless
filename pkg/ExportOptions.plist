@@ -4,15 +4,6 @@
 <dict>
 	<key>compileBitcode</key>
 	<true/>
-	<key>manifest</key>
-	<dict>
-		<key>appURL</key>
-		<string>https://raw.githubusercontent.com/tracelessman/traceless/publishTest/pkg/traceless.ipa</string>
-		<key>displayImageURL</key>
-		<string>https://raw.githubusercontent.com/tracelessman/traceless/publishTest/pkg/57*57.png</string>
-		<key>fullSizeImageURL</key>
-		<string>https://raw.githubusercontent.com/tracelessman/traceless/publishTest/pkg/512*512.png</string>
-	</dict>
 	<key>method</key>
 	<string>ad-hoc</string>
 	<key>signingStyle</key>
