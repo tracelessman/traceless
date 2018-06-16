@@ -29,11 +29,11 @@ var WSChannel={
     _lastPongTime:null,
     seed:Date.now(),
     callbacks:{},
-    generataMsgId : function () {
+    generateMsgId : function () {
         return this.seed++;
     },
     newRequestMsg:function (action,data,callback,targetUid,targetCid,msgId) {
-        var id = msgId||this.generataMsgId();
+        var id = msgId||this.generateMsgId();
         if(callback)
             this.callbacks[id] = callback;
         return  {id:id,action:action,data:data,uid:Store.getCurrentUid(),targetUid:targetUid,cid:Store.getClientId(),targetCid:targetCid};//id消息id uid 身份id
@@ -73,12 +73,23 @@ var WSChannel={
                     }
                     else{
                         // WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true,action:action,id:msg.id,targetUid:msg.uid,targetCid:msg.cid}));
-                        WSChannel[action+"Handler"](msg,()=>{
-                            try{
-                                WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true}));
+                        var handle = function(m){
+                            WSChannel[m.action+"Handler"](m,()=>{
+                                try{
+                                    WSChannel.ws.send(JSON.stringify({key:m.key,isResponse:true}));
 
-                            }catch(e){}
-                        });
+                                }catch(e){}
+                            });
+                        }
+                        if(isNaN(msg.length)){
+                            handle(msg);
+                        }else{
+                            msg.forEach(function (m) {
+                                handle(m);
+                            })
+                        }
+
+
                     }
 
                 };
@@ -168,7 +179,6 @@ var WSChannel={
     },
     login:function (name,uid,cid,ip,callback,timeoutCallback) {
         Store.setCurrentUid(uid) ;
-        // window.top.ipc.send("upgrade-request",{toIndexIFNot:false});
         var req = WSChannel.newRequestMsg("login",{name:name,uid:uid,cid:cid},
             function (msg) {
                 if(!msg.err){
@@ -176,9 +186,9 @@ var WSChannel={
                 }
                 Store.suspendAutoSave();
                 WSChannel._lastPongTime = Date.now();
-                if(msg.serverPublicKey){
-                    Store.truncateServerPublicKey(msg.serverPublicKey);
-                }
+                // if(msg.serverPublicKey){
+                //     Store.truncateServerPublicKey(msg.serverPublicKey);
+                // }
                 if(msg.contacts){
                     // msg.contacts.forEach(function (c) {
                     //     var f = Store.getFriend(c.id);
@@ -226,11 +236,8 @@ var WSChannel={
     },
     fetchAllMessages:function () {
         if(Store.getLoginState()){
-            var req = WSChannel.newRequestMsg("fetchAllMessages",null,
-                function (msg) {
-
-                });
-            this._sendRequest(req,null,ip,true);
+            var req = WSChannel.newRequestMsg("fetchAllMessages",null);
+            this._sendRequest(req,null,null,true);
         }
 
     },
@@ -509,6 +516,22 @@ var WSChannel={
     },
     setPersonalPicHandler:function(msg){
         Store.updateFriendPic(msg.uid,msg.data.pic);
+    },
+    setPersonalName:function (name,callback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("setPersonalName",{name:name},(data)=>{
+            if(!data.err){
+                Store.setPersonalName(name);
+            }
+            callback(data);
+        });
+        this._sendRequest(req,timeoutCallback);
+    },
+
+    setPersonalNameFromOtherDevice:function(msg){
+        Store.setPersonalName(msg.data.name);
+    },
+    setPersonalNameHandler:function(msg){
+        Store.updateFriendName(msg.uid,msg.data.name);
     },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,groupName:Store.getGroup(gid).name,newMembers:uids},(data)=>{

@@ -74,7 +74,7 @@ export default class GroupInfoView extends Component<{}> {
 
 
         return (
-            <ScrollView style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
+            <ScrollView contentContainerStyle={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
                 {friends}
 
             </ScrollView>

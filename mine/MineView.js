@@ -87,7 +87,7 @@ export default class MineView extends Component<{}> {
     render() {
         const list2 = [
             {
-                title:`身份标识`,
+                title:`个人信息`,
                 icon:'contacts',
                 onPress:debounceFunc(()=>{
                     this.props.navigation.navigate('UidView',{
@@ -100,11 +100,11 @@ export default class MineView extends Component<{}> {
                 icon:'refresh',
                 onPress:this.clear,
             },
-            {
-                title:`重置`,
-                icon:'delete-forever',
-                onPress:this.reset
-            },
+            // {
+            //     title:`注销设备`,
+            //     icon:'delete-forever',
+            //     onPress:this.reset
+            // },
             {
                 title:`授权其他设备`,
                 icon:'crop-free',
@@ -113,6 +113,10 @@ export default class MineView extends Component<{}> {
             {
                 title:`当前版本:${versionLocal}-test2`,
                 icon:'new-releases',
+                onPress:debounceFunc(()=>{
+                    // this.props.navigation.navigate('VersionView',{
+                    // })
+                }),
             },
         ]
 

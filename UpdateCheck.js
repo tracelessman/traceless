@@ -19,15 +19,12 @@ const  RNFS = require('react-native-fs');
 import App from './App'
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as Progress from 'react-native-progress';
-
+import DeviceInfo from 'react-native-device-info'
 
 
 // import update from 'react-native-update'
 // console.log(update)
 
-require('ErrorUtils').setGlobalHandler(function (err) {
-    WSChannel.errReport(err.toString())
-});
 
 const axios = require('axios')
 const versionLocal = require('./package').version
@@ -35,8 +32,6 @@ const semver = require('semver')
 const config = require('./config')
 // console.log(md5.hex_md5('test'))
 const {updateJsonUrl,apkUrl,appName,ipaUrl,ppkUrl} = config
-
-console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
 
 export default class UpdateCheck extends Component<{}> {
@@ -62,6 +57,27 @@ export default class UpdateCheck extends Component<{}> {
 
         WSChannel.on("afterLogin", this.checkUpdate);
         this.checkUpdate()
+
+        // const url = `http://172.18.1.181:3000/update`
+        // fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         os:Platform.OS,
+        //         bundleId:DeviceInfo.getBundleId(),
+        //             uniqueId:DeviceInfo.getUniqueID(),
+        //         uid:Store.getCurrentUid(),
+        //         versionLocal:require('./package').version
+        //     }),
+        // });
+        // setTimeout(()=>{
+        //     console.log(Store.getCurrentUid())
+        //
+        // },1000*3)
+
 
     }
 
@@ -116,8 +132,8 @@ export default class UpdateCheck extends Component<{}> {
                     // }
                 }
             }).catch(function (error) {
-                console.log(error);
-            });
+            console.log(error);
+        });
     },1000*60*1)
 
     nativeUpdate = (hash,version)=>{

@@ -26,6 +26,10 @@ export default class AddContactView extends Component<{}> {
         this.state={searchResult:null,numberOfLines:2,isScanMode:false,isWaiting:false};
     }
 
+    // componentDidMount(){
+    //     this.refs.input.wrappedInstance.focus()
+    // }
+
     doSearch=()=>{
         if(this.searchText){
             this.setState({isWaiting:true})
@@ -154,7 +158,7 @@ export default class AddContactView extends Component<{}> {
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
                         <Icon name="ios-search"  onPress={this.doSearch} />
-                        <Input placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
+                        <Input autoFocus ref='input' placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
                         <Icon name="ios-qr-scanner" onPress={()=>{
                             this.setState({isScanMode:true})
                         }} />

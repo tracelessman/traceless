@@ -44,10 +44,10 @@ export default class GroupAvatar extends Component<{}> {
         for(let i=0;i<picAry.length;i++){
             let pic = picAry[i]
             if(i ===0 && picAry.length===3 ){
-                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,marginHorizontal:10}} resizeMode="contain"></Image>)
+                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,marginHorizontal:10,borderRadius:1}} resizeMode="contain"></Image>)
 
             }else{
-                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5}} resizeMode="contain"></Image>)
+                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,borderRadius:1}} resizeMode="contain"></Image>)
             }
 
         }

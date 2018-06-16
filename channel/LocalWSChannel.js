@@ -1,6 +1,7 @@
 /* eslint-disable */
 import Store from "../store/Store";
 import RSAKey from 'react-native-rsa';
+import UUID from 'uuid/v4';
 var WSChannel = require("./WSChannel");
 WSChannel._getRSAInstance = function() {
     if(!this._RSAInstance||this._uid!=Store.getCurrentUid()){
@@ -24,4 +25,7 @@ WSChannel.decrypt = function (encrypted) {
     }
     return de;
 }
+// WSChannel.generateMsgId = function () {
+//     return UUID();
+// }
 export default WSChannel;

@@ -18,7 +18,6 @@ import {Toast} from "native-base";
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
-
 export default class App extends Component<{}> {
 
 
@@ -32,19 +31,19 @@ export default class App extends Component<{}> {
     }
 
     _handleAppStateChange=(appState)=>{
-       //  if(appState!="active"&&this.curAppState=="active"&&this.deActiveTime==null){
-       //      this.deActiveTime = Date.now();
-       //  }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
-       //      if(Date.now()-this.deActiveTime>25*1000){
-       //          WSChannel.reLogin();
-       //      }
-       //      this.deActiveTime = null
-       // }
-       // this.curAppState = appState;
+        //  if(appState!="active"&&this.curAppState=="active"&&this.deActiveTime==null){
+        //      this.deActiveTime = Date.now();
+        //  }else if(appState=="active"&&this.curAppState&&this.curAppState!="active"){
+        //      if(Date.now()-this.deActiveTime>25*1000){
+        //          WSChannel.reLogin();
+        //      }
+        //      this.deActiveTime = null
+        // }
+        // this.curAppState = appState;
 
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
-            PushNotificationIOS.removeAllDeliveredNotifications();
+            AppUtil.removeNotify()
         }
     }
 
@@ -52,14 +51,7 @@ export default class App extends Component<{}> {
         AppState.addEventListener('change', this._handleAppStateChange);
         this.try2Login();
         Store.on("uidChanged",this._onSystemNotify);
-        WSChannel.on("badnetwork",()=>{
-            Toast.show({
-                text: '网络不给力',
-                position: "top",
-                type:"warning",
-                duration: 5000
-            })
-        })
+
     }
 
     componentWillUnmount=()=>{
@@ -95,9 +87,9 @@ export default class App extends Component<{}> {
     reset=(t)=>{
         this.seed++;
         if(Store.getLoginState())
-            {this.setState({reset:true});}
+        {this.setState({reset:true});}
         else
-            {this.try2Login();}
+        {this.try2Login();}
     }
 
     try2Login=()=>{
@@ -117,7 +109,6 @@ export default class App extends Component<{}> {
 
                 },()=> {
                     this.seed++;
-                    WSChannel._fire("badnetwork")
                     this.setState({data,logining:false});
                 });
             }else{

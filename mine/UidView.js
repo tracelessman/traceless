@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { Avatar, Button,Card,Icon ,List,ListItem,} from 'react-native-elements'
 
-export default class QrcodeView extends Component<{}> {
+export default class UidView extends Component<{}> {
 
     constructor(props) {
         super(props);
