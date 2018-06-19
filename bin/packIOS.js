@@ -9,7 +9,7 @@ const archivePath = path.resolve(rootPath,"build/tmp")
 
 console.log('archive ios ....')
 childProcess.execSync(`
-    cd ios && xcodebuild archive -scheme traceless -archivePath "${archivePath}"
+    cd ios && xcodebuild -allowProvisioningUpdates archive -scheme traceless -archivePath "${archivePath}"
 `)
 timeLog()
 
@@ -20,7 +20,7 @@ fse.ensureDirSync(exportPath)
 
 const exportOptionsPath = path.resolve(rootPath,'ios/ExportOptions.plist')
 childProcess.execSync(`
-    xcodebuild -exportArchive -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
+    xcodebuild -exportArchive -allowProvisioningUpdates -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
 `)
 
 console.log('ipa generated successfully')
