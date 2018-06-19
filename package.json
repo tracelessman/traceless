@@ -1,6 +1,6 @@
 {
   "name": "traceless",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -14,7 +14,7 @@
     "packUploadApk": "npm run pack:android && npm run uploadApk",
     "publish": "node bin/publish",
     "lint": "eslint * --fix",
-    "pack:ios":"node bin/packIOS"
+    "pack:ios": "node bin/packIOS"
   },
   "dependencies": {
     "axios": "^0.18.0",
