@@ -296,7 +296,7 @@ export default class ChatView extends Component<{}> {
     _getMessage=(rec)=>{
         if(rec.type==Store.MESSAGE_TYEP_TEXT){
 
-            return <Text style={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}>{rec.content}</Text>;
+            return <Text selectable style={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}>{rec.content}</Text>;
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);

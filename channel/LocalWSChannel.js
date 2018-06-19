@@ -2,6 +2,7 @@
 import Store from "../store/Store";
 import RSAKey from 'react-native-rsa';
 import UUID from 'uuid/v4';
+import CryptoJS from "crypto-js";
 var WSChannel = require("./WSChannel");
 WSChannel._getRSAInstance = function() {
     if(!this._RSAInstance||this._uid!=Store.getCurrentUid()){
@@ -13,17 +14,24 @@ WSChannel._getRSAInstance = function() {
     return this._RSAInstance;
 }
 WSChannel.encrypt = function (text,pk) {
-    var rsa = new RSAKey();
-    rsa.setPublicString(pk);
-    return rsa.encrypt(text);
+    // var rsa = new RSAKey();
+    // rsa.setPublicString(pk);
+    // return rsa.encrypt(text);
+    var s= CryptoJS.AES.encrypt(text, '999').toString();
+    return s;
 }
 WSChannel.decrypt = function (encrypted) {
-    var rsa = this._getRSAInstance();
-    var de = rsa.decrypt(encrypted);
-    if(de===undefined||de==null){
-        return "无法解密的密文";
+    // var rsa = this._getRSAInstance();
+    // var de = rsa.decrypt(encrypted);
+    // if(de===undefined||de==null){
+    //     return "无法解密的密文";
+    // }
+    // return de;
+    if(encrypted){
+        var bytes  = CryptoJS.AES.decrypt(encrypted.toString(), '999');
+        return bytes.toString(CryptoJS.enc.Utf8);
     }
-    return de;
+    return "";
 }
 // WSChannel.generateMsgId = function () {
 //     return UUID();

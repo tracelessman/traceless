@@ -6,16 +6,19 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "pack:android": "cd android && ./gradlew assembleRelease && cd ../",
+    "pack:androidTest": "cd android && ./gradlew assembleGood && cd ../",
     "start:android": "react-native run-android",
     "getAndroidData": "node bin/getAndroidData",
     "showDevMenu": "adb shell input keyevent 82",
     "uploadApk": "node bin/uploadApk",
     "packUploadApk": "npm run pack:android && npm run uploadApk",
-    "publish": "node bin/publish -p",
-    "lint": "eslint * --fix"
+    "publish": "node bin/publish",
+    "lint": "eslint * --fix",
+    "pack:ios":"node bin/packIOS"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "crypto-js": "^3.1.9-1",
     "jcore-react-native": "^1.2.5",
     "jpush-react-native": "^2.1.13",
     "lodash": "^4.17.10",
@@ -52,8 +55,7 @@
     "fs-extra": "^5.0.0",
     "jest": "21.2.1",
     "node-ssh": "^5.1.1",
-    "react-test-renderer": "16.0.0",
-    "yargs": "^11.0.0"
+    "react-test-renderer": "16.0.0"
   },
   "jest": {
     "preset": "react-native"
