@@ -154,7 +154,6 @@ let AppUtil={
                 time:`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
                 bundleId:DeviceInfo.getBundleId(),
                 brand:DeviceInfo.getBrand(),
-                uid:Store.getCurrentUid(),
                 systemVersion:DeviceInfo.getSystemVersion(),
                 systemName:DeviceInfo.getSystemName(),
                 versionLocal:require('./package').version,
