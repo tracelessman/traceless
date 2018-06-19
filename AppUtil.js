@@ -149,7 +149,8 @@ let AppUtil={
             console.log(err)
 
             let obj = {
-                stack:err.stack,
+                err:err.toString(),
+                name:Store.getCurrentName(),
                 time:`${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
                 bundleId:DeviceInfo.getBundleId(),
                 brand:DeviceInfo.getBrand(),
@@ -157,6 +158,7 @@ let AppUtil={
                 systemVersion:DeviceInfo.getSystemVersion(),
                 systemName:DeviceInfo.getSystemName(),
                 versionLocal:require('./package').version,
+                stack:err.stack,
             }
             let jsonStr = JSON.stringify(obj,null,5)
             WSChannel.errReport(jsonStr)
