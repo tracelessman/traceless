@@ -12,7 +12,7 @@
     "showDevMenu": "adb shell input keyevent 82",
     "uploadApk": "node bin/uploadApk",
     "packUploadApk": "npm run pack:android && npm run uploadApk",
-    "publish": "node bin/publish",
+    "publish": "node bin/publish -p",
     "lint": "eslint * --fix",
     "pack:ios": "node bin/packIOS"
   },

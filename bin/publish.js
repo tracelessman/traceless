@@ -13,9 +13,10 @@ const fse = require('fs-extra')
 const config = require('../config')
 const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
 
-const {ch} = argv
+const {c} = argv
 
-if(ch){
+
+if(c){
     childProcess.execSync(`
     git checkout ${config.publishBranch}
 `)
