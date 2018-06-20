@@ -13,15 +13,9 @@ const fse = require('fs-extra')
 const config = require('../config')
 const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
 
-const {c} = argv
-
-
-if(c){
-    childProcess.execSync(`
+childProcess.execSync(`
     git checkout ${config.publishBranch}
 `)
-}
-console.log(1)
 
 const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
 if(argv.p || !fs.existsSync(localApkPath)){
