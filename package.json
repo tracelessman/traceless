@@ -55,7 +55,8 @@
     "fs-extra": "^5.0.0",
     "jest": "21.2.1",
     "node-ssh": "^5.1.1",
-    "react-test-renderer": "16.0.0"
+    "react-test-renderer": "16.0.0",
+    "yargs": "^11.0.0"
   },
   "jest": {
     "preset": "react-native"
