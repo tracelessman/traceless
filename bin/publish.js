@@ -46,6 +46,8 @@ let cmd = `
      git add ${folderName} && git commit -am "${version} / ${new Date()}" && git push
 `
 console.log(3)
+console.log(cmd)
+
 childProcess.exec(cmd,(error,stdout,stderr)=>{
     console.log(6)
     console.log(error)
