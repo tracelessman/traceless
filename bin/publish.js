@@ -51,10 +51,11 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
         console.error(`exec error: ${error}`);
         return;
     }
-
+console.log(5)
     validate(stdout,stderr)
 
 })
+console.log(4)
 
 function validate(stdout,stderr){
     axios.get(apkUrl).then( (res)=> {
