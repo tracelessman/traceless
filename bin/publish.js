@@ -41,11 +41,11 @@ let updateInfo = {
 const localUpdatePath = path.resolve(publishFolderPath,'update.json')
 fs.writeFileSync(localUpdatePath,JSON.stringify(updateInfo),'utf8')
 
-
+console.log(2)
 let cmd = `
      git add ${folderName} && git commit -am "${version} / ${new Date()}" && git push
 `
-
+console.log(3)
 childProcess.exec(cmd,(error,stdout,stderr)=>{
     if (error) {
         console.error(`exec error: ${error}`);
