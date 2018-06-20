@@ -47,6 +47,9 @@ let cmd = `
 `
 console.log(3)
 childProcess.exec(cmd,(error,stdout,stderr)=>{
+    console.log(6)
+    console.log(error)
+    
     if (error) {
         console.error(`exec error: ${error}`);
         return;
