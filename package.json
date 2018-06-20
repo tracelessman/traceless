@@ -1,6 +1,6 @@
 {
   "name": "traceless",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -14,7 +14,7 @@
     "packUploadApk": "npm run pack:android && npm run uploadApk",
     "publish": "node bin/publish",
     "lint": "eslint * --fix",
-    "pack:ios":"node bin/packIOS"
+    "pack:ios": "node bin/packIOS"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -55,7 +55,8 @@
     "fs-extra": "^5.0.0",
     "jest": "21.2.1",
     "node-ssh": "^5.1.1",
-    "react-test-renderer": "16.0.0"
+    "react-test-renderer": "16.0.0",
+    "yargs": "^11.0.0"
   },
   "jest": {
     "preset": "react-native"
