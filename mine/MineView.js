@@ -26,6 +26,16 @@ export default class MineView extends Component<{}> {
             avatarSource
         }
     }
+    componentWillMount(){
+        Store.on("rename",this.update)
+    }
+    componentWillUnMount(){
+        Store.un("rename",this.update)
+    }
+
+    update = ()=>{
+        this.setState({update:true})
+    }
 
     reset=()=>{
         Alert.alert(
@@ -87,12 +97,10 @@ export default class MineView extends Component<{}> {
     render() {
         const list2 = [
             {
-                title:`个人信息`,
+                title:`个人基本信息`,
                 icon:'contacts',
                 onPress:debounceFunc(()=>{
-                    this.props.navigation.navigate('UidView',{
-                        uid:Store.getCurrentUid()
-                    })
+                    this.props.navigation.navigate('BasicInfoView')
                 }),
             },
             {

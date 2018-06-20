@@ -42,7 +42,8 @@ export default class RecentView extends Component<{}> {
         this.state = {
             listViewData : null,
         }
-        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
+        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords",
+            "addGroup","receiveGroupMessage","updateFriendPic","updateFriendName"]
     }
 
     update=(fromId)=>{

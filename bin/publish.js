@@ -13,10 +13,10 @@ const fse = require('fs-extra')
 const config = require('../config')
 const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
 
-
 childProcess.execSync(`
     git checkout ${config.publishBranch}
 `)
+
 const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
 if(argv.p || !fs.existsSync(localApkPath)){
     console.log('packing apk ..................')
