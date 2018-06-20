@@ -20,9 +20,9 @@ childProcess.execSync(`
 const localApkPath = path.resolve(__dirname,'../android/app/build/outputs/apk/app-release.apk')
 if(argv.p || !fs.existsSync(localApkPath)){
     console.log('packing apk ..................')
-    childProcess.execSync(`
-        npm run pack:android
-    `)
+    // childProcess.execSync(`
+    //     npm run pack:android
+    // `)
 }
 const folderName = publishFolderName
 const publishFolderPath = path.resolve(__dirname,`../${folderName}`)
