@@ -1,5 +1,5 @@
 import JPushModule from 'jpush-react-native'
-import {Platform, PushNotificationIOS, StyleSheet} from 'react-native'
+import {Platform, PushNotificationIOS, StyleSheet,Alert} from 'react-native'
 import {Toast} from "native-base";
 import WSChannel from "./channel/LocalWSChannel";
 const _ = require('lodash')
@@ -7,6 +7,7 @@ let deviceIdApn,deviceIdApnPromise
 import DeviceInfo from 'react-native-device-info'
 
 import Store from "./store/LocalStore"
+const config = require('./config')
 
 
 let AppUtil={
@@ -147,6 +148,9 @@ let AppUtil={
         require('ErrorUtils').setGlobalHandler(function (err) {
 
             console.log(err)
+            if(Store.getCurrentUid() === config.spiritUid){
+                Alert.alert("error",err.toString())
+            }
 
             let obj = {
                 err:err.toString(),

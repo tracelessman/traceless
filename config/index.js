@@ -11,4 +11,5 @@ module.exports = {
     ipaUrl:`${baseUrl}manifest.plist`,
     ppkUrl:`${baseUrl+appName}.ppk`,
     publishBranch,
+    spiritUid:"aa45eeb9-bb74-4c01-870d-39d8e7110c29"
 }

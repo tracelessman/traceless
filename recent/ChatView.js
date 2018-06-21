@@ -7,7 +7,8 @@ import {
     Image,
     Keyboard,
     Modal,
-    Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView
+    Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView,
+    Alert
 } from 'react-native';
 import Store from "../store/LocalStore";
 import WSChannel from "../channel/LocalWSChannel";
@@ -18,6 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import ImageZoom from 'react-native-image-pan-zoom';
+const config = require('../config')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -43,7 +45,6 @@ export default class ChatView extends Component<{}> {
         this._keySeed = 0;
 
         this.folderId  = this.getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
-
 
     }
 
@@ -158,9 +159,21 @@ export default class ChatView extends Component<{}> {
 
     componentDidUpdate=()=>{
         setTimeout(()=>{
-            this.refs.scrollView.scrollToEnd({animated: false});
+            this.refs.scrollView.scrollToEnd({animated: false})
         },100)
 
+    }
+
+    scrollToEnd = ()=>{
+        if(this.refs.scrollView){
+            console.log('scroll')
+
+            this.refs.scrollView.scrollToEnd({animated: false});
+        }else{
+            setTimeout(()=>{
+                this.scrollToEnd()
+            },100)
+        }
     }
 
     send=()=>{
@@ -349,7 +362,16 @@ export default class ChatView extends Component<{}> {
                    recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type==Store.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
                }
                if(records[i].senderUid){
-                    if(records[i].senderUid === "9711afa5-a07b-4a37-bbd4-5b3eaca81984"){
+                   let oldLzUid = "9711afa5-a07b-4a37-bbd4-5b3eaca81984"
+                    if(records[i].senderUid === oldLzUid ){
+                        continue
+                    }
+                    if(this.groupMemberInfo.hasOwnProperty(oldLzUid)){
+                       if(Store.getCurrentUid() === config.spiritUid){
+                           Alert.alert("error",`${records[i].senderUid}`)
+                       }
+                        console.log(records[i].senderUid)
+                        console.log(this.groupMemberInfo)
                         continue
                     }
                    let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
