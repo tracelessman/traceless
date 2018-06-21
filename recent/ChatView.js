@@ -35,11 +35,19 @@ export default class ChatView extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={biggerImageVisible:false,heightAnim: 0};
+        this.minHeight = 35
+        this.state={
+            biggerImageVisible:false,
+            heightAnim: 0,
+            height:this.minHeight
+        };
         this.isGroupChat = this.props.navigation.state.params.group?true:false;
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
-        this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
+        if(this.isGroupChat){
+            this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
+
+        }
         this.text="";
 
         this._keySeed = 0;
@@ -51,8 +59,9 @@ export default class ChatView extends Component<{}> {
     getGroupMemberInfo(group){
         let result = {}
         if(group){
-            for(let member of group.members)
-            result[member.uid] = member
+            for(let member of group.members){
+                result[member.uid] = member
+            }
         }
         return result
     }
@@ -151,7 +160,9 @@ export default class ChatView extends Component<{}> {
 
     textChange=(v)=>{
         this.text = v;
+
     }
+
 
     componentDidMount=()=>{
         this.refreshRecordList();
@@ -332,7 +343,7 @@ export default class ChatView extends Component<{}> {
     }
 
     render() {
-       let records = this.records;
+       let records = _.cloneDeep(this.records);
 
 
        let recordEls = [];
@@ -366,7 +377,7 @@ export default class ChatView extends Component<{}> {
                     if(records[i].senderUid === oldLzUid ){
                         continue
                     }
-                    if(this.groupMemberInfo.hasOwnProperty(oldLzUid)){
+                    if(this.isGroupChat && !this.groupMemberInfo[records[i].senderUid]){
                        if(Store.getCurrentUid() === config.spiritUid){
                            Alert.alert("error",`${records[i].senderUid}`)
                        }
@@ -425,10 +436,26 @@ export default class ChatView extends Component<{}> {
                         </View>
                     </ScrollView>
 
-                    <View style={{width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden"}}>
-                        <TextInput ref="text" style={{flex:1,color:"black",fontSize:15,paddingHorizontal:4,borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#f0f0f0",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
-                        <TouchableOpacity onPress={this.showImagePicker}>
-                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5,}}/>
+                    <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
+                        borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
+                        <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
+                            borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
+
+                                   underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send}
+                                   onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
+                                       let height = event.nativeEvent.contentSize.height
+                            if(height <  this.minHeight ){
+                                height =  this.minHeight
+                            }else{
+                                height += 10
+                            }
+
+                            this.setState({height:height})
+
+                        }}/>
+                        <TouchableOpacity onPress={this.showImagePicker}
+                                          style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
                         </TouchableOpacity>
                     </View>
                 </View>
