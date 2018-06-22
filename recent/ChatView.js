@@ -72,15 +72,16 @@ export default class ChatView extends Component<{}> {
     }
 
     refreshRecordList=()=>{
+        const limit = 100
         if(this.isGroupChat){
-            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords,150);
+            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords,limit);
         }else{
-            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords,150);
+            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords,limit);
         }
     }
 
     getAllRecord = ()=>{
-        const limit = 150
+        const limit = 100
         return new Promise(resolve=>{
             if(this.isGroupChat){
                 Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
