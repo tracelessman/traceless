@@ -158,6 +158,7 @@
 		FDB94DE420B28FAE00E7E23E /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDB94DB120B28C8300E7E23E /* libimageCropPicker.a */; };
 		FDCF4FF220CF651F00801D97 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDCF4FCF20CF5EE500801D97 /* libRNDeviceInfo.a */; };
 		FDCF502520CF655700801D97 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDCF4FCF20CF5EE500801D97 /* libRNDeviceInfo.a */; };
+		FDE5371120DCBE4D00F45AA0 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */; };
 		FDE5DAAC20C809FF00541C6B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE5DAAB20C809FF00541C6B /* libbz2.tbd */; };
 /* End PBXBuildFile section */
 
@@ -563,6 +564,13 @@
 			remoteGlobalIDString = E72EC1401F7ABB5A0001BC90;
 			remoteInfo = "RNDeviceInfo-tvOS";
 		};
+		FDE536E120DCBD2000F45AA0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FDE536D720DCBD1F00F45AA0 /* RCTCameraRoll.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
+			remoteInfo = RCTCameraRoll;
+		};
 		FDE5DAA920C805A500541C6B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 600AF97A9330469F87A35838 /* RCTHotUpdate.xcodeproj */;
@@ -680,6 +688,7 @@
 		FDB94DAA20B28C8300E7E23E /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		FDB94DDD20B28CA900E7E23E /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDB94DE020B28CA900E7E23E /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE536D720DCBD1F00F45AA0 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
 		FDE5DAAB20C809FF00541C6B /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -755,6 +764,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE5371120DCBE4D00F45AA0 /* libRCTCameraRoll.a in Frameworks */,
 				FDCF4FF220CF651F00801D97 /* libRNDeviceInfo.a in Frameworks */,
 				FD2811B420C8DA15007C11C1 /* libbz2.tbd in Frameworks */,
 				FD2811B520C8DA15007C11C1 /* libRCTPushNotification.a in Frameworks */,
@@ -1012,6 +1022,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FDE536D720DCBD1F00F45AA0 /* RCTCameraRoll.xcodeproj */,
 				FD43F4D020BBA283003D1655 /* RCTPushNotification.xcodeproj */,
 				FDB94DAA20B28C8300E7E23E /* imageCropPicker.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -1185,6 +1196,14 @@
 			children = (
 				FDCF4FCF20CF5EE500801D97 /* libRNDeviceInfo.a */,
 				FDCF4FF120CF651F00801D97 /* libRNDeviceInfo-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FDE536D820DCBD1F00F45AA0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1387,6 +1406,10 @@
 				{
 					ProductGroup = ADBDB9201DFEBF0600ED6528 /* Products */;
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
+				},
+				{
+					ProductGroup = FDE536D820DCBD1F00F45AA0 /* Products */;
+					ProjectRef = FDE536D720DCBD1F00F45AA0 /* RCTCameraRoll.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
@@ -1841,6 +1864,13 @@
 			fileType = archive.ar;
 			path = "libRNDeviceInfo-tvOS.a";
 			remoteRef = FDCF4FF020CF651F00801D97 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTCameraRoll.a;
+			remoteRef = FDE536E120DCBD2000F45AA0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		FDE5DAAA20C805A500541C6B /* libRCTHotUpdate.a */ = {

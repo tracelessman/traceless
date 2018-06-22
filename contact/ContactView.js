@@ -32,7 +32,7 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.setParams({
             ContactView:this
         });
-        this.eventAry = ["receiveMKFriends","readNewMKFriends","addFriend","updateFriendPic"]
+        this.eventAry = ["receiveMKFriends","readNewMKFriends","addFriend","updateFriendPic","updateFriendName"]
 
     }
 

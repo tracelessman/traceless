@@ -678,6 +678,7 @@ var Store = {
     setPersonalName:function (name) {
         this.keyData.name = name;
         this._save();
+        this._fire('rename')
     },
     updateFriendName:function (uid,name) {
         var f = this.getFriend(uid);

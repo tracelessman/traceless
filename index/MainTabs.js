@@ -16,6 +16,8 @@ import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
+import RenameView from '../mine/RenameView'
+import BasicInfoView from '../mine/BasicInfoView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -160,7 +162,19 @@ let MainStack = StackNavigator({
     UidView:{
         screen:UidView,
         navigationOptions:{
-            headerTitle: '标识'
+            headerTitle: '身份标识'
+        }
+    },
+    RenameView:{
+        screen:RenameView,
+        navigationOptions:{
+            headerTitle: '设置昵称'
+        }
+    },
+    BasicInfoView:{
+        screen:BasicInfoView,
+        navigationOptions:{
+            headerTitle: '基本信息'
         }
     },
     VersionView:{

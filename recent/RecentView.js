@@ -42,7 +42,8 @@ export default class RecentView extends Component<{}> {
         this.state = {
             listViewData : null,
         }
-        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords","addGroup","receiveGroupMessage","updateFriendPic"]
+        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords",
+            "addGroup","receiveGroupMessage","updateFriendPic","updateFriendName"]
     }
 
     update=(fromId)=>{
@@ -105,8 +106,7 @@ export default class RecentView extends Component<{}> {
         const hour = date.getHours()
         const minute = date.getMinutes()
         const second = date.getSeconds()
-        const timeDiff = now.getTime() - date.getTime()
-        const dayDiff = Math.floor(timeDiff / (1000*60*60*24))
+        const dayDiff = Math.floor(now.getTime() / (1000*60*60*24)) - Math.floor(date.getTime() / (1000*60*60*24))
 
         if(year === now.getFullYear()){
             if(month === now.getMonth() && day === now.getDate()){

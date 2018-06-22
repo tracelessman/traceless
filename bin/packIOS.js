@@ -4,7 +4,10 @@ const childProcess = require('child_process')
 const start = Date.now()
 const uuid = require('uuid/v4')
 const fse = require('fs-extra')
-const archivePath = path.resolve(rootPath,"build/tmp")
+const buildFolderPath = path.resolve(rootPath,"build")
+fse.ensureDirSync(buildFolderPath)
+const archivePath = path.resolve(buildFolderPath,"tmp")
+const devConfig = require(rootPath,'config/devConfig')
 
 
 console.log('archive ios ....')
@@ -15,7 +18,7 @@ timeLog()
 
 console.log('archive success')
 
-const exportPath = path.resolve(rootPath,"pkg")
+const exportPath = devConfig.localIpaFolderPath
 fse.ensureDirSync(exportPath)
 
 const exportOptionsPath = path.resolve(rootPath,'ios/ExportOptions.plist')

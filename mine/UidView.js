@@ -3,13 +3,12 @@ import {
     Alert,AlertIOS,Clipboard,Dimensions,Image,Platform,StyleSheet,Switch,Text,TextInput,ToastAndroid,TouchableOpacity,View
 } from 'react-native';
 import { Avatar, Button,Card,Icon ,List,ListItem,} from 'react-native-elements'
+import Store from "../store/LocalStore"
 
 export default class UidView extends Component<{}> {
 
     constructor(props) {
         super(props);
-
-        this.uid = props.navigation.state.params.uid
     }
 
     render() {
@@ -21,7 +20,7 @@ export default class UidView extends Component<{}> {
                 <Card title="个人身份唯一标识" style={{}}>
                     <View style={{marginHorizontal:5,marginTop:20,justifyContent:'center',alignItems:'center'}}>
                         <Text selectable style={{fontSize:width/28}} >
-                            {this.uid}
+                            {Store.getCurrentUid()}
                         </Text>
                     </View>
                 </Card>
