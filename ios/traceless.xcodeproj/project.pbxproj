@@ -159,6 +159,7 @@
 		FDCF4FF220CF651F00801D97 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDCF4FCF20CF5EE500801D97 /* libRNDeviceInfo.a */; };
 		FDCF502520CF655700801D97 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDCF4FCF20CF5EE500801D97 /* libRNDeviceInfo.a */; };
 		FDE5371120DCBE4D00F45AA0 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */; };
+		FDE5376A20DCD01E00F45AA0 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */; };
 		FDE5DAAC20C809FF00541C6B /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE5DAAB20C809FF00541C6B /* libbz2.tbd */; };
 /* End PBXBuildFile section */
 
@@ -705,6 +706,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FDE5376A20DCD01E00F45AA0 /* libRCTCameraRoll.a in Frameworks */,
 				FDE5DAAC20C809FF00541C6B /* libbz2.tbd in Frameworks */,
 				FD43F4D920BBA297003D1655 /* libRCTPushNotification.a in Frameworks */,
 				FDB94DE420B28FAE00E7E23E /* libimageCropPicker.a in Frameworks */,
