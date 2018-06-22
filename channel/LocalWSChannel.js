@@ -28,8 +28,13 @@ WSChannel.decrypt = function (encrypted) {
     // }
     // return de;
     if(encrypted){
-        var bytes  = CryptoJS.AES.decrypt(encrypted.toString(), '999');
-        return bytes.toString(CryptoJS.enc.Utf8);
+        try{
+            var bytes  = CryptoJS.AES.decrypt(encrypted.toString(), '999');
+            return bytes.toString(CryptoJS.enc.Utf8);
+        }catch(e){
+            return encrypted;
+        }
+
     }
     return "";
 }
