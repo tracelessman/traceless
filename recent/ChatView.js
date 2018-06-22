@@ -8,7 +8,8 @@ import {
     Keyboard,
     Modal,
     Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView,
-    Alert
+    Alert,
+    CameraRoll
 } from 'react-native';
 import Store from "../store/LocalStore";
 import WSChannel from "../channel/LocalWSChannel";
@@ -19,6 +20,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import ImageZoom from 'react-native-image-pan-zoom';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {
+    Toast
+}from 'native-base'
 const config = require('../config')
 
 export default class ChatView extends Component<{}> {
@@ -36,12 +41,12 @@ export default class ChatView extends Component<{}> {
     constructor(props){
         super(props);
         this.minHeight = 35
+        this.isGroupChat = this.props.navigation.state.params.group?true:false;
         this.state={
             biggerImageVisible:false,
             heightAnim: 0,
-            height:this.minHeight
+            height:this.minHeight,
         };
-        this.isGroupChat = this.props.navigation.state.params.group?true:false;
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
         if(this.isGroupChat){
@@ -74,13 +79,50 @@ export default class ChatView extends Component<{}> {
         }
     }
 
-    _getRecords=(rec)=>{
+    getAllRecord = ()=>{
+        const limit = 150
+        return new Promise(resolve=>{
+            if(this.isGroupChat){
+                Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    resolve(recordAry)
+                },limit);
+            }else{
+                Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    resolve(recordAry)
+                },limit);
+            }
+        })
 
-        this.records = rec;
-        this.setState({messageChange:true});
+    }
+
+    _getRecords=(recordAry)=>{
+        this.records = recordAry;
+
+        const imageUrls = []
+        const imageIndexer = {}
+        let index = 0
+        for(let i=0;i < recordAry.length;i++){
+            const record = recordAry[i]
+            if(record.type==Store.MESSAGE_TYPE_IMAGE){
+                let img = JSON.parse(record.content);
+
+                img.data = img.data.replace(this.getFolderId(img.data),this.folderId)
+
+                imageUrls.push({
+                    url: "file://"+img.data,
+                    props: {
+                    }
+                })
+                imageIndexer[record.msgId] = index
+                index++
+            }
+        }
+        this.imageIndexer = imageIndexer
+        this.setState({
+            imageUrls:imageUrls
+        })
+
         this.refs.scrollView.scrollToEnd({animated: false});
-
-
     }
 
     _keyboardDidShow=(e)=>{
@@ -261,8 +303,10 @@ export default class ChatView extends Component<{}> {
         });
     }
 
-    showBiggerImage=function () {
-        this.chatView.setState({biggerImageVisible:true,biggerImageUri:this.imgUri});
+    showBiggerImage= (imgUri,msgId)=>{
+        const biggerImageIndex = this.imageIndexer[msgId]
+
+        this.setState({biggerImageVisible:true,biggerImageUri:imgUri,biggerImageIndex});
     }
 
     getIconNameByState=function (state) {
@@ -332,10 +376,9 @@ export default class ChatView extends Component<{}> {
             let imgH = 180;
             if(img&&img.data){
                 imgUri = "file://"+img.data;
-                //imgW = img.width;
-                //imgH = img.height;
+
             }
-           return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
+           return <TouchableOpacity  onPress={()=>{this.showBiggerImage(imgUri,rec.msgId)}}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
         }else if(rec.type==Store.MESSAGE_TYPE_FILE){
             let file = JSON.parse(rec.content);
             return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
@@ -421,10 +464,6 @@ export default class ChatView extends Component<{}> {
                }
            }
        }
-       // var img=null;
-       // if(this.state.avatarSource){
-       //     img = <TouchableOpacity ></TouchableOpacity>;
-       // }
 
 
         return (
@@ -460,22 +499,22 @@ export default class ChatView extends Component<{}> {
                     </View>
                 </View>
 
-                <Modal
-                    animationType={"fade"}
-                    transparent={false}
-                    visible={this.state.biggerImageVisible}
-                    onRequestClose={() => {}}
-                >
-                    <View style={{flex:1,backgroundColor:"#000",flexDirection:"row",alignItems:"center"}}>
-                        <ImageZoom cropWidth={Dimensions.get('window').width}
-                                   cropHeight={Dimensions.get('window').height}
-                                   imageWidth={Dimensions.get('window').width} onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
-                                   imageHeight={Dimensions.get('window').height}>
-                            <Image source={{uri:this.state.biggerImageUri}} style={{flex:1}} resizeMode="contain"></Image>
+                <Modal visible={this.state.biggerImageVisible} transparent={false}   animationType={"fade"}
+                       >
+                    <ImageViewer imageUrls={this.state.imageUrls}
+                                 onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
+                                 onSave={(url)=>{
 
-                        </ImageZoom>
+                                     CameraRoll.saveToCameraRoll(url)
+                                     Alert.alert(
+                                         '',
+                                         '图片成功保存到系统相册',
 
-                    </View>
+                                         { cancelable: true }
+                                     )
+                                 }}
+                                 index={this.state.biggerImageIndex}
+                    />
                 </Modal>
             </View>
         );
