@@ -7,7 +7,7 @@ const fse = require('fs-extra')
 const buildFolderPath = path.resolve(rootPath,"build")
 fse.ensureDirSync(buildFolderPath)
 const archivePath = path.resolve(buildFolderPath,"tmp")
-const devConfig = require(rootPath,'config/devConfig')
+// const devConfig = require(rootPath,'config/devConfig')
 
 
 console.log('archive ios ....')
@@ -18,7 +18,7 @@ timeLog()
 
 console.log('archive success')
 
-const exportPath = devConfig.localIpaFolderPath
+const exportPath = path.resolve(rootPath,'pkg')
 fse.ensureDirSync(exportPath)
 
 const exportOptionsPath = path.resolve(rootPath,'ios/ExportOptions.plist')
