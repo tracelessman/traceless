@@ -423,10 +423,10 @@ export default class ChatView extends Component<{}> {
                     }
                     if(this.isGroupChat && !this.groupMemberInfo[records[i].senderUid]){
                        if(Store.getCurrentUid() === config.spiritUid){
-                           Alert.alert("error",`${records[i].senderUid}`)
+                           // Alert.alert("error",`${records[i].senderUid}`)
                        }
-                        console.log(records[i].senderUid)
-                        console.log(this.groupMemberInfo)
+                        // console.log(records[i].senderUid)
+                        // console.log(this.groupMemberInfo)
                         continue
                     }
                    let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
