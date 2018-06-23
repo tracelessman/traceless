@@ -38,7 +38,10 @@ WSChannel.decrypt = function (encrypted) {
     }
     return "";
 }
-// WSChannel.generateMsgId = function () {
-//     return UUID();
-// }
+WSChannel._msgIndex = 0;
+WSChannel.generateMsgId = function () {
+    var s = this.seed+"0"+this._msgIndex;
+    this._msgIndex++;
+    return parseInt(s);
+}
 export default WSChannel;
