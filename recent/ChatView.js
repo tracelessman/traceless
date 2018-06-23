@@ -480,8 +480,8 @@ export default class ChatView extends Component<{}> {
                         borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
                         <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
                             borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-
-                                   underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send}
+                                   blurOnSubmit returnKeyType="send"
+                                   underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
                                    onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
                                        let height = event.nativeEvent.contentSize.height
                             if(height <  this.minHeight ){
