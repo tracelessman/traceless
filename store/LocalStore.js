@@ -316,78 +316,111 @@ Store._getLocalRecord = function (chatId,msgId,senderUid,callback) {
         });
     });
 };
-Store._updateLocalGroupRecordState = function (chatId,msgIds,state,callback,reporterUid) {
-    if(msgIds){
-        var updateRS = function () {
-            var sql = "update record set state=? where chatId=? ";
-            sql+="and state<? ";
-            sql+="and msgId "
-            var update = false;
-            if(isNaN(msgIds.length)){
-                sql += "='"
-                sql += msgIds;
-                sql += "'";
-                update = true;
-            }else{
-                sql += "in (";
-                for(var i=0;i<msgIds.length;i++){
-                    sql+="'";
-                    sql+=msgIds[i];
-                    sql+="'";
-                    if(i<msgIds.length-1){
-                        sql+=",";
+Store._updateLocalGroupRecordState = function (chatId,msgIds,state,callback,reporterUid,senderCid) {
+
+    var doit = function () {
+        if(msgIds){
+            var updateRS = function () {
+                var sql = "update record set state=? where chatId=? ";
+                sql+="and state<? ";
+                sql+="and msgId "
+                var update = false;
+                if(isNaN(msgIds.length)){
+                    sql += "='"
+                    sql += msgIds;
+                    sql += "'";
+                    update = true;
+                }else{
+                    sql += "in (";
+                    for(var i=0;i<msgIds.length;i++){
+                        sql+="'";
+                        sql+=msgIds[i];
+                        sql+="'";
+                        if(i<msgIds.length-1){
+                            sql+=",";
+                        }
+                    }
+                    sql+=")";
+                    update = true;
+                }
+                if(update){
+                    db.transaction((tx)=>{
+                        tx.executeSql(sql,[state,chatId,state],function () {
+                            if(callback)
+                                callback();
+                        },function (err) {
+                            console.info(err);
+                        });
+                    });
+                }
+            }
+            if(reporterUid){
+                var sql;
+                var params=[];
+                if(isNaN(msgIds.length)){
+                    sql = "insert into record_state_report(chatId,msgId,reporterUid,state) values(?,?,?,?)"
+                    params[chatId,msgIds,reporterUid,state];
+
+                }else{
+                    sql = "insert into record_state_report(chatId,msgId,reporterUid,state) values ";
+                    var params=[];
+                    for(var i=0;i<msgIds.length;i++){
+                        var m = msgIds[i];
+                        sql += "(?,?,?,?)";
+                        if(i<msgIds.length-1){
+                            sql +=",";
+                        }
+                        params.push(chatId);
+                        params.push(m);
+                        params.push(reporterUid);
+                        params.push(state);
                     }
                 }
-                sql+=")";
-                update = true;
-            }
-            if(update){
                 db.transaction((tx)=>{
-                    tx.executeSql(sql,[state,chatId,state],function () {
-                        if(callback)
-                            callback();
+                    tx.executeSql(sql,params,function () {
+                        updateRS();
                     },function (err) {
                         console.info(err);
                     });
                 });
-            }
-        }
-        if(reporterUid){
-            var sql;
-            var params=[];
-            if(isNaN(msgIds.length)){
-                sql = "insert into record_state_report(chatId,msgId,reporterUid,state) values(?,?,?,?)"
-                params[chatId,msgIds,reporterUid,state];
-
             }else{
-                sql = "insert into record_state_report(chatId,msgId,reporterUid,state) values ";
-                var params=[];
-                for(var i=0;i<msgIds.length;i++){
-                    var m = msgIds[i];
-                    sql += "(?,?,?,?)";
-                    if(i<msgIds.length-1){
-                        sql +=",";
-                    }
-                    params.push(chatId);
-                    params.push(m);
-                    params.push(reporterUid);
-                    params.push(state);
-                }
+                updateRS();
             }
-            db.transaction((tx)=>{
-                tx.executeSql(sql,params,function () {
-                    updateRS();
-                },function (err) {
-                    console.info(err);
-                });
-            });
-        }else{
-            updateRS();
         }
-
-
-
-
+    }
+    if(senderCid&&senderCid!=Store.getClientId()){
+        var sql = "select msgId from record where chatId=? and senderUid is null and senderCid=? and msgId ";
+        var num = 0;
+        if(isNaN(msgIds.length)){
+            sql += "='"
+            sql += msgIds;
+            sql += "'";
+            num = 1;
+        }else{
+            sql += "in (";
+            for(var i=0;i<msgIds.length;i++){
+                sql+="'";
+                sql+=msgIds[i];
+                sql+="'";
+                if(i<msgIds.length-1){
+                    sql+=",";
+                }
+                num++;
+            }
+            sql+=")";
+        }
+        db.transaction((tx)=>{
+            tx.executeSql(sql,[chatId,senderCid],function (tx,results) {
+                var len = results.rows.length;
+                if(len==num){
+                    doit();
+                }
+            },function (err) {
+                console.info(err);
+            });
+        });
+    }else{
+        doit();
     }
 
 };
