@@ -181,7 +181,7 @@ export default class RecentView extends Component<{}> {
                         }
                     }else if(type === Store.MESSAGE_TYPE_IMAGE){
                         result.content = '[图片]'
-                    }else if(type === Store.MESSAGE_TYEP_FILE){
+                    }else if(type === Store.MESSAGE_TYPE_FILE){
                         result.content = '[文件]'
                     }
                 }

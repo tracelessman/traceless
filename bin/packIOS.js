@@ -8,11 +8,18 @@ const buildFolderPath = path.resolve(rootPath,"build")
 fse.ensureDirSync(buildFolderPath)
 const archivePath = path.resolve(buildFolderPath,"tmp")
 // const devConfig = require(rootPath,'config/devConfig')
+const {argv} = require('yargs')
+let {scheme} = argv
+const schemeAry = ['traceless','traceless-dev','traceless-test']
 
+if(!scheme || !schemeAry.includes(scheme)){
+    scheme = 'traceless'
+}
+console.log(`scheme : ${scheme}`)
 
 console.log('archive ios ....')
 childProcess.execSync(`
-    cd ios && xcodebuild archive -scheme traceless -archivePath "${archivePath}"
+    cd ios && xcodebuild archive -scheme ${scheme} -archivePath "${archivePath}"
 `)
 timeLog()
 

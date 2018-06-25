@@ -231,19 +231,16 @@ export default class ChatView extends Component<{}> {
     }
 
     send=()=>{
+        const callback = ()=>{
+            this.text="";
+            this.refs.text.clear();
+            this.refs.scrollView.scrollToEnd();
+        };
         if(this.text){
             if(this.isGroupChat){
-                WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,()=>{
-                    this.text="";
-                    this.refs.text.clear();
-                    this.refs.scrollView.scrollToEnd();
-                });
+                WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,callback);
             }else{
-                WSChannel.sendMessage(this.otherSide.id,this.text,()=>{
-                    this.text="";
-                    this.refs.text.clear();
-                    this.refs.scrollView.scrollToEnd();
-                });
+                WSChannel.sendMessage(this.otherSide.id,this.text,callback);
             }
         }
 
@@ -251,14 +248,13 @@ export default class ChatView extends Component<{}> {
     }
 
     sendImage=(data)=>{
+        const callback = ()=>{
+            this.refs.scrollView.scrollToEnd();
+        };
         if(this.isGroupChat){
-            WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,()=>{
-                this.refs.scrollView.scrollToEnd();
-            });
+            WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,callback);
         }else{
-            WSChannel.sendImage(this.otherSide.id,data,()=>{
-                this.refs.scrollView.scrollToEnd();
-            });
+            WSChannel.sendImage(this.otherSide.id,data,callback);
         }
 
     }
@@ -489,9 +485,9 @@ export default class ChatView extends Component<{}> {
                             }else{
                                 height += 10
                             }
-
-                            this.setState({height:height})
-
+                            if(this.state.height !== height){
+                                this.setState({height:height})
+                            }
                         }}/>
                         <TouchableOpacity onPress={this.showImagePicker}
                                           style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
