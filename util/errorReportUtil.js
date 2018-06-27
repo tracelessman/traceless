@@ -12,8 +12,6 @@ const errorReportUtil = {
         if(Store.getCurrentUid() === config.spiritUid){
             Alert.alert("error",errorStr)
         }
-
-
         if(!__DEV__){
             if(!level){
                 level = 0
@@ -27,11 +25,13 @@ const errorReportUtil = {
                 err:errorStr,
                 name:Store.getCurrentName(),
                 time:commonUtil.getTimeDisplay(),
+                versionLocal:require('../package').version,
+                buildNumber:DeviceInfo.getBuildNumber(),
                 bundleId:DeviceInfo.getBundleId(),
                 brand:DeviceInfo.getBrand(),
                 systemVersion:DeviceInfo.getSystemVersion(),
                 systemName:DeviceInfo.getSystemName(),
-                versionLocal:require('../package').version,
+
                 ...extra
             }
             let jsonStr = JSON.stringify(obj,null,5)
@@ -48,6 +48,17 @@ const errorReportUtil = {
             if(__DEV__){
                 console.log(err);
             }
+        });
+    },
+    init(){
+        require('ErrorUtils').setGlobalHandler((err)=> {
+            this.errorReport({
+                errorStr:err.toString(),
+                type:"unCaughtError",
+                extra:{
+                    stack:err.stack
+                }
+            })
         });
     }
 }

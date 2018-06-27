@@ -45,6 +45,8 @@
     "react-native-update": "^5.0.1",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "1.5.11",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
     "semver": "^5.5.0",
     "uuid": "^3.2.1"
   },
