@@ -11,6 +11,7 @@ const archivePath = path.resolve(buildFolderPath,"tmp")
 const {argv} = require('yargs')
 let {scheme} = argv
 const schemeAry = ['traceless','traceless-dev','traceless-test']
+const devConfig = require('../config/devConfig')
 
 if(!scheme || !schemeAry.includes(scheme)){
     scheme = 'traceless'
@@ -19,18 +20,18 @@ console.log(`scheme : ${scheme}`)
 
 console.log('archive ios ....')
 childProcess.execSync(`
-    cd ios && xcodebuild archive -scheme ${scheme} -archivePath "${archivePath}"
+    cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
 `)
 timeLog()
 
 console.log('archive success')
 
-const exportPath = path.resolve(rootPath,'pkg')
+const exportPath = devConfig.exportIpaFolderPath
 fse.ensureDirSync(exportPath)
 
 const exportOptionsPath = path.resolve(rootPath,'ios/ExportOptions.plist')
 childProcess.execSync(`
-    xcodebuild -exportArchive -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
+    xcodebuild -exportArchive  -allowProvisioningUpdates  -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
 `)
 
 console.log('ipa generated successfully')

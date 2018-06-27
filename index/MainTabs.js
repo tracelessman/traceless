@@ -16,6 +16,7 @@ import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
+import DevView from '../mine/DevView'
 import RenameView from '../mine/RenameView'
 import BasicInfoView from '../mine/BasicInfoView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
@@ -194,6 +195,12 @@ let MainStack = StackNavigator({
       navigationOptions:{
           headerTitle: '添加群成员'
       }
+    },
+    DevView:{
+        screen:DevView,
+        navigationOptions:{
+            headerTitle: 'DEBUG'
+        }
     }
 }, {
     transitionConfig:function transitionConfig(){
