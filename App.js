@@ -98,19 +98,22 @@ export default class App extends Component<{}> {
                 let cur = data[0];
                 //登录
                 this.setState({data,logining:true});
-                WSChannel.login(cur.name,cur.id,cur.clientId,cur.server,(msg)=>{
-                    this.seed++;
-                    if(!msg.err){
-                        // Store.setCurrentUid(cur.id) ;
-                        this.setState({data,logining:false});
-                    }else{
-                        this.setState({data,logining:false});
-                    }
+                AppUtil.getAPNDeviceId().then(deviceId=>{
+                    WSChannel.login(cur.name,cur.id,cur.clientId,cur.server,(msg)=>{
+                        this.seed++;
+                        if(!msg.err){
+                            // Store.setCurrentUid(cur.id) ;
+                            this.setState({data,logining:false});
+                        }else{
+                            this.setState({data,logining:false});
+                        }
 
-                },()=> {
-                    this.seed++;
-                    this.setState({data,logining:false});
-                });
+                    },()=> {
+                        this.seed++;
+                        this.setState({data,logining:false});
+                    },deviceId);
+                })
+
             }else{
                 //null 需注册
                 this.setState({data:null});
