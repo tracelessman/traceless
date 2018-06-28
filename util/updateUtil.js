@@ -25,11 +25,13 @@ const updateUtil = {
                 versionLocal:require('../package').version,
                 isPreviewVersion:config.isPreviewVersion,
                 buildNumberClient:DeviceInfo.getBuildNumber(),
+                __DEV__,
             }
         })
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
             ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
             newVersion,serverVersion,buildNumberServer} = result
+
         if(needUpdate){
             if(isHotUpdate){
                 this.hotUpdate({
