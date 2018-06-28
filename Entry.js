@@ -11,6 +11,7 @@ import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
 import AppUtil from "./AppUtil"
 import  pushUtil from "./util/pushUtil"
+import  updateUtil from "./util/updateUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
@@ -52,21 +53,7 @@ export default class UpdateCheck extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        Store.on("fetchAllKeys",(data)=>{
 
-            let option = {
-                name:null,
-                uid:null
-            }
-            if(data && data[0]){
-                const keyData = data[0]
-                option = {
-                    name:keyData.name,
-                    uid:keyData.id
-                }
-            }
-            AppUtil.checkUpdateGeneral(option)
-        })
 
     }
 

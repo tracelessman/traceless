@@ -50,6 +50,20 @@ let AppUtil={
         })
     },
     init(){
+        Store.on("fetchAllKeys",(data)=>{
+            let option = {
+                name:null,
+                uid:null
+            }
+            if(data && data[0]){
+                const keyData = data[0]
+                option = {
+                    name:keyData.name,
+                    uid:keyData.id
+                }
+            }
+            updateUtil.checkUpdateGeneral(option)
+        })
         errorReportUtil.init()
         updateUtil.init()
         netInfoUtil.init()

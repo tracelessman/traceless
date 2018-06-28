@@ -99,10 +99,11 @@ var Store = {
         if(this.data){
             callback(this.data);
         }else{
-            this.queryFromLocal("data",function (result) {
+            this.queryFromLocal("data",(result)=> {
                 if(result){
-                    Store.data = JSON.parse(result);
-                    callback(Store.data);
+                    this.data = JSON.parse(result);
+                    this._fire("fetchAllKeys")
+                    callback(this.data);
                 }else{
                     callback(null);
                 }
