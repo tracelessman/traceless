@@ -60,6 +60,26 @@ const errorReportUtil = {
                 }
             })
         });
+    },
+    errorReportForError(option){
+        const {error,type,extra,level} = option
+        if(!error instanceof Error){
+            this.errorReport({
+                errorStr:JSON.stringify(error),
+                type:"errorReportForError",
+            })
+        }else{
+            this.errorReport({
+                errorStr:error.toString(),
+                type,
+                level,
+                extra:{
+                    ...extra,
+                    stack:error.stack
+                }
+            })
+        }
+
     }
 }
 
