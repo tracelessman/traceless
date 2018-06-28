@@ -31,6 +31,12 @@ const devUtil = {
                 })
             });
     },
+    init(){
+        this.test()
+    },
+    test(){
+
+    }
 
 }
 

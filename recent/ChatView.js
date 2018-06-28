@@ -107,7 +107,7 @@ export default class ChatView extends Component<{}> {
             if(record.type==Store.MESSAGE_TYPE_IMAGE){
                 let img = JSON.parse(record.content);
 
-                img.data = img.data.replace(this.getFolderId(img.data),this.folderId)
+                img.data = this.getImageData(img)
 
                 imageUrls.push({
                     url: "file://"+img.data,
@@ -366,7 +366,7 @@ export default class ChatView extends Component<{}> {
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
 
-            img.data = img.data.replace(this.getFolderId(img.data),this.folderId)
+            img.data = this.getImageData(img)
 
             let imgUri = img;
             let imgW = 180;
@@ -380,6 +380,14 @@ export default class ChatView extends Component<{}> {
             let file = JSON.parse(rec.content);
             return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
         }
+    }
+
+    getImageData = (img)=> {
+        let result = img.data
+        if(Platform.OS === 'ios'){
+            result = img.data.replace(this.getFolderId(img.data), this.folderId);
+        }
+        return result
     }
 
     render() {
@@ -471,29 +479,31 @@ export default class ChatView extends Component<{}> {
                             {recordEls}
                         </View>
                     </ScrollView>
+                        <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
+                            borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
+                                <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
+                                    borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
+                                           blurOnSubmit returnKeyType="send"
+                                           underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
+                                           onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
+                                    let height = event.nativeEvent.contentSize.height
+                                    if(height <  this.minHeight ){
+                                        height =  this.minHeight
+                                    }else{
+                                        height += 10
+                                    }
+                                    if(this.state.height !== height){
+                                        this.setState({height:height})
+                                    }
+                                }}/>
 
-                    <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
-                        borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
-                        <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
-                            borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-                                   blurOnSubmit returnKeyType="send"
-                                   underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
-                                   onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
-                                       let height = event.nativeEvent.contentSize.height
-                            if(height <  this.minHeight ){
-                                height =  this.minHeight
-                            }else{
-                                height += 10
-                            }
-                            if(this.state.height !== height){
-                                this.setState({height:height})
-                            }
-                        }}/>
-                        <TouchableOpacity onPress={this.showImagePicker}
-                                          style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
-                        </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity onPress={this.showImagePicker}
+                                              style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+                                <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
+                            </TouchableOpacity>
+                        </View>
+
+
                 </View>
 
                 <Modal visible={this.state.biggerImageVisible} transparent={false}   animationType={"fade"}

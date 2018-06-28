@@ -13,6 +13,7 @@ const errorReportUtil = require("./util/errorReportUtil")
 const netInfoUtil = require("./util/netInfoUtil")
 const updateUtil = require("./util/updateUtil")
 const pushUtil = require("./util/pushUtil")
+const devUtil = require("./util/devUtil")
 
 let AppUtil={
     setApp (app) {
@@ -41,6 +42,7 @@ let AppUtil={
         }
         return result
     },
+    //TODO 迁移到commonUtil,AppUtil只保留业务相关util
     debounceFunc(func,interval = 1000*2){
         return _.throttle(func,interval,{
             leading:true,
@@ -52,6 +54,7 @@ let AppUtil={
         updateUtil.init()
         netInfoUtil.init()
         pushUtil.init()
+        devUtil.init()
     },
 
 

@@ -11,7 +11,7 @@ const argv = require('yargs').argv
 const axios = require('axios')
 const fse = require('fs-extra')
 const config = require('../config')
-const {updateJsonUrl,apkUrl,appName,publishFolderName} = config
+const {appName,publishFolderName} = config
 
 childProcess.execSync(`
     git checkout ${config.publishBranch}
@@ -56,25 +56,25 @@ childProcess.exec(cmd,(error,stdout,stderr)=>{
 
 })
 
-function validate(stdout,stderr){
-    axios.get(apkUrl).then( (res)=> {
-        // 'status', 'statusText', 'headers',
-        if(res.status !== 200){
-            console.error('error!!!!!!!!!')
-            console.log(res.status)
-            console.log(res.statusText)
-            console.log(res.headers)
-        }else{
-            console.log(`stdout: ${stdout}`);
-            console.log(`${stderr}`);
-
-
-            console.log(`time elapsed ${(Date.now()-start)/1000} s`)
-            console.log(`new version is ${version}`)
-        }
-
-    }).catch(err=>{
-        console.error('error!!!!!!!!!')
-        throw err
-    })
-}
+// function validate(stdout,stderr){
+//     axios.get(apkUrl).then( (res)=> {
+//         // 'status', 'statusText', 'headers',
+//         if(res.status !== 200){
+//             console.error('error!!!!!!!!!')
+//             console.log(res.status)
+//             console.log(res.statusText)
+//             console.log(res.headers)
+//         }else{
+//             console.log(`stdout: ${stdout}`);
+//             console.log(`${stderr}`);
+//
+//
+//             console.log(`time elapsed ${(Date.now()-start)/1000} s`)
+//             console.log(`new version is ${version}`)
+//         }
+//
+//     }).catch(err=>{
+//         console.error('error!!!!!!!!!')
+//         throw err
+//     })
+// }

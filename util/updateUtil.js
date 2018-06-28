@@ -3,20 +3,20 @@ import {Toast} from "native-base";
 const config = require('../config')
 import {downloadUpdate,switchVersion,isFirstTime,isRolledBack,markSuccess} from 'react-native-update'
 import DeviceInfo from 'react-native-device-info'
-import {Platform, PushNotificationIOS, StyleSheet,Alert} from 'react-native'
+import {Platform, PushNotificationIOS, StyleSheet, Alert, Linking, NativeModules} from 'react-native'
+import RNFetchBlob from "react-native-fetch-blob";
 const errorReportUtil = require('./errorReportUtil')
-
+const commonUtil = require('./commonUtil')
+const netInfoUtil = require('./netInfoUtil')
+const  RNFS = require('react-native-fs');
+let downloadApkCount = 0
 
 const updateUtil = {
     checkUpdateGeneral:async function(option){
         const {name,uid,beforeUpdate,noUpdateCb} = option
-        const result = await fetch(config.checkUpdateUrl, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        const result = await netInfoUtil.httpPost({
+            url:config.checkUpdateUrl,
+            param:{
                 name,
                 os:Platform.OS,
                 bundleId:DeviceInfo.getBundleId(),
@@ -25,76 +25,44 @@ const updateUtil = {
                 versionLocal:require('../package').version,
                 isPreviewVersion:config.isPreviewVersion,
                 buildNumberClient:DeviceInfo.getBuildNumber(),
-            }),
-        }).then(response=>{
-            return response.json()
+            }
         })
-
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
-            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,newVersion,serverVersion} = result
+            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
+            newVersion,serverVersion,buildNumberServer} = result
         if(needUpdate){
-            // if(beforeUpdate){
-            //     await beforeUpdate()
-            // }
-            // this._update(result)
             if(isHotUpdate){
-                let options = {
-                    updateUrl: ppkUrl,
-                    hash,  //hash必须是字符串
-                    update : true
-                }
-                downloadUpdate(options).then(hash => {
-                    switchVersion(hash)
-                }).catch(error => {
-                    Toast.show({
-                        text: '下载更新出现错误,请联系技术人员',
-                        position: "top",
-                        type:"warning",
-                        duration: 5000
-                    })
-                    Alert.alert(
-                        '提示',
-                        `下载更新出现错误,请联系技术人员`,
-                        [
-                            {
-                                text: '确认',
-                                onPress:()=>{
-                                    this.setState({mode:'ready'});
-                                }
-
-                            },
-                        ],
-                        { cancelable: false }
-                    )
-
-                });
+                this.hotUpdate({
+                    beforeUpdate,noUpdateCb,result
+                })
             }else{
-
+                this.nativeUpdate({
+                    beforeUpdate,noUpdateCb,result
+                })
             }
         }else{
-            if(noUpdateCb){
-                noUpdateCb()
-            }
+            commonUtil.runFunc(noUpdateCb)
         }
     },
-    _update(result){
+    informUpdate(result, updateNow){
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
-            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,newVersion,serverVersion} = result
+            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
+            newVersion,serverVersion,buildNumberServer} = result
         const optionAry =  [
             {text: '取消', onPress: () =>{}, style: 'cancel'},
             {
                 text: '确认',
-                onPress:()=>{
-
-                }
+                onPress:updateNow
             },
         ]
+        let ask = "是否马上升级?"
         if(isForce){
             optionAry.shift()
+            ask = '请马上升级'
         }
         Alert.alert(
             '提示',
-            `有最新版本${newVersion},是否马上升级?`,
+            `有最新版本${newVersion},${ask}`,
             optionAry,
             { cancelable: false }
         )
@@ -103,8 +71,12 @@ const updateUtil = {
         if(isFirstTime){
             try{
                 markSuccess()
-            }catch(err){
-                Alert.alert(err.toString())
+            }catch(error){
+                errorReportUtil.errorReportForError({
+                    type:"markSuccess",
+                    error,
+                    level:10
+                })
             }
         }
         if(isRolledBack){
@@ -113,7 +85,165 @@ const updateUtil = {
                 errorStr:"isRolledBack",
                 level:10
             })
+
+            this.manualUpdate(`应用更新失败,已经重新恢复到版本${require('../package').version}`)
         }
+    },
+    manualUpdate(option){
+        const {info,manualDownloadUrl} = option
+        Alert.alert("提示",`${info},是否手动下载最新版本?`,
+            {text: '取消', onPress: () =>{}, style: 'cancel'},
+            {
+                text: '确认',
+                onPress:()=>{
+                    Linking.openURL().catch(error => {
+                        errorReportUtil.errorReportForError({
+                            error,
+                            type:`Linking.openURL(${manualDownloadUrl})`
+                        })
+                    });
+                }
+            },
+            { cancelable: false }
+        )
+
+    },
+    nativeUpdate(option){
+        const {result,beforeUpdate,noUpdateCb} = option
+
+        const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
+            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
+            newVersion,serverVersion,buildNumberServer} = result
+        const buildNumberLocal = DeviceInfo.getBuildNumber()
+
+        if(buildNumberServer === buildNumberLocal){
+            errorReportUtil.errorReport({
+                type:"原生更新必须要改版本号",
+                errorStr:`local: ${buildNumberLocal},server: ${buildNumberServer}`,
+                level:10,
+            })
+        }else{
+            if(Platform.OS === 'android'){
+                let filePath = RNFS.ExternalDirectoryPath + `/${fileName}`
+                RNFS.exists(filePath).then(result=>{
+                    if(result){
+                        RNFS.hash(filePath,'md5').then(localHash=>{
+                            if(localHash === hash){
+                                this.installApk(filePath)
+                            }else{
+                                this.downloadAndInstallApk({
+                                    filePath,result
+                                })
+                            }
+                        })
+                    }else{
+                        this.downloadAndInstallApk({
+                            filePath,result
+                        })
+                    }
+                })
+            }else{
+                this.informUpdate(result, () => {
+                    Linking.openURL(manifestUrl)
+                })
+
+            }
+        }
+    },
+    async hotUpdate(option){
+        const {result,beforeUpdate,noUpdateCb} = option
+
+        const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
+            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
+            newVersion,serverVersion,buildNumberServer} = result
+        let param = {
+            updateUrl: ppkUrl,
+            hash:config.appId,  //hash必须是字符串
+            update : true
+        }
+        try{
+            const hash = await  downloadUpdate(param)
+            if(beforeUpdate){
+                await beforeUpdate()
+            }
+            this.informUpdate(result,()=>{
+                switchVersion(hash)
+            })
+
+        }catch(error){
+            commonUtil.runFunc(noUpdateCb)
+            this.manualUpdate({
+                manualDownloadUrl,
+                info:`下载更新出现错误,已停止更新`
+            })
+            errorReportUtil.errorReportForError({
+                type:"downloadUpdate then switchVersion ",
+                error,
+                level:10,
+            })
+        }
+    },
+    installApk(filePath){
+        NativeModules.ToastExample.install(filePath);
+    },
+    downloadAndInstallApk(option){
+        const {result,filePath} = option
+        const {apkUrl} = result
+        RNFetchBlob.config({
+            useDownloadManager : true,
+            fileCache : true,
+            path:filePath
+        }).fetch('GET',apkUrl).progress({ count : 10 }, (received, total) => {
+                // console.log(received)
+                // console.log(total)
+                // console.log('progress', received / total)
+            }).then((res)=>{
+                RNFS.hash(filePath,'md5').then(localHash=>{
+                    if(localHash === hash){
+                        downloadApkCount = 0
+
+                        this.informUpdate(result,()=>{
+                            this.installApk(filePath)
+                        })
+                    }else{
+                        downloadApkCount++
+                        if(downloadApkCount > 5){
+                            errorReportUtil.errorReport({
+                                type:"downloadAndInstallApk",
+                                level:10,
+                                errorStr:`download ${downloadApkCount} times,fail`,
+                                extra:{
+                                    result:JSON.stringify(result)
+                                }
+                            })
+                        }else{
+                            setTimeout(()=>{
+                                this.downloadAndInstallApk(option)
+                            },1000*60)
+                            errorReportUtil.errorReport({
+                                type:"downloadAndInstallApk",
+                                errorStr:`download ${downloadApkCount} times,fail`,
+                                extra:{
+                                    result:JSON.stringify(result)
+                                }
+                            })
+                        }
+                    }
+                })
+            }).catch((error) => {
+                this.manualUpdate({
+                    info:"下载apk文件失败,已停止更新",
+                    manualDownloadUrl:result.manualDownloadUrl
+                })
+                errorReportUtil.errorReportForError({
+                    type:"downloadAndInstallApk",
+                    error,
+                    extra:{
+                        result:JSON.stringify(result)
+                    }
+                })
+
+            })
     }
 }
 
