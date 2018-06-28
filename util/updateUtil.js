@@ -44,28 +44,35 @@ const updateUtil = {
             commonUtil.runFunc(noUpdateCb)
         }
     },
-    informUpdate(result, updateNow){
+    async informUpdate(result,beforeUpdate ,updateNow){
+        if(beforeUpdate){
+            await beforeUpdate()
+        }
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
             ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
-            newVersion,serverVersion,buildNumberServer} = result
-        const optionAry =  [
-            {text: '取消', onPress: () =>{}, style: 'cancel'},
-            {
-                text: '确认',
-                onPress:updateNow
-            },
-        ]
-        let ask = "是否马上升级?"
-        if(isForce){
-            optionAry.shift()
-            ask = '请马上升级'
+            newVersion,serverVersion,buildNumberServer,isSilent} = result
+        if(isSilent){
+            updateNow()
+        }else{
+            const optionAry =  [
+                {text: '取消', onPress: () =>{}, style: 'cancel'},
+                {
+                    text: '确认',
+                    onPress:updateNow
+                },
+            ]
+            let ask = "是否马上升级?"
+            if(isForce){
+                optionAry.shift()
+                ask = '请马上升级'
+            }
+            Alert.alert(
+                '提示',
+                `有最新版本${newVersion},${ask}`,
+                optionAry,
+                { cancelable: false }
+            )
         }
-        Alert.alert(
-            '提示',
-            `有最新版本${newVersion},${ask}`,
-            optionAry,
-            { cancelable: false }
-        )
     },
     init(){
         if(isFirstTime){
@@ -143,14 +150,14 @@ const updateUtil = {
                     }
                 })
             }else{
-                this.informUpdate(result, () => {
+                this.informUpdate(result,beforeUpdate, () => {
                     Linking.openURL(manifestUrl)
                 })
 
             }
         }
     },
-    async hotUpdate(option){
+    hotUpdate(option){
         const {result,beforeUpdate,noUpdateCb} = option
 
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
@@ -162,14 +169,11 @@ const updateUtil = {
             update : true
         }
         try{
-            const hash = await  downloadUpdate(param)
-            if(beforeUpdate){
-                await beforeUpdate()
-            }
-            this.informUpdate(result,()=>{
-                switchVersion(hash)
+            downloadUpdate(param).then(hash=>{
+                this.informUpdate(result,beforeUpdate,()=>{
+                    switchVersion(hash)
+                })
             })
-
         }catch(error){
             commonUtil.runFunc(noUpdateCb)
             this.manualUpdate({

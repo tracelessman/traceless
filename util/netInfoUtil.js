@@ -41,7 +41,7 @@ const netInfoUtil = {
     online:true,
     webConnet(func,offlineCb){
         if(this.online){
-            func
+            func()
         }else{
             commonUtil.runFunc(offlineCb)
             this.informNoConnection()
