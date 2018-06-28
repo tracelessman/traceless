@@ -7,8 +7,9 @@ const port = 3000
 const protocol = "http"
 const RNFS = require('react-native-fs')
 
-
+const url = `${protocol}://${diffConfig.host}:${port}`
 const config = {
+    appId:"traceless",
     apkUrl:`${baseUrl+appName}.apk`,
     updateJsonUrl:`${baseUrl}update.json`,
     appName,
@@ -17,9 +18,10 @@ const config = {
     ppkUrl:`${baseUrl+appName}.ppk`,
     publishBranch,
     spiritUid:"aa45eeb9-bb74-4c01-870d-39d8e7110c29",
-    url:`${protocol}://${diffConfig.host}:${port}`,
+    url,
     devLogPath:RNFS.DocumentDirectoryPath + '/devLog.txt',
-    errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt'
+    errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt',
+    manualDownloadUrl:`${url}/app`
 }
 
 config.checkUpdateUrl = `${config.url}/checkUpdateGeneral`

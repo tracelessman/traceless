@@ -15,7 +15,6 @@ import ScanView from '../mine/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import pushUtil from "../util/pushUtil";
 const versionLocal = require('../package').version
-import pushUtil from "../util/pushUtil"
 
 export default class ScanRegisterView extends React.Component {
 
