@@ -65,6 +65,10 @@ const errorReportUtil = {
     },
     errorReportForError(option){
         let {error,type,extra,level} = option
+
+        if(__DEV__){
+            console.log(error)
+        }
         if(!extra){
             extra = {}
         }
