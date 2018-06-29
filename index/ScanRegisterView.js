@@ -13,6 +13,7 @@ import UUID from 'uuid/v4';
 import RSAKey from 'react-native-rsa';
 import ScanView from '../mine/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import pushUtil from "../util/pushUtil";
 const versionLocal = require('../package').version
 
 export default class ScanRegisterView extends React.Component {
@@ -100,7 +101,7 @@ export default class ScanRegisterView extends React.Component {
         let uid=this.uid||UUID();
         let cid=UUID();
         let curView = this;
-        AppUtil.getAPNDeviceId().then(deviceId=>{
+        pushUtil.getAPNDeviceId().then(deviceId=>{
             curView.setState({registerStep:"注册中......"});
             WSChannel.register(this.ip,uid,cid,deviceId,this.name,this.publicKey,this.checkCode,(data)=>{
                 this.setState({registering:false});

@@ -1,14 +1,27 @@
-const appName = "traceless"
+const appName = "LK"
 const publishFolderName = "pkg"
-const publishBranch = 'publishTest'
+const publishBranch = 'publish'
 const baseUrl = `https://raw.githubusercontent.com/tracelessman/traceless/${publishBranch}/${publishFolderName}/`
+const diffConfig = require('./diffConfig')
+const port = 3000
+const protocol = "http"
+const RNFS = require('react-native-fs')
 
-module.exports = {
-    apkUrl:`${baseUrl+appName}.apk`,
-    updateJsonUrl:`${baseUrl}update.json`,
+const url = `${protocol}://${diffConfig.host}:${port}`
+const config = {
+    appId:"traceless",
     appName,
     publishFolderName,
-    ipaUrl:`${baseUrl}manifest.plist`,
-    ppkUrl:`${baseUrl+appName}.ppk`,
     publishBranch,
+    spiritUid:"aa45eeb9-bb74-4c01-870d-39d8e7110c29",
+    url,
+    devLogPath:RNFS.DocumentDirectoryPath + '/devLog.txt',
+    errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt',
+}
+
+config.checkUpdateUrl = `${config.url}/checkUpdateGeneral`
+
+
+module.exports = {
+    ...config,...diffConfig
 }

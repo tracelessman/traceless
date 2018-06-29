@@ -11,6 +11,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+    #import "RCTHotUpdate.h"
 
 @implementation AppDelegate
 
@@ -18,7 +19,14 @@
 {
   NSURL *jsCodeLocation;
 
+  #if DEBUG
+   jsCodeLocation=[RCTHotUpdate bundleURL];
+      // 原来的jsCodeLocation保留在这里
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+    jsCodeLocation=[RCTHotUpdate bundleURL];
+#endif
+
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"traceless"

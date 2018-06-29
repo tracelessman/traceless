@@ -28,12 +28,20 @@ WSChannel.decrypt = function (encrypted) {
     // }
     // return de;
     if(encrypted){
-        var bytes  = CryptoJS.AES.decrypt(encrypted.toString(), '999');
-        return bytes.toString(CryptoJS.enc.Utf8);
+        try{
+            var bytes  = CryptoJS.AES.decrypt(encrypted.toString(), '999');
+            return bytes.toString(CryptoJS.enc.Utf8);
+        }catch(e){
+            return encrypted;
+        }
+
     }
     return "";
 }
-// WSChannel.generateMsgId = function () {
-//     return UUID();
-// }
+WSChannel._msgIndex = 0;
+WSChannel.generateMsgId = function () {
+    var s = this.seed+"0"+this._msgIndex;
+    this._msgIndex++;
+    return parseInt(s);
+}
 export default WSChannel;

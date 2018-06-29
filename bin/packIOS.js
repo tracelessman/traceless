@@ -3,31 +3,44 @@ const rootPath = path.resolve(__dirname,'../')
 const childProcess = require('child_process')
 const start = Date.now()
 const uuid = require('uuid/v4')
+const fs = require('fs')
 const fse = require('fs-extra')
 const buildFolderPath = path.resolve(rootPath,"build")
 fse.ensureDirSync(buildFolderPath)
 const archivePath = path.resolve(buildFolderPath,"tmp")
-const devConfig = require(rootPath,'config/devConfig')
+// const devConfig = require(rootPath,'config/devConfig')
+const {argv} = require('yargs')
+let {scheme,archive} = argv
+const schemeAry = ['traceless','traceless-dev','traceless-test']
+const devConfig = require('../config/devConfig')
 
+if(!scheme || !schemeAry.includes(scheme)){
+    scheme = 'traceless'
+}
+console.log(`scheme : ${scheme}`)
 
-console.log('archive ios ....')
-childProcess.execSync(`
-    cd ios && xcodebuild archive -scheme traceless -archivePath "${archivePath}"
+if(archive){
+    console.log('archive ios ....')
+    childProcess.execSync(`
+    cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
 `)
-timeLog()
+    timeLog()
+}
+
 
 console.log('archive success')
 
-const exportPath = devConfig.localIpaFolderPath
+const exportPath = devConfig.exportIpaFolderPath
 fse.ensureDirSync(exportPath)
 
 const exportOptionsPath = path.resolve(rootPath,'ios/ExportOptions.plist')
 childProcess.execSync(`
-    xcodebuild -exportArchive -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
+    xcodebuild -exportArchive  -allowProvisioningUpdates  -archivePath "${archivePath}.xcarchive" -exportPath "${exportPath}" -exportOptionsPlist '${exportOptionsPath}'
 `)
 
 console.log('ipa generated successfully')
 
+fs.renameSync(path.resolve(exportPath,`${devConfig.appId}.ipa`),path.resolve(exportPath,`${devConfig.appName}.ipa`))
 timeLog()
 
 function timeLog(){
