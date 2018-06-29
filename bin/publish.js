@@ -11,7 +11,9 @@ const argv = require('yargs').argv
 const axios = require('axios')
 const fse = require('fs-extra')
 const config = require('../config')
-const {appName,publishFolderName} = config
+let {appName,publishFolderName} = config
+
+appName = 'traceless'
 
 childProcess.execSync(`
     git checkout ${config.publishBranch}

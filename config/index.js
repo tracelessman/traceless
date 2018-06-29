@@ -1,4 +1,4 @@
-const appName = "traceless"
+const appName = "LK"
 const publishFolderName = "pkg"
 const publishBranch = 'publish'
 const baseUrl = `https://raw.githubusercontent.com/tracelessman/traceless/${publishBranch}/${publishFolderName}/`

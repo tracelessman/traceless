@@ -3,6 +3,7 @@ const rootPath = path.resolve(__dirname,'../')
 const childProcess = require('child_process')
 const start = Date.now()
 const uuid = require('uuid/v4')
+const fs = require('fs')
 const fse = require('fs-extra')
 const buildFolderPath = path.resolve(rootPath,"build")
 fse.ensureDirSync(buildFolderPath)
@@ -39,6 +40,7 @@ childProcess.execSync(`
 
 console.log('ipa generated successfully')
 
+fs.renameSync(path.resolve(exportPath,`${devConfig.appId}.ipa`),path.resolve(exportPath,`${devConfig.appName}.ipa`))
 timeLog()
 
 function timeLog(){
