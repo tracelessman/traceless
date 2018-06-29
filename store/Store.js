@@ -102,7 +102,7 @@ var Store = {
             this.queryFromLocal("data",(result)=> {
                 if(result){
                     this.data = JSON.parse(result);
-                    this._fire("fetchAllKeys")
+                    this._fire("fetchAllKeys", this.data)
                     callback(this.data);
                 }else{
                     callback(null);
