@@ -15,7 +15,7 @@
     "publish": "node bin/publish -p",
     "lint": "eslint * --fix",
     "pack:ios": "node bin/packIOS --archive",
-    "pack:ppk": "pushy bundle --platform ios --output /Users/spirit/Downloads/entry/git/working_on/traceless-transfer/public/pkg/ppk/LK.ppk"
+    "pack:ppk": "node bin/packPpk"
   },
   "dependencies": {
     "axios": "^0.18.0",
