@@ -26,6 +26,7 @@ const updateUtil = {
                 isPreviewVersion:config.isPreviewVersion,
                 buildNumberClient:DeviceInfo.getBuildNumber(),
                 "__DEV__":__DEV__,
+                "isDevMode":config.isDevMode
             }
         })
         if(__DEV__){

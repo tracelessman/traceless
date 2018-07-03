@@ -61,6 +61,11 @@ let AppUtil={
                     name:keyData.name,
                     uid:keyData.id
                 }
+
+                if(keyData.id === config.spiritUid){
+                    config.isDevMode = true
+
+                }
             }
             updateUtil.checkUpdateGeneral(option)
         })

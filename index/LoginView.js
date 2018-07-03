@@ -143,11 +143,11 @@ export default class LoginView extends React.Component {
                 <TouchableOpacity disabled={this.state.logining} onPress={this.login} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                     <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>{this.state.logining?"登录中...":"登录"}</Text>
                 </TouchableOpacity>
-                <View style={{marginTop:10,width:"90%",flexDirection: 'row',justifyContent: 'flex-end',alignItems: 'center'}}>
-                    <TouchableOpacity onPress={this.reset}>
-                    <Text style={{fontSize:14,textAlign:"center",color:"gray"}}>重置>></Text>
-                    </TouchableOpacity>
-                </View>
+                {/*<View style={{marginTop:10,width:"90%",flexDirection: 'row',justifyContent: 'flex-end',alignItems: 'center'}}>*/}
+                    {/*<TouchableOpacity onPress={this.reset}>*/}
+                    {/*<Text style={{fontSize:14,textAlign:"center",color:"gray"}}>重置>></Text>*/}
+                    {/*</TouchableOpacity>*/}
+                {/*</View>*/}
             </View>
             </TouchableWithoutFeedback>
         );}

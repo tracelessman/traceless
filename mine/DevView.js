@@ -1,72 +1,162 @@
-import React, { Component} from 'react';
+
+import React, { Component } from 'react';
 import {
-    Alert,AlertIOS,Clipboard,Dimensions,Image,Platform,StyleSheet,Switch,TextInput,ToastAndroid,TouchableOpacity,View,ScrollView
+    Alert,
+    Image,
+    Modal,
+    ScrollView,Text,TextInput,TouchableOpacity,View
 } from 'react-native';
 import Store from "../store/LocalStore"
-import {Button, Icon, Text, Toast} from 'native-base'
-import { Card} from 'react-native-elements'
+import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
+import WSChannel from "../channel/WSChannel"
+import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
+import ImagePicker from 'react-native-image-crop-picker';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+const versionLocal = require('../package').version
 
 
-const RNFS = require('react-native-fs')
-var path = RNFS.DocumentDirectoryPath + '/test.txt';
-
-
-
-export default class DevView extends Component<{}> {
-
-    constructor(props) {
+export default class BasicInfoView extends Component<{}> {
+    constructor(props){
         super(props);
-        this.state = {
-            result:""
-        }
+    }
+    componentWillMount(){
+    }
+    componentWillUnMount(){
     }
 
-    componentDidMount(){
-
-        this.reload()
-    }
-
-    reload(){
-        RNFS.readFile(path).then(result=>{
-            this.setState({
-                result
-            })
-        })
-
-    }
 
     render() {
+        const style = {
+            listItem:{
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"space-between",
+                flexDirection:"row"
+            },
+            listStyle:{
+                backgroundColor:'white',marginTop:20,
+            },
+            titleStyle:{
+                fontSize:18,
+                marginLeft:10,
+                color:"#606060",
 
+            },
+            contentStyle:{
+                color:"#a0a0a0",
+                fontSize:18,
+            },
+            contentContainer:{
+            }
+        }
+        const list2 = [
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                查看错误日志
+                            </Text>
+                        </View>
+                        <View style={style.contentContainer}>
+                            <Text style={[style.contentStyle,{fontSize:14}]}>
+                            </Text>
+                        </View>
+
+                    </View>),
+                onPress:debounceFunc(()=>{
+                }),
+            },
+
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                查看调试日志
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+                }),
+            },
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                数据二维码
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+
+                    this.props.navigation.navigate('DataQrView',{
+                    })
+                }),
+            },
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                重置
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+                }),
+            },
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                获取数据后重置
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate("FetchDataView")
+                }),
+            },
+        ]
 
         return (
-            <ScrollView style={{}}
-                        contentContainerStyle={{marginVertical:20,display:'flex',justifyContent:'center',alignItems:'center'}}>
-                <Card title="" style={{}}>
-                    <Text>
-                        {this.state.result}
-                    </Text>
-                </Card>
-                <Button iconLeft  info onPress={()=>{
-                    RNFS.writeFile(path, "", 'utf8')
-                        .then((success) => {
-                            console.log('FILE WRITTEN!');
-                            this.reload()
-                        })
-                        .catch((err) => {
-                            console.log(err.message);
-                        });
-                }}>
-                    <Icon name='refresh' />
-                    <Text>clear</Text>
-                </Button>
-                <Button iconLeft  info onPress={()=>{
-                    this.reload()
-                }}>
-                    <Icon name='refresh' />
-                    <Text>reload</Text>
-                </Button>
-
-            </ScrollView>);
-
+            <ScrollView >
+                <View style={style.listStyle}>
+                    {
+                        list2.map((item, i) =>
+                            <ListItem
+                                key={i}
+                                title={item.title}
+                                component={item.label}
+                                rightIcon={item.rightIconColor?{style:{color:item.rightIconColor}}:{}}
+                                onPress={item.onPress}
+                            />
+                        )
+                    }
+                </View>
+            </ScrollView>
+        );
     }
+
 }

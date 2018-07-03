@@ -15,6 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
+const config = require("../config")
 
 
 export default class MineView extends Component<{}> {
@@ -125,8 +126,20 @@ export default class MineView extends Component<{}> {
                     this.props.navigation.navigate('VersionView',{
                     })
                 }),
-            },
+            }
         ]
+
+        if(config.isDevMode){
+            list2.push(
+                {
+                    title:`开发者工具`,
+                    icon:'https',
+                    onPress:debounceFunc(()=>{
+                        this.props.navigation.navigate('DevView',{
+                        })
+                    }),
+                })
+        }
 
         const pickerOption = {
             width: 300,
