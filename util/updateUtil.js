@@ -24,7 +24,7 @@ const updateUtil = {
                 uid,
                 versionLocal:require('../package').version,
                 isPreviewVersion:config.isPreviewVersion,
-                buildNumberClient:DeviceInfo.getBuildNumber(),
+                buildNumberClient:DeviceInfo.getVersion(),
                 "__DEV__":__DEV__,
                 "isDevMode":config.isDevMode
             }
@@ -178,11 +178,13 @@ const updateUtil = {
             update : true
         }
         try{
-            downloadUpdate(param).then(hash=>{
-                this.informUpdate(result,beforeUpdate,()=>{
+            //一旦downloadUpdate,下次重启必然更新
+            this.informUpdate(result,beforeUpdate,()=>{
+                downloadUpdate(param).then(hash=>{
                     switchVersion(hash)
                 })
             })
+
         }catch(error){
             commonUtil.runFunc(noUpdateCb)
             this.manualUpdate({

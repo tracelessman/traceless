@@ -6,6 +6,6 @@ module.exports = {
     appName:"LK",
     localIpaFolderPath:path.resolve(rootPath,'pkg'),
     exportIpaFolderPath:"/Users/spirit/Downloads/entry/git/working_on/traceless-transfer/public/pkg/ios",
-
+    publishBranch:"publish"
 
 }

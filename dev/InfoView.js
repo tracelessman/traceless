@@ -56,7 +56,18 @@ export default class InfoView extends Component<{}> {
                             uniqueId:{DeviceInfo.getUniqueID()}
                         </Text>
                     </View>
+                    <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
+                        <Text selectable style={{}} >
+                            原生版本:{DeviceInfo.getVersion()}
+                        </Text>
+                    </View>
+                    <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
+                        <Text selectable style={{}} >
+                            buildNumber:{DeviceInfo.getBuildNumber()}
+                        </Text>
+                    </View>
                 </Card>
+
 
             </View>);
 

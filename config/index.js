@@ -17,7 +17,7 @@ const config = {
     spiritUid:"aa45eeb9-bb74-4c01-870d-39d8e7110c29",
     devLogPath:RNFS.DocumentDirectoryPath + '/devLog.txt',
     errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt',
-    isDevMode:true,
+    isDevMode:false,
     ...diffConfig
 }
 setUrl(diffConfig.host)

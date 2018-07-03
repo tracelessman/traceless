@@ -54,11 +54,6 @@ export default class VersionView extends Component<{}> {
 
                            当前版本:{versionLocal}
                         </Text>
-                        <View style={{marginHorizontal:5,justifyContent:'center',alignItems:'center'}}>
-                            <Text selectable  style={style.itemStyle} >
-                                编译版本:{DeviceInfo.getBuildNumber()}
-                            </Text>
-                        </View>
                         <View style={{marginVertical:20}}>
                             <Button iconLeft  info disabled={this.state.checking} onPress={debounceFunc(()=> {
 
