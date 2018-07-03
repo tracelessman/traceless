@@ -1,8 +1,10 @@
 import React, { Component} from 'react';
-import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput} from 'react-native';
+import { Button,Image,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
 import Store from '../store/LocalStore'
 import  WSChannel from '../channel/LocalWSChannel'
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
+
 export default class AddGroupView extends Component<{}> {
 
     static navigationOptions =({ navigation, screenProps }) => (
@@ -10,7 +12,9 @@ export default class AddGroupView extends Component<{}> {
             headerRight:
                 <TouchableOpacity style={{marginRight:20}}>
                     <Button color="#2d8cf0" title="确定"
-                                onPress={()=>navigation.state.params.navigateAddGroupPress()}
+                                onPress={debounceFunc(()=>{
+                                    navigation.state.params.navigateAddGroupPress()
+                                })}
                                 style={{marginRight:20}}/>
                 </TouchableOpacity>
         }
@@ -21,9 +25,7 @@ export default class AddGroupView extends Component<{}> {
         this._selected=[];
     }
 
-    isSelected=(friend)=>{
-        return this._selected.indexOf(friend)!=-1;
-    }
+    isSelected=(friend)=>this._selected.indexOf(friend)!=-1
 
     select=function (v) {
         if(v){
@@ -51,10 +53,10 @@ export default class AddGroupView extends Component<{}> {
             alert("请选择群成员");
             return;
         }
-        var id = Store.generateGroupId();
-        var members = [{uid:Store.getCurrentUid(),name:Store.getCurrentName()}];
+        let id = Store.generateGroupId();
+        let members = [{uid:Store.getCurrentUid(),name:Store.getCurrentName()}];
         this._selected.forEach(function (p) {
-            members.push({uid:p.id,name:p.name});
+            members.push({uid:p.id,name:p.name,pic:p.pic});
         })
         WSChannel.addGroup(id,this.name,members,()=>{
             Store.addGroup(id,this.name,members);
@@ -68,10 +70,10 @@ export default class AddGroupView extends Component<{}> {
     }
 
     render() {
-        var friends = [];
-        var all = Store.getAllFriends();
-        for(var i=0;i<all.length;i++){
-            var f = all[i];
+        let friends = [];
+        let all = Store.getAllFriends();
+        for(let i=0;i<all.length;i++){
+            let f = all[i];
             let imageSource = AppUtil.getAvatarSource(f.pic);
             friends.push(<TouchableOpacity key={i}  style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
                 <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"96%",height:60,marginTop:5}}>

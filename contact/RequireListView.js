@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
     Button,
     Image,
-    TouchableOpacity
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import Store from '../store/LocalStore'
 import  WSChannel from '../channel/LocalWSChannel'
@@ -22,6 +22,9 @@ export default class RequireListView extends Component<{}> {
         WSChannel.acceptMakeFriends(id, ()=> {
             Store.acceptMKFriends(id,()=>{
                 this.setState({update:true});
+                WSChannel.sendMessage(id,"我们已经是好友了,一起LK吧!",()=>{
+
+                });
             });
         });
     }
@@ -29,10 +32,10 @@ export default class RequireListView extends Component<{}> {
 
 
     render() {
-        var result = [];
-        var list = this.requirelist;
+        let result = [];
+        let list = this.requirelist;
         if(list){
-            for(var i=0;i<list.length;i++){
+            for(let i=0;i<list.length;i++){
                 var req = list[i];
                 let imageSource = AppUtil.getAvatarSource(req.pic);
                 let btn = <Button color="#2d8cf0" style={{width:120,color:"#ffffff"}} onPress={()=>{this.accept(req.id)}} title=" 同意 "/>;

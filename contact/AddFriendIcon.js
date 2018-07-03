@@ -2,15 +2,15 @@
 import React, { Component } from 'react';
 import {
     Alert,
-    Text,
-    View,
-    TextInput,TouchableOpacity,Image,
-    Platform
+    Image,
+    Platform,
+    Text,TextInput,TouchableOpacity,
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,List,Thumbnail,Left,Right,Toast
+    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,List,ListItem,Right,Thumbnail,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 
@@ -39,19 +39,19 @@ export default class AddFriendIcon extends Component<{}> {
 
 
     render() {
+        let styleView = {paddingRight:10,marginBottom:10}
 
-
-        const view1 = (
-            <View>
+        const view1 =
+            <View style={styleView}>
                 <Button transparent onPress={()=>{
                 }}>
                     <Icon name='md-checkmark' />
                 </Button>
             </View>
 
-        )
-        const view2 = (
-            <View>
+
+        const view2 =
+            <View style={styleView}>
                 <Button transparent onPress={()=>{
                     this.addFriend(this.props.uid)
                 }}>
@@ -59,7 +59,7 @@ export default class AddFriendIcon extends Component<{}> {
                 </Button>
             </View>
 
-        )
+
         return this.state.isSending?view1:view2
     }
 

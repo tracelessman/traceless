@@ -3,7 +3,9 @@ package com.traceless;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import be.skyzohlabs.rnapk.ReactNativeAPKPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import cn.reactnative.modules.update.UpdatePackage;
+import org.reactnative.camera.RNCameraPackage;
 import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -16,10 +18,10 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import org.reactnative.camera.RNCameraPackage;
 import org.pgsqlite.SQLitePluginPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.traceless.nativeJava.AnExampleReactPackage;
+import cn.reactnative.modules.update.UpdateContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,12 +38,18 @@ public class MainApplication extends Application implements ReactApplication {
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
+     @Override
+        protected String getJSBundleFile() {
+            return UpdateContext.getBundleUrl(MainApplication.this);
+        }
 
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeAPKPackage(),
+            new RNDeviceInfo(),
+            new UpdatePackage(),
+            new RNCameraPackage(),
             new RNFSPackage(),
             new SvgPackage(),
             new PickerPackage(),
@@ -50,7 +58,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ImageResizerPackage(),
             new ImagePickerPackage(),
             new RNFetchBlobPackage(),
-            new RNCameraPackage(),
               new SQLitePluginPackage(),
               new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG),
               new AnExampleReactPackage()

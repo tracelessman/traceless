@@ -105,7 +105,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "0.2.0"
         manifestPlaceholders = [
                 JPUSH_APPKEY: "0362af46c7873bb41d2b5adb",
                 APP_CHANNEL : "default"
@@ -139,8 +139,16 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-              signingConfig signingConfigs.release
+               applicationIdSuffix ".debug"
+                debuggable true
             }
+
+        good {
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
+            applicationIdSuffix ".good"
+        }
     }
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
@@ -158,7 +166,9 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-apk')
+    compile project(':react-native-device-info')
+    compile project(':react-native-update')
+    compile project(':react-native-camera')
     compile project(':react-native-fs')
     compile project(':react-native-svg')
 compile 'com.facebook.fresco:fresco:1.5.0'
@@ -174,7 +184,6 @@ compile 'com.facebook.fresco:fresco:1.5.0'
     }
     compile project(':react-native-vector-icons')
     compile project(':react-native-network-info')
-    compile project(':react-native-camera')
     compile project(':react-native-image-resizer')
     compile project(':react-native-image-picker')
     compile project(':react-native-fetch-blob')

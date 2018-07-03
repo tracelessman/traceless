@@ -1,8 +1,6 @@
-/**
- * Created by renbaogang on 2017/10/31.
- */
+
 import React, { Component} from 'react';
-import { Button,Image,TouchableOpacity} from 'react-native';
+import { Button,Image,TouchableOpacity,View,Text} from 'react-native';
 import {TabNavigator } from 'react-navigation';
 import {StackNavigator}from "react-navigation";
 import RecentView from '../recent/RecentView';
@@ -17,23 +15,49 @@ import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
+import VersionView from '../mine/VersionView'
+import DevView from '../mine/DevView'
+import RenameView from '../mine/RenameView'
+import BasicInfoView from '../mine/BasicInfoView'
+import DataQrView from '../dev/DataQrView'
+import InfoView from '../dev/InfoView'
+import FetchDataView from '../dev/FetchDataView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Tab from './Tab'
 const iconSize = 26
 
+let style = {display:"flex",justifyContent:"center",alignItems:"center"}
+function getTabLogo(title,focused,iconName){
+    let color = focused?"#f9e160":"#d0d0d0"
+      return(
+          <View style={style}>
+              <Icon name={iconName} size={iconSize}  color={color}/>
+              <Text style={{fontSize:10, color}}>{title}</Text>
+          </View>
+      )
+}
+
+
+
 const MainTabs = TabNavigator({
         RecentTab: {
             screen: RecentView,
             navigationOptions: {
-                tabBarLabel: '最近',
-                title:'最近',
+                tabBarLabel: '消息',
+                title:'消息',
 
-                tabBarIcon: ({ tintColor, focused }) => (
-                    <Tab type="recent" focused={focused}></Tab>
-
-                )
+                tabBarIcon: ({ tintColor, focused }) =>
+                {
+                    let color = focused?"#f9e160":"#d0d0d0"
+                    return (
+                        <View style={style}>
+                            <Tab type="recent" focused={focused}></Tab>
+                            <Text style={{fontSize:10,color}}>消息</Text>
+                        </View>
+                    )
+                }
             }
         },
         ContactTab: {
@@ -42,11 +66,10 @@ const MainTabs = TabNavigator({
                 tabBarLabel: '通讯录',
                 title:'通讯录',
 
-                tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Icon name="table-of-contents" size={iconSize}  color="#f9e160"/>
-                        :
-                        <Icon name="table-of-contents" size={iconSize}  color="#d0d0d0"/>
-                )
+                tabBarIcon: ({ tintColor, focused }) =>{
+                    return getTabLogo('通讯录',focused,"table-of-contents" )
+                }
+
             }
         },
         AccountTab: {
@@ -54,11 +77,10 @@ const MainTabs = TabNavigator({
             navigationOptions: {
                 tabBarLabel: '我的',
                 title:'我的',
-                tabBarIcon: ({ tintColor, focused }) => (
-                    focused?<Icon name="account-outline" size={iconSize}  color="#f9e160"/>
-                        :
-                        <Icon name="account-outline" size={iconSize}  color="#d0d0d0"/>
-                )
+                tabBarIcon: ({ tintColor, focused }) =>{
+                    return getTabLogo('我的',focused,"account-outline" )
+                }
+
             },
 
         }
@@ -88,7 +110,7 @@ const MainTabs = TabNavigator({
             }
     }
 );
-var MainStack = StackNavigator({
+let MainStack = StackNavigator({
     MainTabView: {
         screen: MainTabs,
         navigationOptions:{
@@ -135,6 +157,18 @@ var MainStack = StackNavigator({
             headerTitle: '扫描二维码'
         }
     },
+    FetchDataView:{
+        screen:FetchDataView,
+        navigationOptions:{
+            headerTitle: '获取数据'
+        }
+    },
+    InfoView:{
+        screen:InfoView,
+        navigationOptions:{
+            headerTitle: 'App信息'
+        }
+    },
     QrcodeView:{
         screen:QrcodeView,
         navigationOptions:{
@@ -144,7 +178,25 @@ var MainStack = StackNavigator({
     UidView:{
         screen:UidView,
         navigationOptions:{
-            headerTitle: '标识'
+            headerTitle: '身份标识'
+        }
+    },
+    RenameView:{
+        screen:RenameView,
+        navigationOptions:{
+            headerTitle: '设置昵称'
+        }
+    },
+    BasicInfoView:{
+        screen:BasicInfoView,
+        navigationOptions:{
+            headerTitle: '基本信息'
+        }
+    },
+    VersionView:{
+        screen:VersionView,
+        navigationOptions:{
+            headerTitle: '版本信息'
         }
     },
     GroupMsgStateView:{
@@ -158,6 +210,18 @@ var MainStack = StackNavigator({
       navigationOptions:{
           headerTitle: '添加群成员'
       }
+    },
+    DevView:{
+        screen:DevView,
+        navigationOptions:{
+            headerTitle: 'devTools'
+        }
+    },
+    DataQrView:{
+        screen:DataQrView,
+        navigationOptions:{
+            headerTitle: '数据二维码'
+        }
     }
 }, {
     transitionConfig:function transitionConfig(){

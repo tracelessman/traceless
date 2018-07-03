@@ -1,6 +1,4 @@
-/**
- * Created by renbaogang on 2017/10/28.
- */
+/* eslint-disable */
 var Store = require("../store/Store")
 
 
@@ -27,17 +25,18 @@ var WSChannel={
         }
     },
     timeout:60000,
+    _reloginDelay:0,
     _lastPongTime:null,
     seed:Date.now(),
     callbacks:{},
-    generataMsgId : function () {
+    generateMsgId : function () {
         return this.seed++;
     },
     newRequestMsg:function (action,data,callback,targetUid,targetCid,msgId) {
-        var id = msgId||this.generataMsgId();
+        var id = msgId||this.generateMsgId();
         if(callback)
             this.callbacks[id] = callback;
-        return  {id:id,action:action,data:data,uid:Store.getCurrentUid(),targetUid:targetUid,cid:Store.getClientId(),targetCid:targetCid};//id消息id uid 身份id
+        return  {id:id,action:action,data:data,uid:Store.getCurrentUid(),targetUid:targetUid,cid:Store.getClientId(),time:Date.now()};//id消息id uid 身份id
     },
     useChannel:function (callback) {
         this.applyChannel(this.ip,callback);
@@ -74,9 +73,24 @@ var WSChannel={
                     }
                     else{
                         // WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true,action:action,id:msg.id,targetUid:msg.uid,targetCid:msg.cid}));
-                        WSChannel[action+"Handler"](msg,()=>{
-                            WSChannel.ws.send(JSON.stringify({key:msg.key,isResponse:true}));
-                        });
+                        var handle = function(m){
+                            var hn = m.selfSync?(m.action+"SelfSyncHandler"):(m.action+"Handler");
+                            WSChannel[hn](m,()=>{
+                                try{
+                                    WSChannel.ws.send(JSON.stringify({key:m.key,isResponse:true}));
+
+                                }catch(e){}
+                            });
+                        }
+                        if(isNaN(msg.length)){
+                            handle(msg);
+                        }else{
+                            msg.forEach(function (m) {
+                                handle(m);
+                            })
+                        }
+
+
                     }
 
                 };
@@ -87,20 +101,7 @@ var WSChannel={
                 };
                 this.ws.onclose = (event)=>{
                     if(event.target.ip==WSChannel.ip){
-                        delete WSChannel.ws;
-                        setTimeout(()=>{
-                            WSChannel.applyChannel(event.target.ip,function () {
-                                if(Store.getLoginState()){
-                                    WSChannel.login(Store.getCurrentName(),Store.getCurrentUid(),Store.getClientId(),event.target.ip,(data, error)=>{
-                                        if(error){
-                                            //TODO 统一处理网络异常
-                                            alert(error);
-                                        }
-                                    });
-                                }
-                            });
-                        },5000);
-
+                        WSChannel._reLogin();
                     }
 
                 }
@@ -117,6 +118,35 @@ var WSChannel={
                 callback(this.ws);
         }
     },
+    _reLogin:function () {
+        var delay = this._reloginDelay>=5000?5000:this._reloginDelay;
+        var login = function () {
+            WSChannel._reloginDelay+=1000;
+            delete WSChannel.ws;
+            WSChannel.applyChannel(WSChannel.ip,function () {
+                WSChannel._reloginDelay=0;
+                if(Store.getLoginState()){
+                    WSChannel.login(Store.getCurrentName(),Store.getCurrentUid(),Store.getClientId(),WSChannel.ip,(data, error)=>{
+                        if(error){
+                            //TODO 统一处理网络异常
+                            //alert(error);
+                        }
+                        console.info("relogin end:"+Date.now());
+                    },null,Store.getDeviceId());
+                }
+            });
+        }
+        if(delay){
+            setTimeout(()=>{
+
+                login();
+
+            },delay);
+        }else{
+            login();
+        }
+
+    },
     reset :function () {
         delete this.ip;
         if(this.ws){
@@ -124,8 +154,8 @@ var WSChannel={
             delete this.ws;
         }
     },
-    register:function (ip,uid,cid,name,publicKey,checkCode,callback,timeoutCallback) {
-        var req = WSChannel.newRequestMsg("register",{uid:uid,cid:cid,name:name,publicKey:publicKey,checkCode:checkCode},callback)
+    register:function (ip,uid,cid,deviceId,name,publicKey,checkCode,callback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("register",{uid:uid,cid:cid,deviceId:deviceId,name:name,publicKey:publicKey,checkCode:checkCode},callback)
         this._sendRequest(req,timeoutCallback,ip);
     },
     authorize:function (ip,uid,cid,callback,timeoutCallback) {
@@ -136,30 +166,31 @@ var WSChannel={
         var req = WSChannel.newRequestMsg("unauthorize");
         this._sendRequest(req);
     },
-    _timeoutHandler : function (reqId,callback) {
-        if(callback){
+    _timeoutHandler : function (reqId,callback,preventDefault) {
+        if(!preventDefault){
             setTimeout(function(){
                 if(WSChannel.callbacks[reqId]){//如果还没有得到返回处理
-                    callback();
+                    WSChannel._fire("badnetwork");
+                    if(callback)
+                        callback();
                 }
 
             },this.timeout);
         }
-
     },
-    login:function (name,uid,cid,ip,callback,timeoutCallback) {
+    login:function (name,uid,cid,ip,callback,timeoutCallback,deviceId) {
         Store.setCurrentUid(uid) ;
-        // window.top.ipc.send("upgrade-request",{toIndexIFNot:false});
-        var req = WSChannel.newRequestMsg("login",{name:name,uid:uid,cid:cid},
+        Store.setDeviceId(deviceId);
+        var req = WSChannel.newRequestMsg("login",{name:name,uid:uid,cid:cid,deviceId:deviceId},
             function (msg) {
                 if(!msg.err){
                     Store.setLoginState(true);
                 }
                 Store.suspendAutoSave();
                 WSChannel._lastPongTime = Date.now();
-                if(msg.serverPublicKey){
-                    Store.truncateServerPublicKey(msg.serverPublicKey);
-                }
+                // if(msg.serverPublicKey){
+                //     Store.truncateServerPublicKey(msg.serverPublicKey);
+                // }
                 if(msg.contacts){
                     // msg.contacts.forEach(function (c) {
                     //     var f = Store.getFriend(c.id);
@@ -203,6 +234,13 @@ var WSChannel={
 
             });
         this._sendRequest(req,timeoutCallback,ip);
+
+    },
+    fetchAllMessages:function () {
+        if(Store.getLoginState()){
+            var req = WSChannel.newRequestMsg("fetchAllMessages",null);
+            this._sendRequest(req,null,null,true);
+        }
 
     },
     searchFriends:function (searchText,callback,timeoutCallback) {
@@ -257,10 +295,13 @@ var WSChannel={
         });
     },
     sendMessageHandler:function(msg,callback){
-        Store.receiveMessage(msg.uid,msg.cid,msg.id,this.decrypt(msg.data.text),callback);
+        Store.receiveMessage(msg.uid,msg.cid,msg.id,this.decrypt(msg.data.text),callback,msg.time);
     },
     resendMessageHandler:function(msg,callback){
-        Store.receiveMessage(msg.uid,msg.cid,msg.id,this.decrypt(msg.data.text),callback);
+        Store.receiveMessage(msg.uid,msg.cid,msg.id,this.decrypt(msg.data.text),callback,msg.time);
+    },
+    sendMessageSelfSyncHandler:function (msg,callback) {
+        Store.sendMessage(msg.tureTargetUid,this.decrypt(msg.data.text),msg.id,callback,msg.cid,msg.time);
     },
     sendImage:function (targetId,data,callback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("sendImage",{data:data,name:Store.getCurrentName()},(data,msgId)=>{
@@ -284,10 +325,13 @@ var WSChannel={
         });
     },
     sendImageHandler:function(msg,callback){
-        Store.receiveImage(msg.uid,msg.cid,msg.id,msg.data.data,callback);
+        Store.receiveImage(msg.uid,msg.cid,msg.id,msg.data.data,callback,msg.time);
+    },
+    sendImageSelfSyncHandler:function(msg,callback){
+        Store.sendImage(msg.tureTargetUid,msg.data.data,msg.id,callback,msg.cid,msg.time);
     },
     resendImageHandler:function(msg,callback){
-        Store.receiveImage(msg.uid,msg.cid,msg.id,msg.data.data,callback);
+        Store.receiveImage(msg.uid,msg.cid,msg.id,msg.data.data,callback,msg.time);
     },
     addGroup:function (groupId,groupName,members,callback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("addGroup",{groupId:groupId,groupName:groupName,members:members},callback);
@@ -322,10 +366,13 @@ var WSChannel={
         });
     },
     sendGroupMessageHandler:function(msg,callback){
-        Store.receiveGroupMessage(msg.uid,msg.cid,msg.id,msg.data.groupId,this.decrypt(msg.data.text),callback);
+        Store.receiveGroupMessage(msg.uid,msg.cid,msg.id,msg.data.groupId,this.decrypt(msg.data.text),callback,msg.time);
     },
     resendGroupMessageHandler:function(msg,callback){
-        Store.receiveGroupMessage(msg.uid,msg.cid,msg.id,msg.data.groupId,this.decrypt(msg.data.text),callback);
+        Store.receiveGroupMessage(msg.uid,msg.cid,msg.id,msg.data.groupId,this.decrypt(msg.data.text),callback,msg.time);
+    },
+    sendGroupMessageSelfSyncHandler:function (msg,callback) {
+        Store.sendGroupMessage(msg.data.groupId,this.decrypt(msg.data.text),msg.id,callback,msg.cid,msg.time);
     },
     sendGroupImage:function (groupId,groupName,data,callback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("sendGroupImage",{groupId:groupId,groupName:groupName,name:Store.getCurrentName(),data:data},(data,msgId)=>{
@@ -349,13 +396,16 @@ var WSChannel={
         });
     },
     sendGroupImageHandler:function(msg,callback){
-        Store.receiveGroupImage(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
+        Store.receiveGroupImage(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback,msg.time);
     },
     resendGroupImageHandler:function(msg,callback){
-        Store.receiveGroupImage(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
+        Store.receiveGroupImage(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback,msg.time);
+    },
+    sendGroupImageSelfSyncHandler:function (msg,callback) {
+        Store.sendGroupImage(msg.data.groupId,msg.data.data,msg.id,callback,msg.cid,msg.time)
     },
 
-    _sendRequest:function (req,timeoutCallback,ip) {
+    _sendRequest:function (req,timeoutCallback,ip,preventDefaultTimeout) {
         if(ip){
             this.applyChannel(ip,function (ws) {
                 try{
@@ -374,29 +424,29 @@ var WSChannel={
             });
         }
 
-        this._timeoutHandler(req.id,timeoutCallback);
+        this._timeoutHandler(req.id,timeoutCallback,preventDefaultTimeout);
     },
     msgReadStateReport:function (readMsgs,targetUid,targetCid) {
-        var req = WSChannel.newRequestMsg("msgReadStateReport",{readMsgs:readMsgs,state:Store.MESSAGE_STATE_TARGET_READ},function (data,msgId) {
+        var req = WSChannel.newRequestMsg("msgReadStateReport",{readMsgs:readMsgs,state:Store.MESSAGE_STATE_TARGET_READ,cid:targetCid},function (data,msgId) {
             Store.removeFromMQ(msgId);
-        },targetUid,targetCid);
+        },targetUid);
         Store.push2MQ(req,function () {
             WSChannel._sendRequest(req);
         });
     },
     msgReadStateReportHandler:function (msg,callback) {
-        Store.updateMessageState(msg.uid,msg.data.readMsgs,msg.data.state,callback);
+        Store.updateMessageState(msg.uid,msg.data.readMsgs,msg.data.state,callback,msg.data.cid);
     },
     groupMsgReadStateReport:function (gid,readMsgs,targetUid,targetCid) {
-        var req = WSChannel.newRequestMsg("groupMsgReadStateReport",{gid:gid,readMsgs:readMsgs,state:Store.MESSAGE_STATE_TARGET_READ},function (data,msgId) {
+        var req = WSChannel.newRequestMsg("groupMsgReadStateReport",{gid:gid,readMsgs:readMsgs,state:Store.MESSAGE_STATE_TARGET_READ,cid:targetCid},function (data,msgId) {
             Store.removeFromMQ(msgId);
-        },targetUid,targetCid);
+        },targetUid);
         Store.push2MQ(req,function () {
             WSChannel._sendRequest(req);
         });
     },
     groupMsgReadStateReportHandler:function (msg,callback) {
-        Store.updateGroupMessageState(msg.data.gid,msg.data.readMsgs,msg.data.state,msg.uid,callback);
+        Store.updateGroupMessageState(msg.data.gid,msg.data.readMsgs,msg.data.state,msg.uid,callback,msg.data.cid);
     },
     checkTimeoutMsg:function() {
         Store.eachTimeoutMsg(function (row) {
@@ -433,10 +483,13 @@ var WSChannel={
         });
     },
     sendFileHandler:function(msg,callback){
-        Store.receiveFile(msg.uid,msg.cid,msg.id,msg.data.file,callback);
+        Store.receiveFile(msg.uid,msg.cid,msg.id,msg.data.file,callback,msg.time);
     },
     resendFileHandler:function(msg,callback){
-        Store.receiveFile(msg.uid,msg.cid,msg.id,msg.data.file,callback);
+        Store.receiveFile(msg.uid,msg.cid,msg.id,msg.data.file,callback,msg.time);
+    },
+    sendFileSelfSyncHandler:function (msg,callback) {
+        Store.sendFile(msg.tureTargetUid,msg.data.file,msg.id,callback,msg.cid,msg.time);
     },
     sendGroupFile:function (groupId,groupName,data,callback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("sendGroupFile",{groupId:groupId,data:data,groupName:groupName,name:Store.getCurrentName()},(data,msgId)=>{
@@ -460,10 +513,13 @@ var WSChannel={
         });
     },
     sendGroupFileHandler:function(msg,callback){
-        Store.receiveGroupFile(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
+        Store.receiveGroupFile(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback,msg.time);
     },
     resendGroupFileHandler:function(msg,callback){
-        Store.receiveGroupFile(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback);
+        Store.receiveGroupFile(msg.uid,msg.cid,msg.id,msg.data.groupId,msg.data.data,callback,msg.time);
+    },
+    sendGroupFileSelfSyncHandler:function (msg,callback) {
+        Store.sendGroupFile(msg.data.groupId,msg.data.data,msg.id,callback,msg.cid,msg.time);
     },
     setPersonalPic:function (pic,callback,timeoutCallback) {
         var req = WSChannel.newRequestMsg("setPersonalPic",{pic:pic},(data)=>{
@@ -474,28 +530,60 @@ var WSChannel={
         });
         this._sendRequest(req,timeoutCallback);
     },
+
+    setPersonalPicFromOtherDevice:function(msg){
+        Store.setPersonalPic(msg.data.pic);
+    },
+    setPersonalPicHandler:function(msg,callback){
+        Store.updateFriendPic(msg.uid,msg.data.pic);
+        callback();
+    },
+    setPersonalName:function (name,callback,timeoutCallback) {
+        var req = WSChannel.newRequestMsg("setPersonalName",{name:name},(data)=>{
+            if(!data.err){
+                Store.setPersonalName(name);
+            }
+            callback(data);
+        });
+        this._sendRequest(req,timeoutCallback);
+    },
+
+    setPersonalNameFromOtherDevice:function(msg){
+        Store.setPersonalName(msg.data.name);
+    },
+    setPersonalNameHandler:function(msg,callback){
+        Store.updateFriendName(msg.uid,msg.data.name);
+        callback();
+    },
     addGroupMembers:function (gid,uids,errCallback,timeoutCallback) {
-        console.log(uids)
-        var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,newMembers:uids},(data)=>{
-            console.log(data)
+        var req = WSChannel.newRequestMsg("addGroupMembers",{groupId:gid,groupName:Store.getGroup(gid).name,newMembers:uids},(data)=>{
             if(data.err){
                 if(errCallback)
                     errCallback(data.err);
             }else{
-                Store.addGroupMembers(gid,uids);
+                Store.addGroupMembers(gid,null,uids);
             }
         },null,null,null);
         this._sendRequest(req,timeoutCallback);
     },
     addGroupMembersHandler:function (msg,callback) {
-        Store.addGroupMembers(msg.groupId,msg.newMembers,msg.allMembers);
+        Store.addGroupMembers(msg.data.groupId,msg.data.groupName,msg.data.newMembers,msg.data.allMembers);
+        callback();
     },
     leaveGroup:function (gid) {
 
     },
     deleteContact:function (uid) {
 
-    }
+    },
+    errReport:function (err) {
+        var req = WSChannel.newRequestMsg("errReport",{err:err,time:Date.now()},function (data,msgId) {
+            Store.removeFromMQ(msgId);
+        });
+        Store.push2MQ(req,function () {
+            WSChannel._sendRequest(req);
+        });
+    },
 };
 Store.on("readChatRecords",function (data) {
     var uid = data.uid;

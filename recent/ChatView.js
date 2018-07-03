@@ -1,16 +1,15 @@
-/**
- * Created by renbaogang on 2017/11/3.
- */
 
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
-    TextInput,
-    ScrollView,
+    Animated,
     Button,
+    Dimensions,
     Image,
-    TouchableOpacity,Modal,Keyboard,Animated,Platform,Dimensions,WebView
+    Keyboard,
+    Modal,
+    Platform,ScrollView,Text,TextInput,TouchableOpacity,View,WebView,
+    Alert,
+    CameraRoll
 } from 'react-native';
 import Store from "../store/LocalStore";
 import WSChannel from "../channel/LocalWSChannel";
@@ -19,13 +18,20 @@ import ImageResizer from 'react-native-image-resizer';
 import RNFetchBlob from 'react-native-fetch-blob';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
+import ImageZoom from 'react-native-image-pan-zoom';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {
+    Toast
+}from 'native-base'
+const config = require('../config')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
             headerTitle: navigation.state.params.friend?navigation.state.params.friend.name:navigation.state.params.group.name,
-            headerRight:<TouchableOpacity  onPress={()=>{navigation.navigate("GroupInfoView",{group:navigation.state.params.group})}}
+            headerRight:<TouchableOpacity  onPress={debounceFunc(()=>{navigation.navigate("GroupInfoView",{group:navigation.state.params.group})})}
                                           style={{marginRight:20}}><Image source={require('../images/group.png')} style={{width:navigation.state.params.group?22:0,height:22}} resizeMode="contain"></Image></TouchableOpacity>,
 
         }
@@ -34,26 +40,90 @@ export default class ChatView extends Component<{}> {
 
     constructor(props){
         super(props);
-        this.state={biggerImageVisible:false,heightAnim: 0};
+        this.minHeight = 35
         this.isGroupChat = this.props.navigation.state.params.group?true:false;
+        this.state={
+            biggerImageVisible:false,
+            heightAnim: 0,
+            height:this.minHeight,
+        };
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
+        if(this.isGroupChat){
+            this.groupMemberInfo = this.getGroupMemberInfo(this.props.navigation.state.params.group)
+
+        }
         this.text="";
 
         this._keySeed = 0;
+
+        this.folderId  = this.getFolderId(RNFetchBlob.fs.dirs.DocumentDir)
+
+    }
+
+    getGroupMemberInfo(group){
+        let result = {}
+        if(group){
+            for(let member of group.members){
+                result[member.uid] = member
+            }
+        }
+        return result
     }
 
     refreshRecordList=()=>{
+        const limit = 100
         if(this.isGroupChat){
-            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords);
+            Store.readGroupChatRecords(this.otherSide.id,false,this._getRecords,limit);
         }else{
-            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords);
+            Store.readAllChatRecords(this.otherSide.id,false,this._getRecords,limit);
         }
     }
 
-    _getRecords=(rec)=>{
-        this.records = rec;
-        this.setState({messageChange:true});
+    getAllRecord = ()=>{
+        const limit = 100
+        return new Promise(resolve=>{
+            if(this.isGroupChat){
+                Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    resolve(recordAry)
+                },limit);
+            }else{
+                Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    resolve(recordAry)
+                },limit);
+            }
+        })
+
+    }
+
+    _getRecords=(recordAry)=>{
+        this.records = recordAry;
+
+        const imageUrls = []
+        const imageIndexer = {}
+        let index = 0
+        for(let i=0;i < recordAry.length;i++){
+            const record = recordAry[i]
+            if(record.type==Store.MESSAGE_TYPE_IMAGE){
+                let img = JSON.parse(record.content);
+
+                img.data = this.getImageData(img)
+
+                imageUrls.push({
+                    url: "file://"+img.data,
+                    props: {
+                    }
+                })
+                imageIndexer[record.msgId] = index
+                index++
+            }
+        }
+        this.imageIndexer = imageIndexer
+        this.setState({
+            imageUrls:imageUrls
+        })
+
+        this.refs.scrollView.scrollToEnd({animated: false});
     }
 
     _keyboardDidShow=(e)=>{
@@ -133,35 +203,44 @@ export default class ChatView extends Component<{}> {
 
     textChange=(v)=>{
         this.text = v;
+
     }
+
 
     componentDidMount=()=>{
         this.refreshRecordList();
-       setTimeout(()=>{
-           this.refs["scrollView"].scrollToEnd();
-       },50)
     }
 
     componentDidUpdate=()=>{
-        this.refs["scrollView"].scrollToEnd();
+        setTimeout(()=>{
+            this.refs.scrollView.scrollToEnd({animated: false})
+        },100)
+
+    }
+
+    scrollToEnd = ()=>{
+        if(this.refs.scrollView){
+            console.log('scroll')
+
+            this.refs.scrollView.scrollToEnd({animated: false});
+        }else{
+            setTimeout(()=>{
+                this.scrollToEnd()
+            },100)
+        }
     }
 
     send=()=>{
+        const callback = ()=>{
+            this.text="";
+            this.refs.text.clear();
+            this.refs.scrollView.scrollToEnd();
+        };
         if(this.text){
             if(this.isGroupChat){
-                WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,()=>{
-                    this.text="";
-                    this.refs["text"].clear();
-                    this.refs["scrollView"].scrollToEnd();
-                });
+                WSChannel.sendGroupMessage(this.otherSide.id,this.otherSide.name,this.text,callback);
             }else{
-                WSChannel.sendMessage(this.otherSide.id,this.text,()=>{
-                    this.text="";
-                    this.refs["text"].clear();
-                    this.refs["scrollView"].scrollToEnd();
-                });
-
-
+                WSChannel.sendMessage(this.otherSide.id,this.text,callback);
             }
         }
 
@@ -169,20 +248,19 @@ export default class ChatView extends Component<{}> {
     }
 
     sendImage=(data)=>{
+        const callback = ()=>{
+            this.refs.scrollView.scrollToEnd();
+        };
         if(this.isGroupChat){
-            WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,()=>{
-                this.refs["scrollView"].scrollToEnd();
-            });
+            WSChannel.sendGroupImage(this.otherSide.id,this.otherSide.name,data,callback);
         }else{
-            WSChannel.sendImage(this.otherSide.id,data,()=>{
-                this.refs["scrollView"].scrollToEnd();
-            });
+            WSChannel.sendImage(this.otherSide.id,data,callback);
         }
 
     }
 
     showImagePicker=()=>{
-        var options = {
+        let options = {
             title: '选择图片',
             cancelButtonTitle: '取消',
             takePhotoButtonTitle: '拍照',
@@ -204,43 +282,28 @@ export default class ChatView extends Component<{}> {
             else if (response.customButton) {
             }
             else {
-                var imageUri = response.uri;
-                var img = {data:response.data,width:response.width,height:response.height}
-                this.sendImage(img);
+                let imageUri = response.uri;
 
-                 // if(response.fileSize>1*1024*1024){
+                const maxWidth = 1000
+                const maxHeight = 1000
+                ImageResizer.createResizedImage(imageUri, maxWidth, maxHeight, "JPEG", 70, 0, null).then((res) => {
 
+                    RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
+                        this.sendImage({data,width:maxWidth,height:maxHeight});
+                    });
+                }).catch((err) => {
+                    console.log(err)
 
-                    // ImageResizer.createResizedImage(imageUri, 800, 800, "JPEG", 60, 0, null).then((res) => {
-                    //     RNFetchBlob.fs.readFile(res.path,'base64').then((data)=>{
-                    //         // let source = { uri: 'data:image/jpeg;base64,' + data ,width:400,height:400};
-                    //         // console.info("send img:"+'data:image/jpeg;base64,' + data);
-                    //         // this.sendImage(imageUri,'data:image/jpeg;base64,' + data);
-                    //         this.sendImage('data:image/jpeg;base64,' + data);
-                    //         // this.setState({
-                    //         //     avatarSource: source
-                    //         // });
-                    //     });
-                    // }).catch((err) => {
-                    // });
-                // }else{
-                //      this.sendImage(imageUri,'data:image/jpeg;base64,' + response.data);
-                // }
+                });
 
-                // // let source = { uri: response.uri,data:"data:image/jpg;base64,"+response.data };
-                // let source = { uri: 'data:image/png;base64,' + response.data ,width:response.width,height:response.height,type:response.fileName.substring(response.fileName.lastIndexOf("."))};
-                //
-                // console.info(JSON.stringify(source));
-                // this.setState({
-                //     avatarSource: source
-                // });
-                // // this.readFile(source.uri);
             }
         });
     }
 
-    showBiggerImage=function () {
-        this.chatView.setState({biggerImageVisible:true,biggerImageUri:this.imgUri});
+    showBiggerImage= (imgUri,msgId)=>{
+        const biggerImageIndex = this.imageIndexer[msgId]
+
+        this.setState({biggerImageVisible:true,biggerImageUri:imgUri,biggerImageIndex});
     }
 
     getIconNameByState=function (state) {
@@ -258,6 +321,11 @@ export default class ChatView extends Component<{}> {
             return "ios-bonfire-outline";
         }
         return "ios-help"
+    }
+
+    getFolderId(filePath){
+        return filePath.split('/')[6]
+
     }
 
     doTouchMsgState=function () {
@@ -280,9 +348,9 @@ export default class ChatView extends Component<{}> {
             Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
                 if(rec&&rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
                     if(rec.type==Store.MESSAGE_TYEP_TEXT)
-                        WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);
+                        {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
                     else if(rec.type==Store.MESSAGE_TYPE_IMAGE)
-                        WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))
+                        {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
                 }
             });
 
@@ -292,63 +360,101 @@ export default class ChatView extends Component<{}> {
 
     _getMessage=(rec)=>{
         if(rec.type==Store.MESSAGE_TYEP_TEXT){
-            return <Text>{rec.content}</Text>;
+
+            return <Text selectable style={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}>{rec.content}</Text>;
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
-            var img = JSON.parse(rec.content);
-            var imgUri = img;
-            var imgW = 180;
-            var imgH = 180;
+            let img = JSON.parse(rec.content);
+
+            img.data = this.getImageData(img)
+
+            let imgUri = img;
+            let imgW = 180;
+            let imgH = 180;
             if(img&&img.data){
                 imgUri = "file://"+img.data;
-                //imgW = img.width;
-                //imgH = img.height;
+
             }
-           return <TouchableOpacity chatView={this} imgUri={imgUri} onPress={this.showBiggerImage}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
+           return <TouchableOpacity  onPress={()=>{this.showBiggerImage(imgUri,rec.msgId)}}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
         }else if(rec.type==Store.MESSAGE_TYPE_FILE){
-            var file = JSON.parse(rec.content);
+            let file = JSON.parse(rec.content);
             return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
         }
     }
 
+    getImageData = (img)=> {
+        let result = img.data
+        if(Platform.OS === 'ios'){
+            result = img.data.replace(this.getFolderId(img.data), this.folderId);
+        }
+        return result
+    }
+
     render() {
-       var records = this.records;
-       var recordEls = [];
+       let records = _.cloneDeep(this.records);
+
+
+       let recordEls = [];
        if(records){
-           var lastSpTime;
-           var picSource = AppUtil.getAvatarSource(Store.getPersonalPic());
-           var now = new Date();
-           for(var i=0;i<records.length;i++){
+           let lastSpTime;
+           let picSource = AppUtil.getAvatarSource(Store.getPersonalPic());
+           let now = new Date();
+           for(let i=0;i<records.length;i++){
                if(lastSpTime&&records[i].time-lastSpTime>10*60*1000||!lastSpTime){
                    lastSpTime = records[i].time;
                    if(lastSpTime){
-                       var timeStr="";
-                       var date = new Date();
+                       let timeStr="";
+                       let date = new Date();
                        date.setTime(lastSpTime);
                        if(now.getFullYear()==date.getFullYear()&&now.getMonth()==date.getMonth()&&now.getDate()==date.getDate()){
                            timeStr+="今天 ";
                        }else if(now.getFullYear()==date.getFullYear()){
-                           timeStr+=(date.getMonth()+1)+"月"+date.getDate()+"日 ";
+                           timeStr+=date.getMonth()+1+"月"+date.getDate()+"日 ";
                        }
                        timeStr+=date.getHours()+":"+(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());
-                       recordEls.push(<Text  style={{marginTop:10,color:"#a0a0a0",fontSize:11}} key={timeStr}>{timeStr}</Text>);
+                       recordEls.push(<Text  style={{marginVertical:10,color:"#a0a0a0",fontSize:11}} key={timeStr}>{timeStr}</Text>);
 
                    }
                }
                this._keySeed++;
+               const  style = {
+                   recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type==Store.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
+               }
                if(records[i].senderUid){
-                   var otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid).pic:this.otherSide.pic);
-                   recordEls.push(  <View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-start",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                       {/*<Text>  {this.isGroupChat?Store.getMember(this.otherSide.id,records[i].id).name:this.otherSide.name}  </Text>*/}
+                   let oldLzUid = "9711afa5-a07b-4a37-bbd4-5b3eaca81984"
+                    if(records[i].senderUid === oldLzUid ){
+                        continue
+                    }
+                    if(this.isGroupChat && !this.groupMemberInfo[records[i].senderUid]){
+                       if(Store.getCurrentUid() === config.spiritUid){
+                           // Alert.alert("error",`${records[i].senderUid}`)
+                       }
+                        // console.log(records[i].senderUid)
+                        // console.log(this.groupMemberInfo)
+                        continue
+                    }
+                   let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
+                   recordEls.push(  <View key={this._keySeed} style={style.recordEleStyle}>
                        <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
-                       <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                       <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
-                           {this._getMessage(records[i])}
+                       <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
+                           {this.isGroupChat?
+                               <View style={{marginBottom:8,marginLeft:5}}>
+                                   <Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>
+                               </View>
+                               :null}
+
+
+                           <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",}}>
+                               <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                               <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
+                                   {this._getMessage(records[i])}
+                               </View>
+                           </View>
                        </View>
                    </View>);
                }else{
-                   var iconName = this.getIconNameByState(records[i].state);
-                   var msgId = records[i].msgId;
+                   let iconName = this.getIconNameByState(records[i].state);
+                   let msgId = records[i].msgId;
                    recordEls.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
                             <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
@@ -363,41 +469,59 @@ export default class ChatView extends Component<{}> {
                }
            }
        }
-       // var img=null;
-       // if(this.state.avatarSource){
-       //     img = <TouchableOpacity ></TouchableOpacity>;
-       // }
 
 
         return (
             <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
-                <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:(Platform.OS=="ios"?this.state.heightAnim:0)}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}}>
+                <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS=="ios"?this.state.heightAnim:0}}>
+                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}} >
                         <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {recordEls}
                         </View>
-
                     </ScrollView>
+                        <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
+                            borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
+                                <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
+                                    borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
+                                           blurOnSubmit returnKeyType="send"
+                                           underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
+                                           onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
+                                    let height = event.nativeEvent.contentSize.height
+                                    if(height <  this.minHeight ){
+                                        height =  this.minHeight
+                                    }else{
+                                        height += 10
+                                    }
+                                    if(this.state.height !== height){
+                                        this.setState({height:height})
+                                    }
+                                }}/>
 
-                    <View style={{width:"100%",height:44,flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden"}}>
-                        <TextInput ref="text" style={{flex:1,color:"gray",borderWidth:1,borderColor:"#d0d0d0",borderRadius:5,marginRight:5,height:35,backgroundColor:"#f0f0f0",marginLeft:5}} underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={this.send} onChangeText={this.textChange} returnKeyType="send"/>
-                        <TouchableOpacity onPress={this.showImagePicker}>
-                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5,}}/>
-                        </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity onPress={this.showImagePicker}
+                                              style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+                                <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
+                            </TouchableOpacity>
+                        </View>
+
+
                 </View>
 
-                <Modal
-                    animationType={"fade"}
-                    transparent={false}
-                    visible={this.state.biggerImageVisible}
-                    onRequestClose={() => {}}
-                >
-                    <View style={{flex:1,backgroundColor:"#000",flexDirection:"row",alignItems:"center"}}>
-                    <TouchableOpacity style={{flex:1}} onPress={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}>
-                        <Image source={{uri:this.state.biggerImageUri}} style={{flex:1}} resizeMode="contain"></Image>
-                    </TouchableOpacity>
-                    </View>
+                <Modal visible={this.state.biggerImageVisible} transparent={false}   animationType={"fade"}
+                       >
+                    <ImageViewer imageUrls={this.state.imageUrls}
+                                 onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
+                                 onSave={(url)=>{
+
+                                     CameraRoll.saveToCameraRoll(url)
+                                     Alert.alert(
+                                         '',
+                                         '图片成功保存到系统相册',
+
+                                         { cancelable: true }
+                                     )
+                                 }}
+                                 index={this.state.biggerImageIndex}
+                    />
                 </Modal>
             </View>
         );

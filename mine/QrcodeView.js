@@ -1,6 +1,6 @@
 
 import React, { Component} from 'react';
-import { Text,View,Image,TouchableOpacity,Button,Switch,TextInput,StyleSheet} from 'react-native';
+import { Button,Image,StyleSheet,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
 import Camera from 'react-native-camera';
 import Store from "../store/LocalStore"
 import QRCode from 'react-native-qrcode-svg';

@@ -1,23 +1,24 @@
 
 import React, { Component } from 'react';
 import {
-    View,Image,ScrollView,
+    Alert,Image,ListView,
+    ScrollView,
     TouchableOpacity,
-    ListView,
-    Alert
+    View,Platform
 } from 'react-native';
 import Store from "../store/LocalStore"
 import WSChannel from "../channel/WSChannel"
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Container, Header, Content, Button, List, ListItem, Text ,Icon as NBIcon ,
-    Item, Input ,Card,CardItem,Body,Badge,
-    Thumbnail,Left,Right,Toast,Spinner
+import { Badge, Body, Button, Card, CardItem, Container, Content ,Header ,
+    Input, Item ,Left,List,ListItem,Icon as NBIcon,
+    Right,Spinner,Text,Thumbnail,Toast,SwipeRow
 } from 'native-base';
 import AppUtil from "../AppUtil";
 import GroupAvatar from "./GroupAvatar";
-const {getAvatarSource} = AppUtil
+const {getAvatarSource,debounceFunc} = AppUtil
 const {alert} = Alert
 const _ = require('lodash')
+import SwipeableList from './SwipeableList'
 
 
 export default class RecentView extends Component<{}> {
@@ -28,7 +29,7 @@ export default class RecentView extends Component<{}> {
             //     backgroundColor: '#434343'
             // },
             // headerTintColor: '#ffffff',
-            headerRight:<TouchableOpacity onPress={()=>{navigation.navigate("AddGroupView")}}
+            headerRight:<TouchableOpacity onPress={debounceFunc(()=>{navigation.navigate("AddGroupView")})}
                                           style={{height:50,width:50,paddingTop:14,paddingLeft:14}}>
                 <Icon name="account-multiple-plus" size={22} style={{}}/>
             </TouchableOpacity>,
@@ -37,10 +38,12 @@ export default class RecentView extends Component<{}> {
 
     constructor(props){
         super(props);
-        const recent = Store.getAllRecent();
+
         this.state = {
-            listViewData : recent
+            listViewData : null,
         }
+        this.eventAry = ["sendMessage","receiveMessage","readChatRecords","readGroupChatRecords",
+            "addGroup","receiveGroupMessage","updateFriendPic","updateFriendName"]
     }
 
     update=(fromId)=>{
@@ -48,23 +51,19 @@ export default class RecentView extends Component<{}> {
     }
 
     componentWillMount =()=> {
-        Store.on("receiveMessage",this.update);
-        Store.on("readChatRecords",this.update);
-        Store.on("readGroupChatRecords",this.update);
-        Store.on("addGroup",this.update);
-        Store.on("receiveGroupMessage",this.update);
+        for(let event of this.eventAry){
+            Store.on(event,this.update);
+        }
     }
 
     componentWillUnmount =()=> {
-        Store.un("receiveMessage",this.update);
-        Store.un("readChatRecords",this.update);
-        Store.un("readGroupChatRecords",this.update);
-        Store.un("addGroup",this.update);
-        Store.un("receiveGroupMessage",this.update);
+        for(let event of this.eventAry){
+            Store.un(event,this.update);
+        }
     }
     componentDidMount=()=>{
         this.updateRecent()
-        var target = AppUtil.getResetTarget();
+        let target = AppUtil.getResetTarget();
         if(target){
             this.props.navigation.navigate(target.view,target.param);
             AppUtil.clearResetTarget();
@@ -76,22 +75,25 @@ export default class RecentView extends Component<{}> {
     }
 
     updateRecent(){
-      const recent = Store.getAllRecent();
+      let recent = Store.getAllRecent();
 
-      this.state.listViewData = recent
+      recent = _.cloneDeep(recent)
+
       let promiseAry = []
-      for(let ele of this.state.listViewData){
+      for(let ele of recent){
           promiseAry.push(this.getLastMsg(ele.id))
       }
       Promise.all(promiseAry).then(resultMsgAry=>{
-          let newData = this.state.listViewData
-          for(let i =0;i<newData.length;i++){
+
+          for(let i =0;i<recent.length;i++){
               if(resultMsgAry[i]){
-                  newData[i].lastMsg = resultMsgAry[i].content
-                  newData[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
+                  recent[i].lastMsg = resultMsgAry[i].content
+                  recent[i].time = this.getDisplayTime(new Date(resultMsgAry[i].time))
               }
           }
-          this.setState({listViewData:newData})
+          this.setState({
+              listViewData:recent,
+          })
       })
     }
 
@@ -104,8 +106,7 @@ export default class RecentView extends Component<{}> {
         const hour = date.getHours()
         const minute = date.getMinutes()
         const second = date.getSeconds()
-        const timeDiff = now.getTime() - date.getTime()
-        const dayDiff = Math.floor(timeDiff / (1000*60*60*24))
+        const dayDiff = Math.floor(now.getTime() / (1000*60*60*24)) - Math.floor(date.getTime() / (1000*60*60*24))
 
         if(year === now.getFullYear()){
             if(month === now.getMonth() && day === now.getDate()){
@@ -138,14 +139,15 @@ export default class RecentView extends Component<{}> {
       return num
     }
 
-    chat(uid) {
-        var f = Store.getFriend(uid);
-        this.props.navigation.navigate("ChatView",{friend:f});
-    }
+    chat = debounceFunc((uid)=>{
+        const f = Store.getFriend(uid);
 
-    groupChat=function () {
-        this.RecentView.props.navigation.navigate("ChatView",{group:this.group});
-    }
+        this.props.navigation.navigate("ChatView",{friend:f});
+    })
+
+    groupChat = debounceFunc( (group)=>{
+        this.props.navigation.navigate("ChatView",{group});
+    })
     test(){
         alert('test')
     }
@@ -158,22 +160,31 @@ export default class RecentView extends Component<{}> {
 
     getLastMsg(chatId){
         return new Promise(resolve=>{
+            // Store.readAllChatRecords(chatId,false,(res)=>{
+            //     console.log(res)
+            //
+            // })
             Store._getLocalRecords(chatId,(res)=>{
-                let result = res[res.length-1]
+                // console.log(res)
 
-                const {type} = result
-                const {length} = result.content
-                const maxDisplay = 15
-                if(type === Store.MESSAGE_TYEP_TEXT){
-                    if(length > maxDisplay){
-                      result.content = result.content.substring(0,maxDisplay)+"......"
+                let result = null
+                const {length} = res
+                if(length > 0){
+                    result = res[res.length-1]
+
+                    const {type} = result
+                    const {length} = result.content
+                    const maxDisplay = 15
+                    if(type === Store.MESSAGE_TYEP_TEXT){
+                        if(length > maxDisplay){
+                            result.content = result.content.substring(0,maxDisplay)+"......"
+                        }
+                    }else if(type === Store.MESSAGE_TYPE_IMAGE){
+                        result.content = '[图片]'
+                    }else if(type === Store.MESSAGE_TYPE_FILE){
+                        result.content = '[文件]'
                     }
-                }else if(type === Store.MESSAGE_TYPE_IMAGE){
-                  result.content = '[图片]'
-                }else if(type === Store.MESSAGE_TYEP_FILE){
-                  result.content = '[文件]'
                 }
-
                 resolve(result)
             })
         })
@@ -181,94 +192,130 @@ export default class RecentView extends Component<{}> {
     }
 
     render() {
-        var groups = Store.getGroups();
-        var groupAry=[];
+        // console.log( this.state.listViewData)
+
+
+        let groups = Store.getGroups();
+        let groupAry=[];
         if(groups){
-            for(var i=0;i<groups.length;i++){
-                var group = groups[i];
-                var redTip=null;
+            for(let i=0;i<groups.length;i++){
+                let group = groups[i];
+                let redTip=null;
                 if(group.newReceive){
                     redTip =  <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
                         <Text style={{}}>{group.newMsgNum}</Text>
                     </Badge>
                 }
-                groupAry.push(<TouchableOpacity key={i} RecentView={this} group={group}  onPress={this.groupChat} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
-                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:40,marginTop:20}}>
-                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",marginLeft:10}}>
+                groupAry.push(<TouchableOpacity key={i}    onPress={()=>{this.groupChat(group)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
+                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"100%",height:50,marginTop:20}}>
+                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",margin:5,borderRadius:5}}>
                             <GroupAvatar group={group} ></GroupAvatar>
                             <Text>    {group.name}  </Text>
                         </View>
-                        <View style={{paddingRight:50,flexDirection:"column",justifyContent:"flex-start",alignItems:"flex-start"}}>
+                        <View style={{paddingRight:58,flexDirection:"column",justifyContent:"flex-start",alignItems:"flex-start"}}>
                             {redTip}
                         </View>
 
                     </View>
                 </TouchableOpacity>);
-                groupAry.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+                groupAry.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
+
+                </View>);
 
             }
+        }
 
+        let contentAry = []
+        const avatarLength = 50
+        if(this.state.listViewData){
+            for(let data of this.state.listViewData){
+                let content = (
+                    <TouchableOpacity onPress={()=>{
+
+                        this.chat(data.id)
+                    }}
+                                      style={{width:"100%",flexDirection:"row",justifyContent:"flex-start",height:55,
+                                          alignItems:"center"}}>
+                        <Image resizeMode="cover" style={{width:avatarLength,height:avatarLength,margin:5,borderRadius:5}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
+                        <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between",alignItems:"center",marginHorizontal:10}}>
+                            <View style={{flexDirection:"column",justifyContent:"space-around",alignItems:"flex-start",height:"100%"}}>
+                                <View >
+                                    <Text style={{fontSize:18,fontWeight:"500"}}>
+                                        {Store.getFriend(data.id).name}
+                                    </Text>
+                                </View>
+                                <View>
+                                    <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
+                                        {data.lastMsg}
+                                    </Text>
+                                </View>
+                            </View>
+                            <View style={{display:"flex",flexDirection:"column",justifyContent:"space-around",alignItems:"center",height:"100%"}}>
+                                <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
+                                    {data.time}
+                                </Text>
+                                <View>
+                                    {data.newReceive?
+                                        <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
+                                            <Text style={{}}>{data.newMsgNum}</Text>
+                                        </Badge>
+                                        :null}
+                                </View>
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                )
+
+                let ele = (
+                    <SwipeRow
+                        rightOpenValue={-75}
+
+                        body={
+                            content
+                        }
+                        right={
+                            <Button danger onPress={() => {
+                                this.deleteRow(data)
+                            }}>
+                                <NBIcon active name="trash" />
+                            </Button>
+                        }
+                        key = {data.id}
+                    />
+                )
+                contentAry.push( ele)
+            }
         }
 
         return (
             <View style={{flex:1,flexDirection:"column",justifyContent:"flex-start",alignItems:"center",backgroundColor:"#ffffff"}}>
-            {(!this.state.listViewData.length && !groupAry.length)?
-              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:40,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
+
+            {this.state.listViewData?
+                (!this.state.listViewData.length && !groupAry.length?
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ContactTab')}} style={{marginTop:30,width:"90%",height:50,borderColor:"gray",borderWidth:1,borderRadius:5,flex:0,flexDirection: 'row',justifyContent: 'center',alignItems: 'center'}}>
                   <Text style={{fontSize:18,textAlign:"center",color:"gray"}}>开始和好友聊天吧!</Text>
               </TouchableOpacity>
-               :null}
-                <ScrollView ref="scrollView" style={{width:"100%"}}>
-                    <List
-                        dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(this.state.listViewData)}
-                        renderRow={data =>
-                                <ListItem thumbnail style={{}} >
-                                    <Left style={{marginLeft:10,}}>
-                                        <Thumbnail square size={40} style={{width:50,height:50}} source={getAvatarSource(Store.getFriend(data.id).pic)} />
-                                    </Left>
-                                    <Body >
-                                    <TouchableOpacity onPress={()=>{this.chat(data.id)}}>
-                                    <View style={{flexDirection:"row",justifyContent:"space-between",alignItems:"center",width:"90%",height:45}}>
-                                        <View>
-                                            <Text style={{fontSize:18,fontWeight:"500"}}>
-                                                {Store.getFriend(data.id).name}
-                                            </Text>
-                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginTop:3}}>
-                                                {data.lastMsg}
-                                            </Text>
-                                        </View>
-                                        <View style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-                                            <Text style={{fontSize:15,fontWeight:"400",color:"#a0a0a0",marginBottom:3}}>
-                                                {data.time}
-                                            </Text>
-                                            <View>
-                                            {data.newReceive?
-                                                <Badge style={{transform: [{scaleX:0.8},{scaleY:0.8}]}}>
-                                                    <Text style={{}}>{data.newMsgNum}</Text>
-                                                </Badge>
-                                                :null}
-                                            </View>
-                                        </View>
-                                    </View>
-                                    </TouchableOpacity>
-                                    </Body>
-                                </ListItem>
+               : <ScrollView ref="scrollView" style={{width:"100%",paddingTop:10}} keyboardShouldPersistTaps="always">
+                    {contentAry}
+                    {groupAry.length === 0?null:
+                        <View>
+                            <View style={{padding:10}}>
+                                <Text style={{color:"#a0a0a0"}}>
+                                    群消息
+                                </Text>
 
-                           }
+                            </View>
+                            <View  style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#f0f0f0"}}>
 
-                        // renderLeftHiddenRow={data =>
-                        //     <Button full onPress={() => alert(data)}>
-                        //         <NBIcon active name="information-circle" />
-                        //     </Button>}
-                        renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            <Button full danger onPress={_ => this.deleteRow(data)}>
-                                <NBIcon active name="trash" />
-                            </Button>}
-                        // leftOpenValue={75}
-                        rightOpenValue={-75}
-                    />
+                            </View>
+                        </View>
+                    }
 
-                {groupAry}
-                </ScrollView>
+                    {groupAry}
+                </ScrollView>)
+                :null
+            }
+
             </View>
         );
     }

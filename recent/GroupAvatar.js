@@ -1,16 +1,18 @@
+/* eslint-enable */
+
 
 import React, { Component } from 'react';
 import {
     Alert,
-    Text,
-    View,
-    TextInput,TouchableOpacity,Image,
-    Platform
+    Image,
+    Platform,
+    Text,TextInput,TouchableOpacity,
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,List,Thumbnail,Left,Right,Toast
+    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,List,ListItem,Right,Thumbnail,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 const {alert} = Alert
@@ -32,7 +34,7 @@ export default class GroupAvatar extends Component<{}> {
 
         for(let member of this.props.group.members){
             if(member.uid !== Store.getCurrentUid()){
-              picAry.push(Store.getFriend(member.uid).pic)
+              picAry.push(member.pic)
             }
             if(picAry.length === 4){
                 break
@@ -42,10 +44,10 @@ export default class GroupAvatar extends Component<{}> {
         for(let i=0;i<picAry.length;i++){
             let pic = picAry[i]
             if(i ===0 && picAry.length===3 ){
-                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,marginHorizontal:10}} resizeMode="contain"></Image>)
+                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,marginHorizontal:10,borderRadius:1}} resizeMode="contain"></Image>)
 
             }else{
-                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5}} resizeMode="contain"></Image>)
+                avatarAry.push(<Image  key={i} source={AppUtil.getAvatarSource(pic)} style={{width:22,height:22,margin:0.5,borderRadius:1}} resizeMode="contain"></Image>)
             }
 
         }

@@ -3,44 +3,39 @@ import React, { Component } from 'react';
 import {
     Alert,
     Image,
-    Text,
-    View,TextInput,TouchableOpacity,Modal,ScrollView
+    Modal,
+    ScrollView,Text,TextInput,TouchableOpacity,View
 } from 'react-native';
 import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
+const {getAvatarSource,debounceFunc} = AppUtil
 import WSChannel from "../channel/WSChannel"
-import { List, ListItem,Avatar,Card ,Icon,Button} from 'react-native-elements'
+import { Avatar, Button,Card,Icon ,List,ListItem} from 'react-native-elements'
 import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
+const config = require("../config")
 
 
 export default class MineView extends Component<{}> {
     constructor(props){
         super(props);
         let picUrl = Store.getPersonalPic()
-        const avatarSource = AppUtil.getAvatarSource(picUrl)
+        const avatarSource = getAvatarSource(picUrl)
         this.state = {
             avatarSource
         }
     }
+    componentWillMount(){
+        Store.on("rename",this.update)
+    }
+    componentWillUnMount(){
+        Store.un("rename",this.update)
+    }
 
-    reset=()=>{
-        Alert.alert(
-            '提示',
-            '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
-            [
-                {text: '取消', onPress: () => {}, style: 'cancel'},
-                {text: '确认', onPress: () => {
-                        WSChannel.reset();
-                        Store.reset(function () {
-                            AppUtil.reset();
-                        })
-                    }},
-            ],
-            { cancelable: false }
-        )
+    update = ()=>{
+        this.setState({update:true})
     }
 
     clear=()=>{
@@ -59,9 +54,9 @@ export default class MineView extends Component<{}> {
         )
     }
 
-    showScanView=()=>{
+    showScanView=debounceFunc(()=>{
         this.props.navigation.navigate("ScanView");
-    }
+    })
 
     setAvatar(image){
         RNFetchBlob.fs.readFile(image.path, 'base64')
@@ -86,24 +81,18 @@ export default class MineView extends Component<{}> {
     render() {
         const list2 = [
             {
-                title:`身份标识`,
+                title:`个人基本信息`,
                 icon:'contacts',
-                onPress:()=>{
-                    this.props.navigation.navigate('UidView',{
-                        uid:Store.getCurrentUid()
-                    })
-                },
+                onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate('BasicInfoView')
+                }),
             },
             {
-                title:`清除本地聊天缓存`,
+                title:`清除聊天记录`,
                 icon:'refresh',
                 onPress:this.clear,
             },
-            {
-                title:`重置`,
-                icon:'delete-forever',
-                onPress:this.reset
-            },
+
             {
                 title:`授权其他设备`,
                 icon:'crop-free',
@@ -112,8 +101,24 @@ export default class MineView extends Component<{}> {
             {
                 title:`当前版本:${versionLocal}`,
                 icon:'new-releases',
-            },
+                onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate('VersionView',{
+                    })
+                }),
+            }
         ]
+
+        if(config.isDevMode){
+            list2.push(
+                {
+                    title:`开发者工具`,
+                    icon:'https',
+                    onPress:debounceFunc(()=>{
+                        this.props.navigation.navigate('DevView',{
+                        })
+                    }),
+                })
+        }
 
         const pickerOption = {
             width: 300,
@@ -134,7 +139,7 @@ export default class MineView extends Component<{}> {
                         rightIcon={
                             <Icon name='qrcode' type="font-awesome" iconStyle={{margin:10}}  color='gray'
                                   raised
-                                  onPress={()=>{
+                                  onPress={debounceFunc(()=>{
                                       this.props.navigation.navigate('QrcodeView',{
                                           qrcode:{
                                               uid:Store.getCurrentUid(),
@@ -144,7 +149,7 @@ export default class MineView extends Component<{}> {
                                           },
                                           avatarUrl:this.state.avatarSource.uri
                                       })
-                                  }}
+                                  })}
                             />}
                         avatar={<Avatar
                             large
@@ -155,7 +160,7 @@ export default class MineView extends Component<{}> {
                                     '设置头像',
                                     '请选择头像设置方式',
                                     [
-                                        {text: '取消', onPress: () => console.log('Ask me later pressed')},
+                                        {text: '取消', onPress: () => {}},
                                         {text: '拍照', onPress: () => {
                                                 ImagePicker.openCamera(pickerOption).then(image => {
                                                     this.setAvatar(image)
@@ -184,7 +189,7 @@ export default class MineView extends Component<{}> {
                 </View>
                 <View style={style.listStyle}>
                     {
-                        list2.map((item, i) => (
+                        list2.map((item, i) =>
                             <ListItem
                                 key={i}
                                 title={item.title}
@@ -194,7 +199,7 @@ export default class MineView extends Component<{}> {
                                 subtitle={item.subtitle}
                                 onPress={item.onPress}
                             />
-                        ))
+                        )
                     }
                 </View>
             </ScrollView>

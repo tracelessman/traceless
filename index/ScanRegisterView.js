@@ -3,8 +3,8 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,Keyboard,TouchableWithoutFeedback,
-    TouchableOpacity,Image,Modal} from 'react-native';
+import { Image, Keyboard, Modal,StyleSheet,Text,TextInput,
+    TouchableOpacity,TouchableWithoutFeedback,View} from 'react-native';
 import WSChannel from '../channel/LocalWSChannel';
 import Store from "../store/LocalStore";
 import MainView from "./MainView";
@@ -13,6 +13,8 @@ import UUID from 'uuid/v4';
 import RSAKey from 'react-native-rsa';
 import ScanView from '../mine/ScanView'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import pushUtil from "../util/pushUtil";
+const versionLocal = require('../package').version
 
 export default class ScanRegisterView extends React.Component {
 
@@ -85,7 +87,7 @@ export default class ScanRegisterView extends React.Component {
         if(!this.publicKey&&!this.privateKey){
             const bits = 1024;
             const exponent = '10001';
-            var rsa = new RSAKey();
+            let rsa = new RSAKey();
             rsa.generate(bits, exponent);
             this.publicKey = rsa.getPublicString(); // return json encoded string
             this.privateKey = rsa.getPrivateString(); // return js
@@ -94,19 +96,27 @@ export default class ScanRegisterView extends React.Component {
 
     _doRegister = ()=>{
         this.createKey();
-        this.setState({registerStep:"注册中......"});
+        this.setState({registerStep:"获取设备标识......"});
 
-        var uid=this.uid||UUID();
-        var cid=UUID();
-        WSChannel.register(this.ip,uid,cid,this.name,this.publicKey,this.checkCode,(data)=>{
-            this.setState({registering:false});
-            if(data.err){
-                alert(data.err);
-            }else{
-                Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.serverPublicKey,cid);
-                AppUtil.reset();
-            }
-        });
+        let uid=this.uid||UUID();
+        let cid=UUID();
+        let curView = this;
+        pushUtil.getAPNDeviceId().then(deviceId=>{
+            curView.setState({registerStep:"注册中......"});
+            WSChannel.register(this.ip,uid,cid,deviceId,this.name,this.publicKey,this.checkCode,(data)=>{
+                this.setState({registering:false});
+                if(data.err){
+                    curView.setState({registerStep:"注册出错......"});
+                    alert(data.err);
+                }else{
+                    Store.saveKey(data.name||this.name,this.ip,uid,this.publicKey,this.privateKey,data.publicKey,cid);
+                    AppUtil.reset();
+                }
+            },()=>{
+                curView.setState({registerStep:"网络访问超时......"});
+            });
+        })
+
     }
 
     register=()=>{
@@ -131,7 +141,7 @@ export default class ScanRegisterView extends React.Component {
     }
 
     render() {
-        const logoView = <Image source={require('../images/traceless.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
+        const logoView = <Image source={require('../images/1024x1024.png')} style={{width:100,height:100,margin:50}} resizeMode="contain"></Image>
         return (
 
             <TouchableWithoutFeedback onPress={this.dismissKeyboard}>
@@ -237,7 +247,7 @@ export default class ScanRegisterView extends React.Component {
                     <View style={{flex:1,width:"100%",backgroundColor:"#ffffff"}}>
                     </View>
                     <View style={{height:60,width:"100%",backgroundColor:"#f0f0f0",flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
-                        <Text style={{color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v1.0</Text>
+                        <Text style={{color:"#a0a0a0",textAlign:"center",fontSize:10}}>版本：v{versionLocal}</Text>
                     </View>
                     <Modal visible={this.state.scanVisible}
                            onRequestClose={()=>{

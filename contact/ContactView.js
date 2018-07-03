@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import {
-    Text,
-    View,
     Button,
     Image,
-    TouchableOpacity
+    Text,
+    TouchableOpacity,
+    View,
+    ScrollView
 } from 'react-native';
 import Store from '../store/LocalStore'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import AppUtil from "../AppUtil";
-const {getAvatarSource} = AppUtil
-import { List, ListItem,Avatar,Card } from 'react-native-elements'
+const {getAvatarSource,debounceFunc} = AppUtil
+import { Avatar, Card,List,ListItem } from 'react-native-elements'
 
 export default class ContactView extends Component<{}> {
 
@@ -19,7 +20,7 @@ export default class ContactView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
 
         {
-         headerRight: <TouchableOpacity onPress={()=>{ navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})}}
+         headerRight: <TouchableOpacity onPress={debounceFunc(()=>{ navigation.navigate("AddContactView",{ContactView:navigation.state.params.ContactView})})}
              style={{marginRight:20}}>
              <Icon name="plus" size={22} />
          </TouchableOpacity>
@@ -31,37 +32,40 @@ export default class ContactView extends Component<{}> {
         this.props.navigation.setParams({
             ContactView:this
         });
+        this.eventAry = ["receiveMKFriends","readNewMKFriends","addFriend","updateFriendPic","updateFriendName"]
 
     }
 
     componentDidMount(){
-      //有新的好友请求时更新界面
-      Store.on("receiveMKFriends",()=>{
-          this.setState({update:true});
-      });
-      Store.on("readNewMKFriends",()=>{
-          this.setState({update:true});
-      });
-      Store.on("addFriend",()=>{
-          this.setState({update:true});
-      }) ;
+        for(let event of this.eventAry){
+            Store.on(event,this.update);
+        }
     }
 
-    go2RequireListView=()=>{
+    componentWillUnmount =()=> {
+        for(let event of this.eventAry){
+            Store.un(event,this.update);
+        }
+    }
+
+    update = ()=>{
+        this.setState({update:true});
+    }
+
+    go2RequireListView=debounceFunc(()=>{
         this.props.navigation.navigate("RequireListView",{ContactView:this});
-    }
+    })
 
-    go2FriendInfoView=(f)=>{
-
+    go2FriendInfoView=debounceFunc((f)=>{
         this.props.navigation.navigate("FriendInfoView",{ContactView:this,friend:f});
-    }
+    })
 
 
 
     render() {
-        var friends = [];
-        var all = Store.getAllFriends();
-        for(var i=0;i<all.length;i++){
+        let friends = [];
+        let all = Store.getAllFriends();
+        for(let i=0;i<all.length;i++){
             let f = all[i];
 
             friends.push(<TouchableOpacity key={i} onPress={()=>{this.go2FriendInfoView(f)}} style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
@@ -74,7 +78,7 @@ export default class ContactView extends Component<{}> {
                     <Text>    {f.name}  </Text>
                 </View>
             </TouchableOpacity>);
-            friends.push(<View key={i+"line"} style={{width:"90%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
+            friends.push(<View key={i+"line"} style={{width:"100%",height:0,borderTopWidth:1,borderColor:"#d0d0d0"}}></View>);
 
         }
         return (
@@ -88,7 +92,10 @@ export default class ContactView extends Component<{}> {
                     </View>
                 </TouchableOpacity>
                 <View style={{width:"96%",height:0,borderTopWidth:0.5,borderColor:"#d0d0d0",marginTop:5,marginBottom:5}}></View>
-                {friends}
+                <ScrollView>
+                    {friends}
+                </ScrollView>
+
             </View>
         );
     }

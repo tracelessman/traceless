@@ -2,16 +2,16 @@
 import React, { Component } from 'react';
 import {
     Alert,
-    Text,
-    View,
-    TextInput,TouchableOpacity,Image,
-    Platform
+    Image,
+    Platform,
+    Text,TextInput,TouchableOpacity,
+    View
 } from 'react-native';
 import  WSChannel from '../channel/LocalWSChannel'
 import Store from "../store/LocalStore"
 import {
-    Container, Header, Content, Item, Input, Icon ,Button,Card,CardItem,Body,ListItem,
-    List,Thumbnail,Left,Right,Toast,Spinner
+    Body, Button, Card, CardItem, Container, Content ,Header,Icon,Input,Item,Left,
+    List,ListItem,Right,Spinner,Thumbnail,Toast
 } from 'native-base';
 import ScanView from '../mine/ScanView'
 import AddFriendIcon from './AddFriendIcon'
@@ -26,17 +26,17 @@ export default class AddContactView extends Component<{}> {
         this.state={searchResult:null,numberOfLines:2,isScanMode:false,isWaiting:false};
     }
 
+    // componentDidMount(){
+    //     this.refs.input.wrappedInstance.focus()
+    // }
+
     doSearch=()=>{
         if(this.searchText){
             this.setState({isWaiting:true})
-            WSChannel.searchFriends(this.searchText,(data)=>{
+            WSChannel.searchFriends(this.searchText.trim(),(data)=>{
                 const friendAry = Store.getAllFriends()
-                const friendIdAry = friendAry.map(ele=>{
-                    return ele.id
-                })
-                const searchResult = data.result.filter((item)=>{
-                   return  item.uid !== Store.getCurrentUid() && !friendIdAry.includes(item.uid)
-                })
+                const friendIdAry = friendAry.map(ele=>ele.id)
+                const searchResult = data.result.filter((item)=>item.uid !== Store.getCurrentUid() && !friendIdAry.includes(item.uid))
 
                 this.setState({searchResult,isWaiting:false})
             });
@@ -48,8 +48,7 @@ export default class AddContactView extends Component<{}> {
         }
     }
 
-    addFriend = (fid)=>{
-        return new Promise(resolve => {
+    addFriend = (fid)=>new Promise(resolve => {
             WSChannel.applyMakeFriends(fid, (result)=> {
                 resolve()
                 Toast.show({
@@ -60,8 +59,6 @@ export default class AddContactView extends Component<{}> {
                 })
             })
         })
-
-    }
 
     textChange=(v)=>{
         this.searchText = v;
@@ -112,14 +109,14 @@ export default class AddContactView extends Component<{}> {
 
     render() {
 
-        var searchResult = [];
+        let searchResult = [];
         if(this.state.searchResult && !this.state.isWaiting){
             if(this.state.searchResult.length > 0){
-                searchResult = (
+                searchResult =
                     <List
                         dataArray={this.state.searchResult}
                         renderRow={data =>
-                            <ListItem thumbnail>
+                            <ListItem thumbnail style={{height:80}}>
                                 <Left>
                                     <Thumbnail square size={35} source={getAvatarSource(data.pic)} />
                                 </Left>
@@ -128,15 +125,13 @@ export default class AddContactView extends Component<{}> {
                                     {data.name}
                                 </Text>
                                 </Body>
-                                <Right>
-                                    <AddFriendIcon uid={data.uid}></AddFriendIcon>
-                                </Right>
+                                <AddFriendIcon uid={data.uid}></AddFriendIcon>
                             </ListItem>}
                     />
-                )
+
 
             }else {
-                searchResult = (
+                searchResult =
                     <ListItem thumbnail style={{height:80}}>
                         <Left>
                         </Left>
@@ -145,26 +140,25 @@ export default class AddContactView extends Component<{}> {
                             没有结果,试试扫码添加吧
                         </Text>
                         </Body>
-                        <Right>
-                            <Button bordered onPress={()=>{
-                                this.setState({isScanMode:true})
-                            }}>
-                                <Icon active name='md-camera' />
-                            </Button>
-                        </Right>
+                        <Button bordered style={{margin:20}}
+                                onPress={()=>{
+                            this.setState({isScanMode:true})
+                        }}>
+                            <Icon active name='md-camera' />
+                        </Button>
                     </ListItem>
-                )
+
             }
         }
 
-        const view1 = (<ScanView action="addFriend" parent={this}></ScanView>)
+        const view1 = <ScanView action="addFriend" parent={this}></ScanView>
         const searchBarBgColor = Platform.OS === 'android' ?'#bdc6cf' :'#f0f0f0'
-        const view2 = (
+        const view2 =
             <Container>
                 <Header searchBar rounded style={{backgroundColor:searchBarBgColor}}>
                     <Item>
                         <Icon name="ios-search"  onPress={this.doSearch} />
-                        <Input placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
+                        <Input autoFocus ref='input' placeholder="请输入对方昵称或标识" onSubmitEditing={this.doSearch} onChangeText={this.textChange} />
                         <Icon name="ios-qr-scanner" onPress={()=>{
                             this.setState({isScanMode:true})
                         }} />
@@ -177,7 +171,7 @@ export default class AddContactView extends Component<{}> {
                 </Content>
             </Container>
 
-           )
+
         return this.state.isScanMode?view1:view2
     }
 
