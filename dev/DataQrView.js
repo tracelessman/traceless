@@ -49,7 +49,8 @@ export default class DataQrView extends Component<{}> {
         msg.groups = Store.keyData.groups;
         msg.pic = Store.keyData.pic;
         const data = {
-            uid:msg.id
+            uid:msg.id,
+            clientId:Store.getClientId()
         }
 
         return (

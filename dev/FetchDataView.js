@@ -49,7 +49,7 @@ export default class FetchDataView extends Component<{}> {
 
                         const {data} = e
 
-                        const {uid} = JSON.parse(data)
+                        const {uid,clientId} = JSON.parse(data)
                         const tmpFilePath =  `${RNFetchBlob.fs.dirs.CacheDir}/${uid}.json`
                         // this.setState({
                         //     visible:false
@@ -67,7 +67,7 @@ export default class FetchDataView extends Component<{}> {
                                     this.setState({
                                         visible:false
                                     })
-                                    keyData.clientId = Store.getClientId()
+                                    keyData.clientId = clientId
                                     Store.data.splice(0,1,keyData);
                                     Store._save();
 

@@ -110,7 +110,7 @@ const updateUtil = {
             {
                 text: '确认',
                 onPress:()=>{
-                    Linking.openURL().catch(error => {
+                    Linking.openURL(manualDownloadUrl).catch(error => {
                         errorReportUtil.errorReportForError({
                             error,
                             type:`Linking.openURL(${manualDownloadUrl})`
@@ -158,6 +158,8 @@ const updateUtil = {
                 })
             }else{
                 this.informUpdate(result,beforeUpdate, () => {
+                    console.log(manifestUrl)
+
                     Linking.openURL(manifestUrl)
                 })
 

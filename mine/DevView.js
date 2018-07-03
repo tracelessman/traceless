@@ -169,6 +169,23 @@ export default class BasicInfoView extends Component<{}> {
                     this.props.navigation.navigate("FetchDataView")
                 }),
             },
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
+                                test
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+                    // Alert.alert("win")
+                }),
+            },
         ]
 
         return (

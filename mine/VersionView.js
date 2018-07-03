@@ -94,16 +94,6 @@ export default class VersionView extends Component<{}> {
                                 <Text>检查更新</Text>
                             </Button>
                         </View>
-                        {/*<View>*/}
-                            {/*<Button iconLeft  info onPress={debounceFunc(()=>{*/}
-
-                                {/*this.props.navigation.navigate('DevView',{*/}
-                                {/*})*/}
-                            {/*})}>*/}
-                                {/*<Icon name='refresh' />*/}
-                                {/*<Text>debug</Text>*/}
-                            {/*</Button>*/}
-                        {/*</View>*/}
                     </View>
                 </Card>
                 {this.state.checking?<Spinner color='blue' style={{position:"absolute",top:"10%"}}/>:null}
