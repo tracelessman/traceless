@@ -119,6 +119,20 @@ export default class BasicInfoView extends Component<{}> {
                         </View>
                     </View>),
                 onPress:debounceFunc(()=>{
+                    Alert.alert(
+                        '提示',
+                        '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
+                        [
+                            {text: '取消', onPress: () => {}, style: 'cancel'},
+                            {text: '确认', onPress: () => {
+                                    WSChannel.reset();
+                                    Store.reset(function () {
+                                        AppUtil.reset();
+                                    })
+                                }},
+                        ],
+                        { cancelable: false }
+                    )
                 }),
             },
             {

@@ -38,23 +38,6 @@ export default class MineView extends Component<{}> {
         this.setState({update:true})
     }
 
-    reset=()=>{
-        Alert.alert(
-            '提示',
-            '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
-            [
-                {text: '取消', onPress: () => {}, style: 'cancel'},
-                {text: '确认', onPress: () => {
-                        WSChannel.reset();
-                        Store.reset(function () {
-                            AppUtil.reset();
-                        })
-                    }},
-            ],
-            { cancelable: false }
-        )
-    }
-
     clear=()=>{
         Alert.alert(
             '提示',
@@ -109,11 +92,7 @@ export default class MineView extends Component<{}> {
                 icon:'refresh',
                 onPress:this.clear,
             },
-            // {
-            //     title:`注销设备`,
-            //     icon:'delete-forever',
-            //     onPress:this.reset
-            // },
+
             {
                 title:`授权其他设备`,
                 icon:'crop-free',
