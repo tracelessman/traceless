@@ -6,6 +6,7 @@ import { Avatar, Button,Card,Icon ,List,ListItem,} from 'react-native-elements'
 import Store from "../store/LocalStore"
 const pushUtil = require("../util/pushUtil")
 import DeviceInfo from 'react-native-device-info'
+const config = require('../config')
 
 export default class InfoView extends Component<{}> {
 
@@ -37,7 +38,17 @@ export default class InfoView extends Component<{}> {
                     </View>
                     <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
                         <Text selectable style={{}} >
-                            开发模式:{__DEV__?"是":"否"}
+                            开发状态:{__DEV__?"是":"否"}
+                        </Text>
+                    </View>
+                    <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
+                        <Text selectable style={{}} >
+                            预览模式:{config.isPreviewVersion?"是":"否"}
+                        </Text>
+                    </View>
+                    <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
+                        <Text selectable style={{}} >
+                            开发模式:{config.isDevMode?"是":"否"}
                         </Text>
                     </View>
                     <View style={{marginHorizontal:5,marginTop:20,justifyContent:'flex-start',alignItems:'flex-start'}}>
