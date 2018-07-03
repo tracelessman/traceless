@@ -57,6 +57,23 @@ export default class BasicInfoView extends Component<{}> {
                     <View style={style.listItem}>
                         <View>
                             <Text style={style.titleStyle}>
+                                软件信息
+                            </Text>
+                        </View>
+                        <View>
+                            <Text style={style.contentStyle}>
+                            </Text>
+                        </View>
+                    </View>),
+                onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate("InfoView")
+                }),
+            },
+            {
+                title: (
+                    <View style={style.listItem}>
+                        <View>
+                            <Text style={style.titleStyle}>
                                 查看错误日志
                             </Text>
                         </View>

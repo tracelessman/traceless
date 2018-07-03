@@ -20,6 +20,7 @@ import DevView from '../mine/DevView'
 import RenameView from '../mine/RenameView'
 import BasicInfoView from '../mine/BasicInfoView'
 import DataQrView from '../dev/DataQrView'
+import InfoView from '../dev/InfoView'
 import FetchDataView from '../dev/FetchDataView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
@@ -160,6 +161,12 @@ let MainStack = StackNavigator({
         screen:FetchDataView,
         navigationOptions:{
             headerTitle: '获取数据'
+        }
+    },
+    InfoView:{
+        screen:InfoView,
+        navigationOptions:{
+            headerTitle: 'App信息'
         }
     },
     QrcodeView:{
