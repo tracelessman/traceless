@@ -11,16 +11,14 @@ import {
 import LoginView from "./index/LoginView"
 import Store from "./store/LocalStore"
 import AppUtil from "./AppUtil"
+import pushUtil from "./util/pushUtil"
 import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
 import {Toast} from "native-base";
 
-console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
 export default class App extends Component<{}> {
-
-
 
     constructor(props){
         super(props);
@@ -43,7 +41,7 @@ export default class App extends Component<{}> {
 
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
-            AppUtil.removeNotify()
+            pushUtil.removeNotify()
         }
     }
 
@@ -61,22 +59,15 @@ export default class App extends Component<{}> {
 
     _onSystemNotify=(uid)=>{
         if(uid){
-            if(Platform.OS === 'android'){
-                let tag = uid.replace(/\-/gi, '');
-                AppUtil.setJpush({
-                    clickHandler(msg){
-                        if(msg.targetUid==Store.getCurrentUid()){
-                            AppUtil.reset({view:"ChatView",param:{friend:Store.getFriend(msg.fromUid)}});
-                        }
-                    },
-                    tag
-                }).then((result)=>{
-                    const {registrationId} = result
-
-                }).catch(err=>{
-                    console.log(err)
-                })
-            }
+            let tag = uid.replace(/\-/gi, '');
+            pushUtil.setJpush({
+                clickHandler(msg){
+                    if(msg.targetUid==Store.getCurrentUid()){
+                        AppUtil.reset({view:"ChatView",param:{friend:Store.getFriend(msg.fromUid)}});
+                    }
+                },
+                tag
+            })
         }
     }
 
@@ -98,7 +89,7 @@ export default class App extends Component<{}> {
                 let cur = data[0];
                 //登录
                 this.setState({data,logining:true});
-                AppUtil.getAPNDeviceId().then(deviceId=>{
+                pushUtil.getAPNDeviceId().then(deviceId=>{
                     WSChannel.login(cur.name,cur.id,cur.clientId,cur.server,(msg)=>{
                         this.seed++;
                         if(!msg.err){

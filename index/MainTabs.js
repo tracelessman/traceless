@@ -16,8 +16,12 @@ import ScanView from '../mine/ScanView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
+import DevView from '../mine/DevView'
 import RenameView from '../mine/RenameView'
 import BasicInfoView from '../mine/BasicInfoView'
+import DataQrView from '../dev/DataQrView'
+import InfoView from '../dev/InfoView'
+import FetchDataView from '../dev/FetchDataView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -153,6 +157,18 @@ let MainStack = StackNavigator({
             headerTitle: '扫描二维码'
         }
     },
+    FetchDataView:{
+        screen:FetchDataView,
+        navigationOptions:{
+            headerTitle: '获取数据'
+        }
+    },
+    InfoView:{
+        screen:InfoView,
+        navigationOptions:{
+            headerTitle: 'App信息'
+        }
+    },
     QrcodeView:{
         screen:QrcodeView,
         navigationOptions:{
@@ -194,6 +210,18 @@ let MainStack = StackNavigator({
       navigationOptions:{
           headerTitle: '添加群成员'
       }
+    },
+    DevView:{
+        screen:DevView,
+        navigationOptions:{
+            headerTitle: 'devTools'
+        }
+    },
+    DataQrView:{
+        screen:DataQrView,
+        navigationOptions:{
+            headerTitle: '数据二维码'
+        }
     }
 }, {
     transitionConfig:function transitionConfig(){

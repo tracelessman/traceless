@@ -15,6 +15,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
+const config = require("../config")
 
 
 export default class MineView extends Component<{}> {
@@ -35,23 +36,6 @@ export default class MineView extends Component<{}> {
 
     update = ()=>{
         this.setState({update:true})
-    }
-
-    reset=()=>{
-        Alert.alert(
-            '提示',
-            '重置后会删除当前账号的所有数据,请确认是否继续本操作?',
-            [
-                {text: '取消', onPress: () => {}, style: 'cancel'},
-                {text: '确认', onPress: () => {
-                        WSChannel.reset();
-                        Store.reset(function () {
-                            AppUtil.reset();
-                        })
-                    }},
-            ],
-            { cancelable: false }
-        )
     }
 
     clear=()=>{
@@ -108,11 +92,7 @@ export default class MineView extends Component<{}> {
                 icon:'refresh',
                 onPress:this.clear,
             },
-            // {
-            //     title:`注销设备`,
-            //     icon:'delete-forever',
-            //     onPress:this.reset
-            // },
+
             {
                 title:`授权其他设备`,
                 icon:'crop-free',
@@ -122,11 +102,23 @@ export default class MineView extends Component<{}> {
                 title:`当前版本:${versionLocal}`,
                 icon:'new-releases',
                 onPress:debounceFunc(()=>{
-                    // this.props.navigation.navigate('VersionView',{
-                    // })
+                    this.props.navigation.navigate('VersionView',{
+                    })
                 }),
-            },
+            }
         ]
+
+        if(config.isDevMode){
+            list2.push(
+                {
+                    title:`开发者工具`,
+                    icon:'https',
+                    onPress:debounceFunc(()=>{
+                        this.props.navigation.navigate('DevView',{
+                        })
+                    }),
+                })
+        }
 
         const pickerOption = {
             width: 300,

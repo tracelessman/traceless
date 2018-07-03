@@ -21,6 +21,7 @@ import com.facebook.soloader.SoLoader;
 import org.pgsqlite.SQLitePluginPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.traceless.nativeJava.AnExampleReactPackage;
+import cn.reactnative.modules.update.UpdateContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +38,10 @@ public class MainApplication extends Application implements ReactApplication {
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
+     @Override
+        protected String getJSBundleFile() {
+            return UpdateContext.getBundleUrl(MainApplication.this);
+        }
 
     @Override
     protected List<ReactPackage> getPackages() {

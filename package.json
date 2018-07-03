@@ -1,6 +1,6 @@
 {
   "name": "traceless",
-  "version": "0.1.14",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -14,8 +14,8 @@
     "packUploadApk": "npm run pack:android && npm run uploadApk",
     "publish": "node bin/publish -p",
     "lint": "eslint * --fix",
-    "pack:ios": "node bin/packIOS",
-    "pack:ppk": "pushy bundle --platform ios --output /Users/spirit/Downloads/entry/git/working_on/traceless-transfer/public/pkg/ppk/test.ppk"
+    "pack:ios": "node bin/packIOS --archive",
+    "pack:ppk": "pushy bundle --platform ios --output /Users/spirit/Downloads/entry/git/working_on/traceless-transfer/public/pkg/ppk/LK.ppk"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -45,6 +45,8 @@
     "react-native-update": "^5.0.1",
     "react-native-vector-icons": "^4.5.0",
     "react-navigation": "1.5.11",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
     "semver": "^5.5.0",
     "uuid": "^3.2.1"
   },
