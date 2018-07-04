@@ -26,6 +26,7 @@ import {
 }from 'native-base'
 const config = require('../config')
 import MessageText from './MessageText'
+const {MAX_INPUT_HEIGHT} = require('../state/Constant')
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -498,7 +499,11 @@ export default class ChatView extends Component<{}> {
                                         height += 10
                                     }
                                     if(this.state.height !== height){
+                                        if(height > MAX_INPUT_HEIGHT){
+                                            height = MAX_INPUT_HEIGHT
+                                        }
                                         this.setState({height:height})
+
                                     }
                                 }}/>
 
