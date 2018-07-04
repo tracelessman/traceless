@@ -9,7 +9,7 @@ import AddContactView from '../contact/AddContactView';
 import RequireListView from '../contact/RequireListView';
 import FriendInfoView from '../contact/FriendInfoView';
 import MineView from '../mine/MineView';
-import ChatView from '../recent/ChatView'
+import ChatView from '../chat/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'

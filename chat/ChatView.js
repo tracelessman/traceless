@@ -25,6 +25,7 @@ import {
     Toast
 }from 'native-base'
 const config = require('../config')
+import MessageText from './MessageText'
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -353,15 +354,19 @@ export default class ChatView extends Component<{}> {
                         {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
                 }
             });
-
-
         }
     }
 
     _getMessage=(rec)=>{
         if(rec.type==Store.MESSAGE_TYEP_TEXT){
+            const text = (
+                <MessageText  currentMessage={
+                    {text:rec.content}
+                } textStyle={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}
+                ></MessageText>
+            )
 
-            return <Text selectable style={{fontSize:16,lineHeight:19,color:(rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}>{rec.content}</Text>;
+            return text
 
         }else if(rec.type==Store.MESSAGE_TYPE_IMAGE) {
             let img = JSON.parse(rec.content);
