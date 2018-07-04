@@ -131,33 +131,10 @@ export default class ChatView extends Component<{}> {
     _keyboardDidShow=(e)=>{
         let keyY = e.endCoordinates.screenY;
         this.setState({heightAnim:Dimensions.get('window').height-keyY});
-        // if(Platform.OS=="ios"){
-        //     this.setState({marignBAnim:Dimensions.get('window').height-keyY});
-            // Animated.timing(
-            //     this.state.marignBAnim,
-            //     {
-            //         toValue: Dimensions.get('window').height-keyY,
-            //         duration: 50
-            //     }
-            // ).start();
-        // }
-
 
     }
     _keyboardDidHide=(e)=>{
         this.setState({heightAnim:0});
-        // if(Platform.OS=="ios"){
-        //     this.setState({marginTAnim:0});
-        //     this.setState({marignBAnim:0});
-            // Animated.timing(
-            //     this.state.marignBAnim,
-            //     {
-            //         toValue: 0,
-            //         duration: 50
-            //     }
-            // ).start();
-        // }
-
     }
 
     onReceiveMessage=(fromId)=>{
@@ -489,9 +466,9 @@ export default class ChatView extends Component<{}> {
                             borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
                                 <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
                                     borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-                                           blurOnSubmit returnKeyType="send"
+                                           blurOnSubmit returnKeyType="send" enablesReturnKeyAutomatically
                                            underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
-                                           onChangeText={this.textChange} returnKeyType="send"   onContentSizeChange={(event) => {
+                                           onChangeText={this.textChange}   onContentSizeChange={(event) => {
                                     let height = event.nativeEvent.contentSize.height
                                     if(height <  this.minHeight ){
                                         height =  this.minHeight
