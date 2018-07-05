@@ -440,7 +440,7 @@ export default class ChatView extends Component<{}> {
                    let msgId = records[i].msgId;
                    recordEls.push(<View key={this._keySeed} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
                        <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
-                            <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40}}/>
+                            <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(records[i].state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
                        </TouchableOpacity>
                        <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
                            {this._getMessage(records[i])}
