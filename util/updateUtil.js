@@ -23,7 +23,7 @@ const updateUtil = {
                 uniqueId:DeviceInfo.getUniqueID(),
                 uid,
                 versionLocal:require('../package').version,
-                isPreviewVersion:config.isPreviewVersion,
+                "isPreviewVersion":config.isPreviewVersion,
                 buildNumberClient:DeviceInfo.getVersion(),
                 "__DEV__":__DEV__,
                 "isDevMode":config.isDevMode

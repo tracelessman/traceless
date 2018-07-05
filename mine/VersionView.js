@@ -52,7 +52,7 @@ export default class VersionView extends Component<{}> {
                             },1000*10)
                         }} >
 
-                           当前版本:{versionLocal}
+                            {config.isPreviewVersion?"预览版本":"当前版本"}:{versionLocal}
                         </Text>
                         <View style={{marginVertical:20}}>
                             <Button iconLeft  info disabled={this.state.checking} onPress={debounceFunc(()=> {
