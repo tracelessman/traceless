@@ -67,7 +67,9 @@ export default class ChatView extends Component<{}> {
         this.limit = Constant.MESSAGE_PER_REFRESH
         this.extra = {
             lastContentHeight:0,
-            contentHeight:0
+            contentHeight:0,
+            count:0,
+            isRefreshingControl:false
         }
     }
 
@@ -82,6 +84,7 @@ export default class ChatView extends Component<{}> {
     }
 
     refreshRecord = (limit)=>{
+
         this.getAllRecord(limit).then(recordAry=>{
             let records = _.cloneDeep(recordAry)
 
@@ -196,10 +199,16 @@ export default class ChatView extends Component<{}> {
                 Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
                     resolve(recordAry)
                 },limit);
+                Store.readGroupChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    this.extra.maxCount = recordAry.length
+                });
             }else{
                 Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
                     resolve(recordAry)
                 },limit);
+                Store.readAllChatRecords(this.otherSide.id,false,(recordAry)=>{
+                    this.extra.maxCount = recordAry.length
+                });
             }
         })
 
@@ -218,6 +227,8 @@ export default class ChatView extends Component<{}> {
 
     onReceiveMessage=(fromId)=>{
         if(fromId==this.otherSide.id){
+
+            this.limit++
             this.refreshRecord(this.limit);
         }
 
@@ -225,15 +236,20 @@ export default class ChatView extends Component<{}> {
 
     onSendMessage=(targetId)=>{
         if(targetId==this.otherSide.id){
+
+            this.limit++
             this.refreshRecord(this.limit);
         }
     }
 
+    update = ()=>{
+        this.refreshRecord(this.limit);
+    }
     componentWillMount =()=> {
         Store.on("receiveMessage",this.onReceiveMessage);
         Store.on("sendMessage",this.onSendMessage);
-        Store.on("updateMessageState",this.onSendMessage);
-        Store.on("updateGroupMessageState",this.onSendMessage);
+        Store.on("updateMessageState",this.update);
+        Store.on("updateGroupMessageState",this.update);
         Store.on("receiveGroupMessage",this.onReceiveMessage);
         Store.on("sendGroupMessage",this.onSendMessage);
 
@@ -249,8 +265,8 @@ export default class ChatView extends Component<{}> {
     componentWillUnmount =()=> {
         Store.un("receiveMessage",this.onReceiveMessage);
         Store.un("sendMessage",this.onSendMessage);
-        Store.un("updateMessageState",this.onSendMessage);
-        Store.un("updateGroupMessageState",this.onSendMessage);
+        Store.un("updateMessageState",this.update);
+        Store.un("updateGroupMessageState",this.update);
         Store.un("receiveGroupMessage",this.onReceiveMessage);
         Store.un("sendGroupMessage",this.onSendMessage);
 
@@ -278,7 +294,6 @@ export default class ChatView extends Component<{}> {
         const callback = ()=>{
             this.text="";
             this.refs.text.clear();
-            this.refs.scrollView.scrollToEnd();
         };
         if(this.text){
             if(this.isGroupChat){
@@ -433,22 +448,42 @@ export default class ChatView extends Component<{}> {
         return result
     }
     _onRefresh = ()=>{
-        this.setState({
-            refreshing:true
-        })
         this.limit = this.limit+Constant.MESSAGE_PER_REFRESH
-        this.refreshRecord(this.limit)
+        if(this.limit > this.extra.maxCount){
+            Toast.show({
+                text: '没有更早的消息记录',
+                position:"top"
+            })
+        }else{
+            this.setState({
+                refreshing:true
+            })
+            this.extra.isRefreshingControl = true
+            this.refreshRecord(this.limit)
+        }
+
+
+
     }
 
     onContentSizeChange=(contentWidth,contentHeight)=>{
         this.extra.lastContentHeight = this.extra.contentHeight
         this.extra.contentHeight = contentHeight
-        // console.log(this.extra)
-        const offset = this.extra.contentHeight - this.extra.lastContentHeight
-        // console.log(offset)
+        this.extra.count++
+        const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
+        if(this.extra.count === 2 ){
+            this.refs.scrollView.scrollToEnd({animated: false})
 
-        this.refs.scrollView.scrollTo({x: 0, y:offset , animated: false})
+        }else if(this.extra.count > 2){
+            if(this.extra.isRefreshingControl){
+                this.refs.scrollView.scrollTo({x: 0, y:offset , animated: false})
+                this.extra.isRefreshingControl = false
+            }else{
+                this.refs.scrollView.scrollToEnd({animated: false})
+            }
+
+        }
 
     }
 
