@@ -81,6 +81,16 @@ export default class VersionView extends Component<{}> {
                                                     duration: 3000
                                                 })
                                             })
+                                        },
+                                        errorCb:()=>{
+                                            afterCheck().then(()=>{
+                                                Toast.show({
+                                                    text: '检查更新出错了',
+                                                    position: "top",
+                                                    type:"error",
+                                                    duration: 3000
+                                                })
+                                            })
                                         }
                                     })
                                  })
