@@ -11,7 +11,7 @@
 					<key>kind</key>
 					<string>software-package</string>
 					<key>url</key>
-					<string>http://172.18.1.181:3000/pkg/ios/LK.ipa</string>
+					<string>http://192.168.1.101:3000/pkg/ios/LK.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
