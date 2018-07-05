@@ -1,6 +1,7 @@
 const diffConfig  = {
-    host:"172.18.1.181",
-    isPreviewVersion:false,
+    host:"192.144.172.30",
+    isPreviewVersion:true,
+    previewVersion:"0.0.1"
 }
 
 module.exports = diffConfig

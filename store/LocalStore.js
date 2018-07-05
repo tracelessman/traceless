@@ -223,7 +223,7 @@ Store._insertRecord2Local = function (chatId,record,callback) {
 Store._updateLocalRecordState = function (chatId,msgIds,state,callback,senderCid) {
     var doit = function () {
         if(msgIds){
-            var sql = "update record set state=? where chatId=? and senderUid is null and msgId ";
+            var sql = "update record set state=? where state<? and chatId=? and senderUid is null and msgId ";
             var update = false;
             if(isNaN(msgIds.length)){
                 sql += "='"
@@ -245,7 +245,7 @@ Store._updateLocalRecordState = function (chatId,msgIds,state,callback,senderCid
             }
             if(update){
                 db.transaction((tx)=>{
-                    tx.executeSql(sql,[state,chatId],function () {
+                    tx.executeSql(sql,[state,state,chatId],function () {
                         if(callback)
                             callback();
                     },function (err) {

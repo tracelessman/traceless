@@ -6,22 +6,28 @@ const diffConfig = require('./diffConfig')
 const port = 3000
 const protocol = "http"
 const RNFS = require('react-native-fs')
+import { NetworkInfo } from 'react-native-network-info';
 
-const url = `${protocol}://${diffConfig.host}:${port}`
+
 const config = {
     appId:"traceless",
     appName,
     publishFolderName,
     publishBranch,
     spiritUid:"aa45eeb9-bb74-4c01-870d-39d8e7110c29",
-    url,
     devLogPath:RNFS.DocumentDirectoryPath + '/devLog.txt',
     errorLogPath:RNFS.DocumentDirectoryPath + '/errorLog.txt',
+    isDevMode:false,
+    ...diffConfig
 }
+setUrl(diffConfig.host)
 
-config.checkUpdateUrl = `${config.url}/checkUpdateGeneral`
 
 
-module.exports = {
-    ...config,...diffConfig
+
+module.exports = config
+
+function setUrl(serverIp){
+    config.url = `${protocol}://${serverIp}:${port}`
+    config.checkUpdateUrl = `${config.url}/checkUpdateGeneral`
 }

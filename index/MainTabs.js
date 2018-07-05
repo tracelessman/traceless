@@ -9,7 +9,7 @@ import AddContactView from '../contact/AddContactView';
 import RequireListView from '../contact/RequireListView';
 import FriendInfoView from '../contact/FriendInfoView';
 import MineView from '../mine/MineView';
-import ChatView from '../recent/ChatView'
+import ChatView from '../chat/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
@@ -19,6 +19,9 @@ import VersionView from '../mine/VersionView'
 import DevView from '../mine/DevView'
 import RenameView from '../mine/RenameView'
 import BasicInfoView from '../mine/BasicInfoView'
+import DataQrView from '../dev/DataQrView'
+import InfoView from '../dev/InfoView'
+import FetchDataView from '../dev/FetchDataView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -154,6 +157,18 @@ let MainStack = StackNavigator({
             headerTitle: '扫描二维码'
         }
     },
+    FetchDataView:{
+        screen:FetchDataView,
+        navigationOptions:{
+            headerTitle: '获取数据'
+        }
+    },
+    InfoView:{
+        screen:InfoView,
+        navigationOptions:{
+            headerTitle: 'App信息'
+        }
+    },
     QrcodeView:{
         screen:QrcodeView,
         navigationOptions:{
@@ -199,7 +214,13 @@ let MainStack = StackNavigator({
     DevView:{
         screen:DevView,
         navigationOptions:{
-            headerTitle: 'DEBUG'
+            headerTitle: 'devTools'
+        }
+    },
+    DataQrView:{
+        screen:DataQrView,
+        navigationOptions:{
+            headerTitle: '数据二维码'
         }
     }
 }, {

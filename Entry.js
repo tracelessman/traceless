@@ -10,6 +10,8 @@ import {
 import AppUtil from "./AppUtil"
 import {Root, Spinner, Toast} from "native-base"
 import App from './App'
+import ActionSheet from '@expo/react-native-action-sheet';
+import PropTypes from 'prop-types'
 
 console.ignoredYellowBox = ['Setting a timer','Remote debugger']
 
@@ -28,19 +30,31 @@ export default class Entry extends Component<{}> {
 
     }
 
+    getChildContext = ()=>{
+        return {
+            actionSheet: () => this._actionSheetRef,
+        };
+    }
+
     render() {
 
         return (
             <Root>
-                <View style={styles.container}>
-                    <App></App>
-                </View>
+                <ActionSheet ref={(component) => (this._actionSheetRef = component)}>
+                    <View style={styles.container}>
+                        <App></App>
+                    </View>
+                </ActionSheet>
             </Root>
 
         );
     }
 
 }
+
+Entry.childContextTypes = {
+    actionSheet: PropTypes.func,
+};
 
 const styles = StyleSheet.create({
     container: {

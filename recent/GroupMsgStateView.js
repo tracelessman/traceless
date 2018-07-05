@@ -64,7 +64,7 @@ export default class GroupMsgStateView extends Component<{}> {
             for(let i=0;i<members.length;i++){
                 let f = members[i];
                 if(f.uid!=Store.getCurrentUid()){
-                    let state = rec.state;
+                    let state = rec.state>Store.MESSAGE_STATE_SERVER_RECEIVE?Store.MESSAGE_STATE_SERVER_RECEIVE:rec.state;
                     for(let j=0;j<states.length;j++){
                         if(states[j].reporterUid == f.uid){
                             state = states[j].state;

@@ -57,6 +57,7 @@ const netInfoUtil = {
     },1000*60),
     httpPost(option){
         const {offlineCb,url,param} = option
+
         return new Promise(resolve=>{
             this.webConnet(()=>{
                 fetch(url, {

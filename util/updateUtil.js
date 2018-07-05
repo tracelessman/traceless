@@ -13,7 +13,7 @@ let downloadApkCount = 0
 
 const updateUtil = {
     checkUpdateGeneral:async function(option){
-        const {name,uid,beforeUpdate,noUpdateCb} = option
+        const {name,uid,beforeUpdate,noUpdateCb,errorCb} = option
         const result = await netInfoUtil.httpPost({
             url:config.checkUpdateUrl,
             param:{
@@ -23,9 +23,10 @@ const updateUtil = {
                 uniqueId:DeviceInfo.getUniqueID(),
                 uid,
                 versionLocal:require('../package').version,
-                isPreviewVersion:config.isPreviewVersion,
-                buildNumberClient:DeviceInfo.getBuildNumber(),
+                "previewVersion":config.previewVersion,
+                buildNumberClient:DeviceInfo.getVersion(),
                 "__DEV__":__DEV__,
+                "isDevMode":config.isDevMode,
             }
         })
         if(__DEV__){
@@ -34,21 +35,33 @@ const updateUtil = {
 
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
             ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
-            newVersion,serverVersion,buildNumberServer} = result
+            newVersion,serverVersion,buildNumberServer,error} = result
 
-        if(needUpdate){
-            if(isHotUpdate){
-                this.hotUpdate({
-                    beforeUpdate,noUpdateCb,result
-                })
-            }else{
-                this.nativeUpdate({
-                    beforeUpdate,noUpdateCb,result
-                })
-            }
+        if(error){
+            errorReportUtil.errorReport({
+                type:"checkUpdateGeneral",
+                errorStr:error,
+                level:10
+            })
+            commonUtil.runFunc(errorCb)
+
         }else{
-            commonUtil.runFunc(noUpdateCb)
+            if(needUpdate){
+                if(isHotUpdate){
+                    this.hotUpdate({
+                        beforeUpdate,noUpdateCb,result
+                    })
+                }else{
+                    this.nativeUpdate({
+                        beforeUpdate,noUpdateCb,result
+                    })
+                }
+            }else{
+                commonUtil.runFunc(noUpdateCb)
+            }
         }
+
+
     },
     async informUpdate(result,beforeUpdate ,updateNow){
         if(beforeUpdate){
@@ -74,7 +87,7 @@ const updateUtil = {
             }
             Alert.alert(
                 '提示',
-                `有最新版本${newVersion},${ask}`,
+                `有最新${isPreviewVersion?"预览":""}版本${newVersion},${ask}`,
                 optionAry,
                 { cancelable: false }
             )
@@ -109,7 +122,7 @@ const updateUtil = {
             {
                 text: '确认',
                 onPress:()=>{
-                    Linking.openURL().catch(error => {
+                    Linking.openURL(manualDownloadUrl).catch(error => {
                         errorReportUtil.errorReportForError({
                             error,
                             type:`Linking.openURL(${manualDownloadUrl})`
@@ -157,6 +170,8 @@ const updateUtil = {
                 })
             }else{
                 this.informUpdate(result,beforeUpdate, () => {
+                    console.log(manifestUrl)
+
                     Linking.openURL(manifestUrl)
                 })
 
@@ -175,11 +190,13 @@ const updateUtil = {
             update : true
         }
         try{
-            downloadUpdate(param).then(hash=>{
-                this.informUpdate(result,beforeUpdate,()=>{
+            //一旦downloadUpdate,下次重启必然更新
+            this.informUpdate(result,beforeUpdate,()=>{
+                downloadUpdate(param).then(hash=>{
                     switchVersion(hash)
                 })
             })
+
         }catch(error){
             commonUtil.runFunc(noUpdateCb)
             this.manualUpdate({

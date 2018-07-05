@@ -10,7 +10,7 @@ const start = Date.now()
 const argv = require('yargs').argv
 const axios = require('axios')
 const fse = require('fs-extra')
-const config = require('../config')
+const config = require('../config/devConfig')
 let {appName,publishFolderName} = config
 
 appName = 'traceless'

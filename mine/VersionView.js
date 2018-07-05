@@ -52,17 +52,8 @@ export default class VersionView extends Component<{}> {
                             },1000*10)
                         }} >
 
-                           当前版本:{versionLocal}
+                            {config.isPreviewVersion?"预览版本":"当前版本"}:{versionLocal}
                         </Text>
-                        {/*<Text selectable style={style.itemStyle} >*/}
-                            {/*设备标识:*/}
-                        {/*</Text>*/}
-                        {/*<Text selectable style={style.itemStyle} >*/}
-                            {/*开发模式:{__DEV__?"是":"否"}*/}
-                        {/*</Text>*/}
-                        {/*<Text selectable style={style.itemStyle} >*/}
-                            {/*bundleId:{DeviceInfo.getBundleId()}*/}
-                        {/*</Text>*/}
                         <View style={{marginVertical:20}}>
                             <Button iconLeft  info disabled={this.state.checking} onPress={debounceFunc(()=> {
 
@@ -90,6 +81,16 @@ export default class VersionView extends Component<{}> {
                                                     duration: 3000
                                                 })
                                             })
+                                        },
+                                        errorCb:()=>{
+                                            afterCheck().then(()=>{
+                                                Toast.show({
+                                                    text: '检查更新出错了',
+                                                    position: "top",
+                                                    type:"error",
+                                                    duration: 3000
+                                                })
+                                            })
                                         }
                                     })
                                  })
@@ -98,16 +99,6 @@ export default class VersionView extends Component<{}> {
                                 <Text>检查更新</Text>
                             </Button>
                         </View>
-                        {/*<View>*/}
-                            {/*<Button iconLeft  info onPress={debounceFunc(()=>{*/}
-
-                                {/*this.props.navigation.navigate('DevView',{*/}
-                                {/*})*/}
-                            {/*})}>*/}
-                                {/*<Icon name='refresh' />*/}
-                                {/*<Text>debug</Text>*/}
-                            {/*</Button>*/}
-                        {/*</View>*/}
                     </View>
                 </Card>
                 {this.state.checking?<Spinner color='blue' style={{position:"absolute",top:"10%"}}/>:null}
