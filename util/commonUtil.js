@@ -14,6 +14,9 @@ const commonUtil = {
             trailing:false
         })
     },
+    getFolderId(filePath){
+        return filePath.split('/')[6]
+    }
 }
 
 module.exports = commonUtil
