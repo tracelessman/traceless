@@ -3,9 +3,11 @@ const rootPath = path.resolve(__dirname,'../')
 const devDiffConfig = require("./devDiffConfig")
 const fs = require('fs')
 const fse = require('fs-extra')
-const isPreviewVersion  = true
-const middlePath = isPreviewVersion?"preview/":""
 
+const isPreviewVersion  = true
+
+
+const middlePath = isPreviewVersion?"preview/":""
 const devConfig = {
     ...JSON.parse(fs.readFileSync(path.resolve(__dirname,'common.json'),"utf8").trim()),
     ...devDiffConfig,

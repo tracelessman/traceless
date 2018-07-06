@@ -10,7 +10,7 @@ const hostObj  = {
 
 const diffConfig  = {
     host:hostObj[location],
-    previewVersion:"0.0.2",
+    previewVersion:"0.0.1",
     nextVersion:"0.2.1",
     hostObj
 }
