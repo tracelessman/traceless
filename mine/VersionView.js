@@ -44,6 +44,7 @@ export default class VersionView extends Component<{}> {
                         <Text selectable style={style.itemStyle} onPress={()=>{
                             this.count++
                             if(this.count > 10){
+                                config.isDevMode = true
                                 Alert.alert('你已进入开发模式')
                             }
 
@@ -52,7 +53,7 @@ export default class VersionView extends Component<{}> {
                             },1000*10)
                         }} >
 
-                            {config.isPreviewVersion?"预览版本":"当前版本"}:{versionLocal}
+                            {config.isPreviewVersion?`预览版本:${config.nextVersion}(${config.previewVersion})`:`当前版本:${versionLocal}`}
                         </Text>
                         <View style={{marginVertical:20}}>
                             <Button iconLeft  info disabled={this.state.checking} onPress={debounceFunc(()=> {

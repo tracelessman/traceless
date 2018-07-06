@@ -69,7 +69,7 @@ const updateUtil = {
             await beforeUpdate()
         }
         const {needUpdate,isForce,hash,os,isHotUpdate,apkUrl,manifestUrl,
-            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,
+            ppkUrl,manualDownloadUrl,isPreviewVersion,fileName,updatePlatform,nextVersion,
             newVersion,serverVersion,buildNumberServer,isSilent} = result
         if(isSilent){
             updateNow()
@@ -88,7 +88,7 @@ const updateUtil = {
             }
             Alert.alert(
                 '提示',
-                `有最新${isPreviewVersion?"预览":""}版本${newVersion},${ask}`,
+                `有${isPreviewVersion?`预览版本${nextVersion}`:`最新版本${newVersion}`},${ask}`,
                 optionAry,
                 { cancelable: false }
             )
