@@ -5,7 +5,9 @@ import WSChannel from "../channel/LocalWSChannel";
 import {Toast} from "native-base";
 const errorReportUtil = require('./errorReportUtil')
 const commonUtil = require('./commonUtil')
+const devUtil = require('./devUtil')
 import Store from "../store/LocalStore"
+const state = require('../state')
 
 const netInfoUtil = {
     init(){
@@ -21,6 +23,22 @@ const netInfoUtil = {
         );
         WSChannel.on("badnetwork",()=>{
             if(this.online){
+                const timeDiff = Math.abs(state.reOpenTime.getTime() - new Date())
+                devUtil.debugToLog(timeDiff)
+
+                if(timeDiff > 1000*60){
+                    // Toast.show({
+                    //     text: '网络不给力',
+                    //     position: "top",
+                    //     type:"warning",
+                    //     duration: 5000
+                    // })
+                    // errorReportUtil.errorReport({
+                    //     errorStr:`can not connect to ${Store.getCurrentServer()}`,
+                    //     type:"badnetwork",
+                    //     level:10
+                    // })
+                }
                 Toast.show({
                     text: '网络不给力',
                     position: "top",
@@ -38,6 +56,8 @@ const netInfoUtil = {
 
         })
     },
+
+    //todo:应该放在状态管理里
     online:true,
     webConnet(func,offlineCb){
         if(this.online){

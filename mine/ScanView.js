@@ -2,10 +2,15 @@
  * Created by renbaogang on 2018/2/8.
  */
 import React, { Component} from 'react';
-import { Button,Image,StyleSheet,Switch,Text,TextInput,TouchableOpacity,View} from 'react-native';
+import {Alert, Button, Image, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Camera from 'react-native-camera';
 import Store from "../store/LocalStore"
 import { NetworkInfo } from 'react-native-network-info';
+import RNFetchBlob from "react-native-fetch-blob";
+const util = require('../util')
+const AppUtil = require('../AppUtil')
+const {debounceFunc} = util
+const config = require('../config')
 
 export default class ScanView extends Component<{}> {
 
@@ -20,17 +25,51 @@ export default class ScanView extends Component<{}> {
     onBarCodeRead =(e) =>{
         try{
             let d = JSON.parse(e.data);
-            if(d.code=="traceless"&&!this.data){
-                if(d.action=="authorize"){
-                    this.setState({msg:"等待目标设备响应..."});
-                    this.data = d;
-                    this.authorizeOther();
-                }else if(d.action==this.action){
-                    this.setState({msg:"扫码成功..."});
-                    this.data = d;
-                    this.parent.afterScan(d);
+
+            if(d.action === 'fetchData'){
+                const {uid,clientId} = d
+                const tmpFilePath =  `${RNFetchBlob.fs.dirs.CacheDir}/${uid}.json`
+
+                RNFetchBlob.config({
+                    useDownloadManager : true,
+                    fileCache : true,
+                    path:tmpFilePath
+                }).fetch('GET',`${config.url}/upload/${uid}.json`).then((res)=>{
+                    RNFetchBlob.fs.readFile(tmpFilePath, 'utf8')
+                        .then((data) => {
+                            let keyData = JSON.parse(data)
+
+
+                            keyData.clientId = clientId
+                            Store.data.splice(0,1,keyData);
+                            Store._save();
+
+                            setTimeout(()=>{
+                                AppUtil.reset();
+                            },1000*5)
+
+
+                        })
+
+
+                }).catch(err=>{
+                    console.log(err)
+                    Alert.alert('error')
+                })
+            }else{
+                if(d.code=="traceless"&&!this.data){
+                    if(d.action=="authorize"){
+                        this.setState({msg:"等待目标设备响应..."});
+                        this.data = d;
+                        this.authorizeOther();
+                    }else if(d.action==this.action){
+                        this.setState({msg:"扫码成功..."});
+                        this.data = d;
+                        this.parent.afterScan(d);
+                    }
                 }
             }
+
         }catch(e){
 
         }
@@ -118,7 +157,7 @@ export default class ScanView extends Component<{}> {
                 <View style={styles.container}>
 
                     <Camera
-                        onBarCodeRead={this.onBarCodeRead}
+                        onBarCodeRead={debounceFunc(this.onBarCodeRead,1000*2)}
                         style={styles.preview}
                         aspect={Camera.constants.Aspect.full}>
                         <View style={{flex:1,backgroundColor:"#000",opacity:0.5,width:"100%"}}/>

@@ -13,6 +13,7 @@ import ChatView from '../chat/ChatView'
 import AddGroupView from '../recent/AddGroupView'
 import GroupInfoView from '../recent/GroupInfoView'
 import ScanView from '../mine/ScanView'
+import LogView from '../dev/LogView'
 import QrcodeView from '../mine/QrcodeView'
 import UidView from '../mine/UidView'
 import VersionView from '../mine/VersionView'
@@ -21,7 +22,7 @@ import RenameView from '../mine/RenameView'
 import BasicInfoView from '../mine/BasicInfoView'
 import DataQrView from '../dev/DataQrView'
 import InfoView from '../dev/InfoView'
-import FetchDataView from '../dev/FetchDataView'
+import SetHostView from '../dev/SetHostView'
 import GroupMsgStateView from '../recent/GroupMsgStateView'
 import AddGroupMemberView from '../recent/AddGroupMemberView'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -157,10 +158,10 @@ let MainStack = StackNavigator({
             headerTitle: '扫描二维码'
         }
     },
-    FetchDataView:{
-        screen:FetchDataView,
+    SetHostView:{
+        screen:SetHostView,
         navigationOptions:{
-            headerTitle: '获取数据'
+            headerTitle: '设置更新服务器'
         }
     },
     InfoView:{
@@ -222,7 +223,13 @@ let MainStack = StackNavigator({
         navigationOptions:{
             headerTitle: '数据二维码'
         }
-    }
+    },
+    LogView:{
+        screen:LogView,
+        navigationOptions:{
+            headerTitle: '日志'
+        }
+    },
 }, {
     transitionConfig:function transitionConfig(){
         return {

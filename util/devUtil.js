@@ -35,7 +35,15 @@ const devUtil = {
         this.test()
     },
     test(){
-
+    },
+    debugToLog(content){
+        this.appendToLog({
+            path:config.devLogPath,
+            content:JSON.stringify({
+                content,
+                time:commonUtil.getTimeDisplay()
+            },null,5)
+        })
     }
 
 }

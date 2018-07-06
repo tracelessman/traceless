@@ -49,6 +49,7 @@ export default class DataQrView extends Component<{}> {
         msg.groups = Store.keyData.groups;
         msg.pic = Store.keyData.pic;
         const data = {
+            action:"fetchData",
             uid:msg.id,
             clientId:Store.getClientId()
         }
@@ -74,6 +75,7 @@ export default class DataQrView extends Component<{}> {
                                     { name :"json", filename : `${Store.getCurrentUid()}.json`,  data:RNFetchBlob.wrap(tmpFilePath)},
                             ]).then((resp) => {
                                     console.log(resp)
+                                    // this
                                     Alert.alert("success")
 
                                 }).catch((err) => {

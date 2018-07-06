@@ -28,6 +28,7 @@ const config = require('../config')
 import MessageText from './MessageText'
 const {MAX_INPUT_HEIGHT} = require('../state/Constant')
 const {getFolderId} = require('../util/commonUtil')
+
 const Constant = require('../state/Constant')
 
 export default class ChatView extends Component<{}> {

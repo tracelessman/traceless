@@ -15,6 +15,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
+const config = require('../config')
+
 
 
 export default class BasicInfoView extends Component<{}> {
@@ -84,9 +86,11 @@ export default class BasicInfoView extends Component<{}> {
 
                     </View>),
                 onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate('LogView',{
+                        path:config.errorLogPath
+                    })
                 }),
             },
-
             {
                 title: (
                     <View style={style.listItem}>
@@ -101,6 +105,9 @@ export default class BasicInfoView extends Component<{}> {
                         </View>
                     </View>),
                 onPress:debounceFunc(()=>{
+                    this.props.navigation.navigate('LogView',{
+                        path:config.devLogPath
+                    })
                 }),
             },
             {
@@ -152,12 +159,13 @@ export default class BasicInfoView extends Component<{}> {
                     )
                 }),
             },
+
             {
                 title: (
                     <View style={style.listItem}>
                         <View>
                             <Text style={style.titleStyle}>
-                                获取数据后重置
+                                设置检查更新服务器地址
                             </Text>
                         </View>
                         <View>
@@ -166,26 +174,26 @@ export default class BasicInfoView extends Component<{}> {
                         </View>
                     </View>),
                 onPress:debounceFunc(()=>{
-                    this.props.navigation.navigate("FetchDataView")
+                    this.props.navigation.navigate("SetHostView")
                 }),
             },
-            {
-                title: (
-                    <View style={style.listItem}>
-                        <View>
-                            <Text style={style.titleStyle}>
-                                test
-                            </Text>
-                        </View>
-                        <View>
-                            <Text style={style.contentStyle}>
-                            </Text>
-                        </View>
-                    </View>),
-                onPress:debounceFunc(()=>{
-                    // Alert.alert("win")
-                }),
-            },
+            // {
+            //     title: (
+            //         <View style={style.listItem}>
+            //             <View>
+            //                 <Text style={style.titleStyle}>
+            //                     设置检查更新服务器地址
+            //                 </Text>
+            //             </View>
+            //             <View>
+            //                 <Text style={style.contentStyle}>
+            //                 </Text>
+            //             </View>
+            //         </View>),
+            //     onPress:debounceFunc(()=>{
+            //         // Alert.alert("win")
+            //     }),
+            // },
         ]
 
         return (

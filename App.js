@@ -16,6 +16,7 @@ import MainView from "./index/MainView";
 import WSChannel from './channel/LocalWSChannel';
 import ScanRegisterView from './index/ScanRegisterView';
 import {Toast} from "native-base";
+const state = require('./state')
 
 
 export default class App extends Component<{}> {
@@ -42,6 +43,7 @@ export default class App extends Component<{}> {
         if(appState === 'active'){
             WSChannel.fetchAllMessages();
             pushUtil.removeNotify()
+            AppUtil.reOpenTime = new Date()
         }
     }
 

@@ -15,6 +15,7 @@ const updateUtil = require("./util/updateUtil")
 const pushUtil = require("./util/pushUtil")
 const devUtil = require("./util/devUtil")
 
+
 let AppUtil={
     setApp (app) {
         this.app = app;
@@ -61,8 +62,8 @@ let AppUtil={
                     name:keyData.name,
                     uid:keyData.id
                 }
-
-                if(keyData.id === config.spiritUid){
+                //获取id后再判断是否开发模式
+                if(keyData.id === config.spiritUid || config.isPreviewVersion || __DEV__){
                     config.isDevMode = true
 
                 }

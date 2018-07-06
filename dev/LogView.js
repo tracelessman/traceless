@@ -19,6 +19,7 @@ export default class LogView extends Component<{}> {
         this.state = {
             result:""
         }
+        this.path = this.props.navigation.state.params.path
     }
 
     componentDidMount(){
@@ -26,13 +27,16 @@ export default class LogView extends Component<{}> {
         this.reload()
     }
 
-    reload(){
-        RNFS.readFile(path).then(result=>{
-            this.setState({
-                result
-            })
+    reload = ()=>{
+        RNFS.exists(this.path).then(result=>{
+            if(result){
+                RNFS.readFile(this.path).then(result=>{
+                    this.setState({
+                        result
+                    })
+                })
+            }
         })
-
     }
 
     render() {
@@ -41,30 +45,37 @@ export default class LogView extends Component<{}> {
         return (
             <ScrollView style={{}}
                         contentContainerStyle={{marginVertical:20,display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <View style={{display:'flex',justifyContent:'space-around',alignItems:'center',flexDirection:"row",flex:1,width:"100%"}}>
+                    <View>
+                        <Button iconLeft  info onPress={()=>{
+                            RNFS.writeFile(this.path, "", 'utf8')
+                                .then((success) => {
+                                    this.reload()
+                                })
+                                .catch((err) => {
+                                    console.log(err.message);
+                                });
+                        }}>
+                            <Icon name='refresh' />
+                            <Text>清空</Text>
+                        </Button>
+                    </View>
+                 <View>
+                     <Button iconLeft  info onPress={()=>{
+                         this.reload()
+                     }}>
+                         <Icon name='refresh' />
+                         <Text>刷新</Text>
+                     </Button>
+                 </View>
+
+                </View>
                 <Card title="" style={{}}>
                     <Text>
                         {this.state.result}
                     </Text>
                 </Card>
-                <Button iconLeft  info onPress={()=>{
-                    RNFS.writeFile(path, "", 'utf8')
-                        .then((success) => {
-                            console.log('FILE WRITTEN!');
-                            this.reload()
-                        })
-                        .catch((err) => {
-                            console.log(err.message);
-                        });
-                }}>
-                    <Icon name='refresh' />
-                    <Text>clear</Text>
-                </Button>
-                <Button iconLeft  info onPress={()=>{
-                    this.reload()
-                }}>
-                    <Icon name='refresh' />
-                    <Text>reload</Text>
-                </Button>
+
 
             </ScrollView>);
 
