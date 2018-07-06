@@ -102,7 +102,7 @@ const pushUtil = {
         return new Promise(resolve=>{
             PushNotificationIOS.addEventListener('register', (deviceId) => {
                 if(__DEV__ && Platform.OS === 'ios'){
-                    console.log(`deviceId APN: ${deviceId}`)
+                    // console.log(`deviceId APN: ${deviceId}`)
 
                 }
 
