@@ -39,7 +39,12 @@ export default class SetHostView extends Component<{}> {
     }
 
     onValueChange = (value)=>{
-        config.host = value
+        this.resetUpdateUrl(value)
+
+    }
+
+    resetUpdateUrl = (host)=>{
+        config.checkUpdateUrl = `http://${host}:3000/checkUpdateGeneral`
         this.setState({
             update:true
         })
@@ -54,7 +59,15 @@ export default class SetHostView extends Component<{}> {
         }
         return (
             <View style={{display:'flex',justifyContent:"center",alignItems:"center",marginVertical:15}}>
-                <Label >当前更新服务器IP: {config.host}</Label>
+                <View>
+                    <Label >当前更新服务器IP:</Label>
+
+                </View>
+                <View>
+                    <Label >{config.checkUpdateUrl}</Label>
+
+                </View>
+
                 <View style={{display:'flex',justifyContent:"center",alignItems:"center",marginVertical:15}}>
                     <Item floatingLabel last >
                         <Label>手动设置</Label>
@@ -65,9 +78,7 @@ export default class SetHostView extends Component<{}> {
                     <Button iconLeft style={{width:100}}  info onPress={debounceFunc(()=>{
                         if(this.input){
                             //TODO ip 校验
-
-                            config.host = this.input.trim()
-                            this.setState({update:true})
+                            this.resetUpdateUrl(this.input.trim())
                         }else{
                             Alert.alert('请输入合法的IP地址')
                         }
@@ -76,12 +87,12 @@ export default class SetHostView extends Component<{}> {
                         <Text>设置</Text>
                     </Button>
                 </View>
-                <Form>
+                <Form style={{display:'flex',justifyContent:"center",alignItems:"center",marginVertical:15}}>
                     <Item picker last>
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="ios-arrow-down-outline" />}
-                            style={{ width: "80%" }}
+                            style={{ width: "60%" }}
                             placeholder="选择IP"
                             placeholderStyle={{ color: "#bfc6ea" }}
                             placeholderIconColor="#007aff"
