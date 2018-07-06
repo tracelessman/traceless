@@ -16,6 +16,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
 const config = require('../config')
+import RNRestart from 'react-native-restart';
 
 
 
@@ -182,7 +183,7 @@ export default class BasicInfoView extends Component<{}> {
             //         <View style={style.listItem}>
             //             <View>
             //                 <Text style={style.titleStyle}>
-            //                     设置检查更新服务器地址
+            //                     test
             //                 </Text>
             //             </View>
             //             <View>
@@ -191,7 +192,7 @@ export default class BasicInfoView extends Component<{}> {
             //             </View>
             //         </View>),
             //     onPress:debounceFunc(()=>{
-            //         // Alert.alert("win")
+            //         RNRestart.Restart()
             //     }),
             // },
         ]

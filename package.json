@@ -43,6 +43,7 @@
     "react-native-parsed-text": "0.0.20",
     "react-native-progress": "^3.4.0",
     "react-native-qrcode-svg": "^5.0.5",
+    "react-native-restart": "0.0.6",
     "react-native-rsa": "0.0.3",
     "react-native-sqlite-storage": "^3.3.4",
     "react-native-svg": "^5.5.1",

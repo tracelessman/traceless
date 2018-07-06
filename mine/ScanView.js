@@ -11,6 +11,8 @@ const util = require('../util')
 const AppUtil = require('../AppUtil')
 const {debounceFunc} = util
 const config = require('../config')
+import RNRestart from 'react-native-restart';
+import {Toast} from 'native-base'
 
 export default class ScanView extends Component<{}> {
 
@@ -24,29 +26,41 @@ export default class ScanView extends Component<{}> {
 
     onBarCodeRead =(e) =>{
         try{
+
             let d = JSON.parse(e.data);
 
             if(d.action === 'fetchData'){
-                const {uid,clientId} = d
+                let {uid,clientId,host} = d
+                if(!host){
+                    host = config.hostObj.office
+                }
                 const tmpFilePath =  `${RNFetchBlob.fs.dirs.CacheDir}/${uid}.json`
 
                 RNFetchBlob.config({
                     useDownloadManager : true,
                     fileCache : true,
                     path:tmpFilePath
-                }).fetch('GET',`${config.url}/upload/${uid}.json`).then((res)=>{
+                }).fetch('GET',`http://${host}:3000/upload/${uid}.json`).then((res)=>{
                     RNFetchBlob.fs.readFile(tmpFilePath, 'utf8')
                         .then((data) => {
                             let keyData = JSON.parse(data)
 
 
                             keyData.clientId = clientId
+                            if(!Store.data){
+                                Store.data = []
+                            }
                             Store.data.splice(0,1,keyData);
                             Store._save();
-
+                            this.parent.hideScanView();
+                            const duration = 1000*4
+                            Toast.show({
+                                text:"请稍候...",
+                                duration
+                            })
                             setTimeout(()=>{
-                                AppUtil.reset();
-                            },1000*5)
+                                RNRestart.Restart();
+                            },duration)
 
 
                         })

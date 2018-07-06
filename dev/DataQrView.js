@@ -51,7 +51,8 @@ export default class DataQrView extends Component<{}> {
         const data = {
             action:"fetchData",
             uid:msg.id,
-            clientId:Store.getClientId()
+            clientId:Store.getClientId(),
+            host:config.hostObj.office
         }
 
         return (
