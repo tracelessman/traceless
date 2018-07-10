@@ -4,7 +4,7 @@ const devDiffConfig = require("./devDiffConfig")
 const fs = require('fs')
 const fse = require('fs-extra')
 
-const isPreviewVersion  = true
+const isPreviewVersion  = false
 
 
 const middlePath = isPreviewVersion?"preview/":""
