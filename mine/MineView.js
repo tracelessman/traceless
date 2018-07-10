@@ -99,7 +99,7 @@ export default class MineView extends Component<{}> {
                 onPress:this.showScanView
             },
             {
-                title:config.isPreviewVersion?`当前版本:${versionLocal}`:`预览版本:${versionLocal}`,
+                title:config.isPreviewVersion?`预览版本:${versionLocal}`:`当前版本:${versionLocal}`,
                 icon:'new-releases',
                 onPress:debounceFunc(()=>{
                     this.props.navigation.navigate('VersionView',{
