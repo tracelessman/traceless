@@ -11,7 +11,6 @@ const hostObj  = {
 const diffConfig  = {
     host:hostObj[location],
     previewVersion:"",
-    nextVersion:"0.2.2",
     hostObj
 }
 diffConfig.isPreviewVersion = Boolean(diffConfig.previewVersion)
