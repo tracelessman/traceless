@@ -61,6 +61,7 @@
 		CE66A2CC29D14545B79F895D /* libRCTRestart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C32B9A36E7C415FBB3100B8 /* libRCTRestart.a */; };
 		EE67EBE615BA4DAFBBC4AA3A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A52D65283F734E1D9F04789D /* FontAwesome.ttf */; };
 		F1F27B96016C44ADA8BC0907 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACDC99D4E983493CAEA45D92 /* EvilIcons.ttf */; };
+		FD1D92AA211E062F003114F7 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE536E220DCBD2000F45AA0 /* libRCTCameraRoll.a */; };
 		FD2811B120C8DA15007C11C1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		FD2811B220C8DA15007C11C1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		FD2811B420C8DA15007C11C1 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE5DAAB20C809FF00541C6B /* libbz2.tbd */; };
@@ -715,6 +716,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD1D92AA211E062F003114F7 /* libRCTCameraRoll.a in Frameworks */,
 				FDE5DAAC20C809FF00541C6B /* libbz2.tbd in Frameworks */,
 				FD43F4D920BBA297003D1655 /* libRCTPushNotification.a in Frameworks */,
 				FDB94DE420B28FAE00E7E23E /* libimageCropPicker.a in Frameworks */,

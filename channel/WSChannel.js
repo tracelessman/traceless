@@ -52,7 +52,7 @@ var WSChannel={
             this.ws.close();
             delete this.ws;
         }
-        if(!this.ws){
+        if(!this._openPromise){
             try{
                 this.ws = new WebSocket(url);
             }catch (e){
@@ -108,21 +108,31 @@ var WSChannel={
 
 
                 //error here
-                this.ws.onopen = function () {
-                    if(callback)
-                        callback(WSChannel.ws);
-                };
+                this._openPromise = new Promise(resolve => {
+                    this.ws.onopen = function () {
+                        resolve(WSChannel.ws)
+                        if(callback){
+                            callback(WSChannel.ws)
+                        }
+                    };
+                })
+
             }
         }else{
-            if(callback)
-                callback(this.ws);
+            (async()=>{
+                 await this._openPromise
+                if(callback){
+                    callback(this.ws)
+                }
+            })()
+
         }
     },
     _reLogin:function () {
         var delay = this._reloginDelay>=5000?5000:this._reloginDelay;
         var login = function () {
             WSChannel._reloginDelay+=1000;
-            delete WSChannel.ws;
+            delete WSChannel._openPromise;
             WSChannel.applyChannel(WSChannel.ip,function () {
                 WSChannel._reloginDelay=0;
                 if(Store.getLoginState()){
