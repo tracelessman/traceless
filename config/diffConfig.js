@@ -1,4 +1,4 @@
-const location = "home"
+const location = "server"
 
 const hostObj  = {
     office:"172.18.1.181",
