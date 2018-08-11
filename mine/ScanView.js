@@ -31,9 +31,8 @@ export default class ScanView extends Component<{}> {
 
             if(d.action === 'fetchData'){
                 let {uid,clientId,host} = d
-                if(!host){
-                    host = config.hostObj.office
-                }
+                host = config.host
+
                 const tmpFilePath =  `${RNFetchBlob.fs.dirs.CacheDir}/${uid}.json`
 
                 RNFetchBlob.config({
