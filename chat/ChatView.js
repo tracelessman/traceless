@@ -138,57 +138,54 @@ export default class ChatView extends Component<{}> {
                     const  style = {
                         recordEleStyle:{flexDirection:"row",justifyContent:"flex-start",alignItems:(records[i].type==Store.MESSAGE_TYPE_IMAGE?"flex-start":"flex-start"),width:"100%",marginTop:15}
                     }
-                    const ary = []
-                    if(!ary.includes(records[i].msgId)){
-                        ary.push(records[i].msgId)
-                        if(records[i].senderUid){
-                            let oldLzUid = "9711afa5-a07b-4a37-bbd4-5b3eaca81984"
-                            if(records[i].senderUid === oldLzUid ){
-                                continue
+
+                    if(records[i].senderUid){
+                        let oldLzUid = "9711afa5-a07b-4a37-bbd4-5b3eaca81984"
+                        if(records[i].senderUid === oldLzUid ){
+                            continue
+                        }
+                        if(this.isGroupChat && !this.groupMemberInfo[records[i].senderUid]){
+                            if(Store.getCurrentUid() === config.spiritUid){
+                                // Alert.alert("error",`${records[i].senderUid}`)
                             }
-                            if(this.isGroupChat && !this.groupMemberInfo[records[i].senderUid]){
-                                if(Store.getCurrentUid() === config.spiritUid){
-                                    // Alert.alert("error",`${records[i].senderUid}`)
-                                }
-                                // console.log(records[i].senderUid)
-                                // console.log(this.groupMemberInfo)
-                                continue
-                            }
-                            let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
+                            // console.log(records[i].senderUid)
+                            // console.log(this.groupMemberInfo)
+                            continue
+                        }
+                        let otherPicSource = AppUtil.getAvatarSource(this.isGroupChat?Store.getMember(this.otherSide.id,records[i].senderUid)?Store.getMember(this.otherSide.id,records[i].senderUid).pic:null:this.otherSide.pic);
 
-                            recordEls.push(  <View key={records[i].msgId} style={style.recordEleStyle}>
-                                <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
-                                <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
-                                    {this.isGroupChat?
-                                        <View style={{marginBottom:8,marginLeft:5}}>
-                                            <Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>
-                                        </View>
-                                        :null}
+                        recordEls.push(  <View key={records[i].msgId} style={style.recordEleStyle}>
+                            <Image source={otherPicSource} style={{width:40,height:40,marginLeft:5,marginRight:8}} resizeMode="contain"></Image>
+                            <View style={{flexDirection:"column",justifyContent:"center",alignItems:"flex-start",}}>
+                                {this.isGroupChat?
+                                    <View style={{marginBottom:8,marginLeft:5}}>
+                                        <Text style={{color:"#808080",fontSize:13}}> {this.groupMemberInfo[records[i].senderUid].name}</Text>
+                                    </View>
+                                    :null}
 
 
-                                    <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",}}>
-                                        <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                                        <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
-                                            {this._getMessage(records[i])}
-                                        </View>
+                                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"flex-start",}}>
+                                    <Image source={require('../images/chat-y-l.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                                    <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#f9e160",borderRadius:5,marginLeft:-2,minHeight:40,padding:10,overflow:"hidden"}}>
+                                        {this._getMessage(records[i])}
                                     </View>
                                 </View>
-                            </View>);
-                        }else{
-                            let iconName = this.getIconNameByState(records[i].state);
-                            let msgId = records[i].msgId;
-                            recordEls.push(<View key={msgId} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
-                                <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
-                                    <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(records[i].state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
-                                </TouchableOpacity>
-                                <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
-                                    {this._getMessage(records[i])}
-                                </View>
-                                {/*<Text>  {name}  </Text>*/}
-                                <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
-                                <Image source={picSource} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
-                            </View>);
-                        }
+                            </View>
+                        </View>);
+                    }else{
+                        let iconName = this.getIconNameByState(records[i].state);
+                        let msgId = records[i].msgId;
+                        recordEls.push(<View key={msgId} style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"flex-start",width:"100%",marginTop:10}}>
+                            <TouchableOpacity ChatView={this} msgId={msgId} onPress={this.doTouchMsgState}>
+                                <Ionicons name={iconName} size={20}  style={{marginRight:5,lineHeight:40,color:(records[i].state === Store.MESSAGE_STATE_SERVER_NOT_RECEIVE?"red":"black")}}/>
+                            </TouchableOpacity>
+                            <View style={{maxWidth:200,borderWidth:0,borderColor:"#e0e0e0",backgroundColor:"#ffffff",borderRadius:5,minHeight:40,padding:10,overflow:"hidden"}}>
+                                {this._getMessage(records[i])}
+                            </View>
+                            {/*<Text>  {name}  </Text>*/}
+                            <Image source={require('../images/chat-w-r.png')} style={{width:11,height:18,marginTop:11}} resizeMode="contain"></Image>
+                            <Image source={picSource} style={{width:40,height:40,marginRight:5,marginLeft:8}} resizeMode="contain"></Image>
+                        </View>);
                     }
 
                 }
@@ -515,7 +512,7 @@ export default class ChatView extends Component<{}> {
                             borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
                                 <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
                                     borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-                                           blurOnSubmit returnKeyType="send" enablesReturnKeyAutomatically
+                                           blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
                                            underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
                                            onChangeText={this.textChange}   onContentSizeChange={(event) => {
                                     let height = event.nativeEvent.contentSize.height
