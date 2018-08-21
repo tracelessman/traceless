@@ -45,11 +45,11 @@ const netInfoUtil = {
                     type:"warning",
                     duration: 5000
                 })
-                errorReportUtil.errorReport({
-                    errorStr:`can not connect to ${Store.getCurrentServer()}`,
-                    type:"badnetwork",
-                    level:10
-                })
+                // errorReportUtil.errorReport({
+                //     errorStr:`can not connect to ${Store.getCurrentServer()}`,
+                //     type:"badnetwork",
+                //     level:10
+                // })
             }else{
                 this.informNoConnection()
             }
