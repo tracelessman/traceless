@@ -29,8 +29,9 @@ const config = require('../config')
 import MessageText from './MessageText'
 const {MAX_INPUT_HEIGHT} = require('../state/Constant')
 const {getFolderId} = require('../util/commonUtil')
-
 const Constant = require('../state/Constant')
+import {Header} from 'react-navigation'
+import ActivityIndicator from './ActivityIndicator'
 
 export default class ChatView extends Component<{}> {
     static navigationOptions =({ navigation, screenProps }) => (
@@ -50,12 +51,15 @@ export default class ChatView extends Component<{}> {
     constructor(props){
         super(props);
         this.minHeight = 35
+        this.originalContentHeight = Dimensions.get("window").height - Header.HEIGHT
         this.isGroupChat = this.props.navigation.state.params.group?true:false;
         this.state={
             biggerImageVisible:false,
             heightAnim: 0,
             height:this.minHeight,
-            refreshing:false
+            refreshing:false,
+            msgViewHeight:this.originalContentHeight,
+            isInited:false
         };
 
         this.otherSide = this.props.navigation.state.params.friend||this.props.navigation.state.params.group;
@@ -193,7 +197,8 @@ export default class ChatView extends Component<{}> {
             this.setState({
                 recordEls,
                 refreshing:false,
-                imageUrls
+                imageUrls,
+                isInited:true
             })
         })
     }
@@ -222,12 +227,21 @@ export default class ChatView extends Component<{}> {
 
 
     _keyboardDidShow=(e)=>{
+        const {height} = Dimensions.get('window')
         let keyY = e.endCoordinates.screenY;
-        this.setState({heightAnim:Dimensions.get('window').height-keyY});
+        const headerHeight = Header.HEIGHT
+        let change = {}
 
+        if(this.extra.contentHeight + headerHeight < keyY){
+            change.msgViewHeight = keyY - headerHeight
+        }else{
+            change.heightAnim = height-keyY
+        }
+
+        this.setState(change)
     }
     _keyboardDidHide=(e)=>{
-        this.setState({heightAnim:0});
+        this.setState({heightAnim:0,msgViewHeight:this.originalContentHeight})
     }
 
     onReceiveMessage=(fromId)=>{
@@ -407,9 +421,9 @@ export default class ChatView extends Component<{}> {
             Store.getRecentChatRecord(this.ChatView.otherSide.id,this.msgId,null,(rec)=>{
                 if(rec&&rec.state==Store.MESSAGE_STATE_SERVER_NOT_RECEIVE){
                     if(rec.type==Store.MESSAGE_TYEP_TEXT)
-                        {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
+                    {WSChannel.resendMessage(rec.msgId,this.ChatView.otherSide.id,rec.content);}
                     else if(rec.type==Store.MESSAGE_TYPE_IMAGE)
-                        {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
+                    {WSChannel.resendImage(rec.msgId,this.ChatView.otherSide.id,JSON.parse(rec.content))}
                 }
             });
         }
@@ -438,7 +452,7 @@ export default class ChatView extends Component<{}> {
                 imgUri = "file://"+img.data;
 
             }
-           return <TouchableOpacity  onPress={()=>{this.showBiggerImage(imgUri,rec.msgId)}}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
+            return <TouchableOpacity  onPress={()=>{this.showBiggerImage(imgUri,rec.msgId)}}><Image source={{uri:imgUri}} style={{width:imgW,height:imgH}} resizeMode="contain"/></TouchableOpacity>;
         }else if(rec.type==Store.MESSAGE_TYPE_FILE){
             let file = JSON.parse(rec.content);
             return <TouchableOpacity><Ionicons name="ios-document-outline" size={40}  style={{marginRight:5,lineHeight:40}}></Ionicons><Text>{file.name}(请在桌面版APP里查看)</Text></TouchableOpacity>;
@@ -471,74 +485,72 @@ export default class ChatView extends Component<{}> {
 
     }
 
+
     onContentSizeChange=(contentWidth,contentHeight)=>{
-        this.extra.lastContentHeight = this.extra.contentHeight
+        this.extra.lastContentHeight = this.extra.msgViewHeight
         this.extra.contentHeight = contentHeight
         this.extra.count++
         const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
 
-        if(this.extra.count === 2 ){
+        if(this.extra.count === 1 ){
             this.refs.scrollView.scrollToEnd({animated: false})
-
-        }else if(this.extra.count > 2){
+        }else if(this.extra.count > 1){
             if(this.extra.isRefreshingControl){
                 this.refs.scrollView.scrollTo({x: 0, y:offset , animated: false})
                 this.extra.isRefreshingControl = false
             }else{
                 this.refs.scrollView.scrollToEnd({animated: false})
             }
-
         }
-
     }
 
     render() {
-        return (
-            <View style={{flex:1,backgroundColor:"#f0f0f0"}}>
+        const initedView =
+            <View style={{backgroundColor:"#f0f0f0",height:this.state.msgViewHeight}}>
                 <View style={{flex:1,flexDirection:"column",justifyContent:"flex-end",alignItems:"center",bottom:Platform.OS=="ios"?this.state.heightAnim:0}}>
-                    <ScrollView ref="scrollView" style={{width:"100%",flex:1}}
+                    <ScrollView ref="scrollView" style={{width:"100%"}}
                                 refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this._onRefresh}
-                        />}
+                                    <RefreshControl
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={this._onRefresh}
+                                    />}
                                 onContentSizeChange={this.onContentSizeChange}
                     >
                         <View style={{width:"100%",flexDirection:"column",justifyContent:"flex-start",alignItems:"center",marginBottom:20}}>
                             {this.state.recordEls}
                         </View>
                     </ScrollView>
-                        <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
-                            borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
-                                <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
-                                    borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
-                                           blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
-                                           underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
-                                           onChangeText={this.textChange}   onContentSizeChange={(event) => {
-                                    let height = event.nativeEvent.contentSize.height
-                                    if(height <  this.minHeight ){
-                                        height =  this.minHeight
-                                    }else{
-                                        height += 10
-                                    }
-                                    if(this.state.height !== height){
-                                        if(height > MAX_INPUT_HEIGHT){
-                                            height = MAX_INPUT_HEIGHT
-                                        }
-                                        this.setState({height:height})
+                    <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
+                        borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
+                        <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
+                            borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height:this.state.height}}
+                                   blurOnSubmit={false} returnKeyType="send" enablesReturnKeyAutomatically
+                                   underlineColorAndroid='transparent' defaultValue={""} onSubmitEditing={debounceFunc(this.send)}
+                                   onChangeText={this.textChange}   onContentSizeChange={(event) => {
+                            let height = event.nativeEvent.contentSize.height
+                            if(height <  this.minHeight ){
+                                height =  this.minHeight
+                            }else{
+                                height += 10
+                            }
+                            if(this.state.height !== height){
+                                if(height > MAX_INPUT_HEIGHT){
+                                    height = MAX_INPUT_HEIGHT
+                                }
+                                this.setState({height:height})
 
-                                    }
-                                }}/>
+                            }
+                        }}/>
 
-                            <TouchableOpacity onPress={this.showImagePicker}
-                                              style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
-                                <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity onPress={this.showImagePicker}
+                                          style={{display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+                            <Ionicons name="ios-camera-outline" size={38}  style={{marginRight:5}}/>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <Modal visible={this.state.biggerImageVisible} transparent={false}   animationType={"fade"}
-                       >
+                >
                     <ImageViewer imageUrls={this.state.imageUrls}
                                  onClick={()=>{this.setState({biggerImageVisible:false,biggerImageUri:null})}}
                                  onSave={(url)=>{
@@ -555,7 +567,8 @@ export default class ChatView extends Component<{}> {
                     />
                 </Modal>
             </View>
-        );
+        const loadingView = <ActivityIndicator/>
+        return  this.state.isInited?initedView:loadingView
     }
 
 }

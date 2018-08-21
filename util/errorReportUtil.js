@@ -10,7 +10,7 @@ const errorReportUtil = {
     errorReport(option){
         let {errorStr,type,extra,level} = option
         //TODO 改成去服务端去取是否dev模式,再持久化
-        if(Store.getCurrentUid() === config.spiritUid){
+        if(__DEV__){
             Alert.alert("error",errorStr)
         }
         const errorInfoObj = {
