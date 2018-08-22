@@ -487,10 +487,11 @@ export default class ChatView extends Component<{}> {
 
 
     onContentSizeChange=(contentWidth,contentHeight)=>{
-        this.extra.lastContentHeight = this.extra.msgViewHeight
+        this.extra.lastContentHeight = this.extra.contentHeight
         this.extra.contentHeight = contentHeight
         this.extra.count++
-        const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight)
+        const adjustment = 70
+        const offset = Math.floor(this.extra.contentHeight - this.extra.lastContentHeight) - adjustment
 
         if(this.extra.count === 1 ){
             this.refs.scrollView.scrollToEnd({animated: false})
