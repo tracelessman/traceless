@@ -310,9 +310,11 @@ export default class ChatView extends Component<{}> {
 
 
     send=()=>{
-        const callback = ()=>{
+      setTimeout(() => {
+        this.refs.text.clear();
+      }, 0)
+      const callback = ()=>{
             this.text="";
-            this.refs.text.clear();
         };
         if(this.text){
             if(this.isGroupChat){
