@@ -311,8 +311,8 @@ export default class ChatView extends Component<{}> {
 
 
     send=()=>{
-      this.refs.text.reload()
       this.refs.text2.focus()
+      this.refs.text.reload()
 
       const callback = ()=>{
             this.text="";
