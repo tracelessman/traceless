@@ -6,7 +6,6 @@ import {
     Modal,
     ScrollView,Text,TextInput,TouchableOpacity,View
 } from 'react-native';
-import Store from "../store/LocalStore"
 import AppUtil from "../AppUtil"
 const {getAvatarSource,debounceFunc} = AppUtil
 import WSChannel from "../channel/WSChannel"
@@ -17,8 +16,8 @@ import RNFetchBlob from 'react-native-fetch-blob'
 const versionLocal = require('../package').version
 const config = require('../config')
 import RNRestart from 'react-native-restart';
-
-
+const updateUtil = require("../util/updateUtil")
+import Store from "../store/LocalStore"
 
 export default class BasicInfoView extends Component<{}> {
     constructor(props){
@@ -178,6 +177,29 @@ export default class BasicInfoView extends Component<{}> {
                     this.props.navigation.navigate("SetHostView")
                 }),
             },
+          {
+            title: (
+              <View style={style.listItem}>
+                <View>
+                  <Text style={style.titleStyle}>
+                    强制更新
+                  </Text>
+                </View>
+                <View>
+                  <Text style={style.contentStyle}>
+                  </Text>
+                </View>
+              </View>),
+            onPress:debounceFunc(()=>{
+              const option = {
+                uid: Store.getCurrentUid(),
+                name: Store.getCurrentName(),
+                versionLocal:'0.0.1',
+                devParam:false
+              }
+              updateUtil.checkUpdateGeneral(option)
+            }),
+          },
             // {
             //     title: (
             //         <View style={style.listItem}>

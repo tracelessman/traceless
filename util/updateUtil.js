@@ -13,23 +13,31 @@ let downloadApkCount = 0
 
 const updateUtil = {
     checkUpdateGeneral:async function(option){
-        const {name,uid,beforeUpdate,noUpdateCb,errorCb} = option
-        const result = await netInfoUtil.httpPost({
+        const {name,uid,beforeUpdate,noUpdateCb,errorCb,versionLocal,devParam} = option
+        let result
+        console.log(option)
+        try{
+          result = await netInfoUtil.httpPost({
             url:config.checkUpdateUrl,
             param:{
-                name,
-                os:Platform.OS,
-                bundleId:DeviceInfo.getBundleId(),
-                uniqueId:DeviceInfo.getUniqueID(),
-                uid,
-                versionLocal:require('../package').version,
-                "previewVersion":config.previewVersion,
-                buildNumberClient:DeviceInfo.getVersion(),
-                "__DEV__":__DEV__,
-                "isDevMode":config.isDevMode,
-                "isPreviewVersion":config.isPreviewVersion
+              name,
+              os:Platform.OS,
+              bundleId:DeviceInfo.getBundleId(),
+              uniqueId:DeviceInfo.getUniqueID(),
+              uid,
+              versionLocal:versionLocal?versionLocal:require('../package.json').version,
+              "previewVersion":config.previewVersion,
+              buildNumberClient:DeviceInfo.getVersion(),
+              "__DEV__":typeof devParam === "undefined"?__DEV__:devParam,
+              "isDevMode":config.isDevMode,
+              "isPreviewVersion":config.isPreviewVersion
             }
-        })
+          })
+        }catch(error) {
+          console.log(error)
+        }
+        console.log({result})
+
         if(__DEV__){
             // console.log(result)
         }
