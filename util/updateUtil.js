@@ -15,7 +15,7 @@ const updateUtil = {
     checkUpdateGeneral:async function(option){
         const {name,uid,beforeUpdate,noUpdateCb,errorCb,versionLocal,devParam} = option
         let result
-        console.log(option)
+        // console.log(option)
         try{
           result = await netInfoUtil.httpPost({
             url:config.checkUpdateUrl,
@@ -36,7 +36,7 @@ const updateUtil = {
         }catch(error) {
           console.log(error)
         }
-        console.log({result})
+        // console.log({result})
 
         if(__DEV__){
             // console.log(result)
