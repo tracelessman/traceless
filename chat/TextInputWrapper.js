@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   Text, TextInput,
   View,
+  NativeModules
 } from 'react-native';
 import PropTypes from 'prop-types'
 import AppUtil from "../AppUtil"
@@ -15,12 +16,12 @@ export default class TextInputWrapper extends Component<{}> {
     super(props);
     this.minHeight = 35
     this.state = {
-      height: this.minHeight
+      height: this.minHeight,
+      autoFocus:false
     };
   }
 
   componentDidMount() {
-
   }
 
   componentDidUpdate() {
@@ -32,13 +33,11 @@ export default class TextInputWrapper extends Component<{}> {
   }
 
   reload(){
-    console.log('reload')
-    this.setState({key:uuid()})
+    this.setState({key:uuid(),autoFocus: false})
   }
 
   render() {
     const {onChangeText, onSubmitEditing} = this.props
-    console.log('wrapper render')
     return (
       <TextInput multiline ref="text" style={{flex:1,color:"black",fontSize:16,paddingHorizontal:4,borderWidth:1,
         borderColor:"#d0d0d0",borderRadius:5,marginHorizontal:5,minHeight: this.minHeight ,backgroundColor:"#f0f0f0",marginBottom:5,height: this.state.height}}
@@ -58,7 +57,7 @@ export default class TextInputWrapper extends Component<{}> {
           this.setState({height: heightContent})
 
         }
-      }} key={this.state.key}/>
+      }} key={this.state.key} autoFocus={this.state.autoFocus} />
     )
   }
 
