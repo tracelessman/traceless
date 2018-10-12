@@ -311,7 +311,8 @@ export default class ChatView extends Component<{}> {
 
 
     send=()=>{
-      this.refs.text.reload();
+      this.refs.text.reload()
+      this.refs.text2.focus()
 
       const callback = ()=>{
             this.text="";
@@ -525,7 +526,7 @@ export default class ChatView extends Component<{}> {
                     </ScrollView>
                     <View style={{width:"100%",flexDirection:"row",justifyContent:"center",alignItems:"flex-end",
                         borderTopWidth:1,borderColor:"#d0d0d0",overflow:"hidden",paddingVertical:5,marginBottom:0}}>
-
+                      <TextInput ref='text2' style={{height:0,width:0,backgroundColor: 'red'}}></TextInput>
                       <TextInputWrapper onChangeText={this.textChange} onSubmitEditing={this.send} ref='text'></TextInputWrapper>
 
                         <TouchableOpacity onPress={this.showImagePicker}

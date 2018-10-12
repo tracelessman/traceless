@@ -33,7 +33,7 @@ export default class TextInputWrapper extends Component<{}> {
   }
 
   reload(){
-    this.setState({key:uuid(),autoFocus: false})
+    this.setState({key:uuid(),autoFocus: true})
   }
 
   render() {
