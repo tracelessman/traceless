@@ -51,7 +51,7 @@ export default class ScanView extends Component<{}> {
                             }
                             Store.data.splice(0,1,keyData);
                             Store._save();
-                            this.parent.hideScanView();
+                            // this.parent.hideScanView();
                             const duration = 1000*4
                             Toast.show({
                                 text:"请稍候...",
