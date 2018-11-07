@@ -112,10 +112,11 @@ export default class ScanView extends Component<{}> {
                         }
                     }
                 }
-                if(serverIP){
+              var scanV = this;
+
+              if(serverIP){
                     let uri = serverIP+":"+this.data.port;
                     let ws = new WebSocket('ws://'+uri);
-                    var scanV = this;
                     ws.onmessage = function incoming(message) {
                         let msg = JSON.parse(message.data);
                         if(msg.state){//done
