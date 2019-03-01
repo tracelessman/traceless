@@ -1,7 +1,7 @@
 
 
 const devDiffConfig = {
-    localServerPublicFolderPath:"/Users/spirit/entry/git/working_on/traceless-transfer/public/",
+    localServerPublicFolderPath:"/Volumes/Samsung_T5/entry/code/archived/traceless-transfer/public",
 
 }
 

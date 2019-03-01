@@ -65,3 +65,6 @@ ios/build
 /android/app/build/outputs/*.html
 
 build
+
+# mac
+._*
