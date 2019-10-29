@@ -453,6 +453,26 @@ Store._getLocalRecordStateReports=function (chatId,msgId,callback) {
     });
 };
 
+Store.deleteOldMsg = () => {
+    return new Promise((resolve, reject)=> {
+        db.transaction((tx)=>{
+            tx.executeSql(`delete from record where time < ${Date.now() -  1000 * 60 * 60 * 24 * 3}`,[],function (tx,results) {
+                var rs = [];
+                var len = results.rows.length;
+                for(var i=0;i<len;i++){
+                    rs.push(results.rows.item(i));
+                }
+                resolve(rs);
+                // console.log({rs})
+            },function (err) {
+                console.log({err})
+                reject(err);
+            });
+        });
+
+    })
+}
+
 function deleteFolder(p) {
     RNFetchBlob.fs.exists(p).then((exists)=>{
         if(exists){

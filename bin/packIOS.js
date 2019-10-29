@@ -25,10 +25,11 @@ if(archive){
     cd ios && xcodebuild  -allowProvisioningUpdates  archive -scheme ${scheme} -archivePath "${archivePath}"
 `)
     timeLog()
+    console.log('archive success')
+
 }
 
 
-console.log('archive success')
 
 const exportPath = devConfig.exportIpaFolderPath
 fse.ensureDirSync(exportPath)

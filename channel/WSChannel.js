@@ -1,5 +1,6 @@
 /* eslint-disable */
 var Store = require("../store/Store")
+var localStore = require("../store/LocalStore")
 
 
 var WSChannel={
@@ -195,6 +196,7 @@ var WSChannel={
             function (msg) {
                 if(!msg.err){
                     Store.setLoginState(true);
+                    localStore.default.deleteOldMsg()
                 }
                 Store.suspendAutoSave();
                 WSChannel._lastPongTime = Date.now();
